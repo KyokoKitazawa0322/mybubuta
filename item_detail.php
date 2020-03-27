@@ -20,7 +20,7 @@ require_once(__DIR__."/connection.php");
     <div class="header">
         <div class="header_inner">
             <div class="header_contents">
-                <a href="item_list.php">
+                <a href="item_list.php">ああああ
                     <img class="main_logo" src="common/img/main_logo.png">
                 </a>
                 <div class="header_logo_area">
@@ -65,7 +65,7 @@ if($item = $stmt->fetch()) {
 $taxIn = 1.1;
 ?>
                 <div class="item_detail_title">
-                    <h2>aaaaaaa
+                    <h2>
                         <img class="product_logo" src="common/img/main_contents_title_detail.png" alt="商品詳細">
                     </h2>
                 </div>
