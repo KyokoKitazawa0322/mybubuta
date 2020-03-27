@@ -150,11 +150,11 @@ if(isset($_GET["sortkey"])){
             <div class="header_contents">
                 <h1 class="main_title">
                 <a href="item_list.php?cmd=item_list">
+                	<p>てすとてすと</p>
                     <img class="main_logo" src="common/img/main_logo.png">
                 </a>
                 </h1>
                 <div class="header_logo_area">
-                    あああああ
                     <a href="<?php echo $server;?>login.php">
                         <img class="header_logo" src="common/img/header_icon_member.png">
                     </a>
