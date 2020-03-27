@@ -1,3 +1,3 @@
 <?php
-require_once(__DIR__."/item_list.php");
+require_once(__DIR__."/item_detail.php");
 ?>
