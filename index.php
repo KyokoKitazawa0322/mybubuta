@@ -1,6 +1,3 @@
 <?php
-$server = "https://".$_SERVER['SERVER_NAME'].__DIR__."/";
-echo $server;
-require_once("{$server}item_detail.php");
-require_once($server."item_detail.php");
+require_once(__DIR__."/item_detail.php");
 ?>
