@@ -244,6 +244,7 @@ $i++;
                         </div>
 <?php 
 }
+$con->close();
 ?>
                         </div>
                     </div>
