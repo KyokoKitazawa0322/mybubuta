@@ -65,7 +65,7 @@ if($item = $stmt->fetch()) {
 $taxIn = 1.1;
 ?>
                 <div class="item_detail_title">
-                    <h2>
+                    <h2>aaaaaaa
                         <img class="product_logo" src="common/img/main_contents_title_detail.png" alt="商品詳細">
                     </h2>
                 </div>
