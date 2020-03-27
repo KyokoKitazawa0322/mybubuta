@@ -5,7 +5,6 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo(); 
-$server = "https://".$_SERVER['SERVER_NAME']."/sample/";
 $taxIn = 1.1;
 /**-----------------------------------------------------------
     商品一覧表示
@@ -150,7 +149,6 @@ if(isset($_GET["sortkey"])){
             <div class="header_contents">
                 <h1 class="main_title">
                 <a href="item_list.php?cmd=item_list">
-                	<p>てすとてすと</p>
                     <img class="main_logo" src="common/img/main_logo.png">
                 </a>
                 </h1>
