@@ -1,6 +1,6 @@
 <?php
-echo "kyonkyon";
-echo __DIR__;
-require_once(__DIR__."/item_detail.php");
+$server = "https://".$_SERVER['SERVER_NAME']."/sample/";
+echo $server;
+require_once("{$server}item_detail.php");
 
 ?>
