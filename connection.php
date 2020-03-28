@@ -4,10 +4,10 @@ $server = "http://".$_SERVER['SERVER_NAME']."/sample/";
 
 class Connection{
     // くらす内からconst定数を参照するときにはself::定数名の形式で指定
-    const DB_NAME = 'ecsite_kitazawa';
-    const HOST = 'localhost';
-    const USER = 'root';
-    const PASS = 'k1takyon';
+    const DB_NAME = 'heroku_4f96fa5a824de8a';
+    const HOST = 'us-cdbr-iron-east-01.cleardb.net';
+    const USER = 'b3c0c47b00dff6';
+    const PASS = '9cfd0c93';
     private $pdo = null;
 
     public function __construct(){

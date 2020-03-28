@@ -20,7 +20,7 @@ require_once(__DIR__."/connection.php");
     <div class="header">
         <div class="header_inner">
             <div class="header_contents">
-                <a href="item_list.php">ああああ
+                <a href="item_list.php">
                     <img class="main_logo" src="common/img/main_logo.png">
                 </a>
                 <div class="header_logo_area">
