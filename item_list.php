@@ -5,6 +5,7 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo(); 
+$pdo->set_charset('utf8');
 $taxIn = 1.1;
 /**-----------------------------------------------------------
     商品一覧表示
