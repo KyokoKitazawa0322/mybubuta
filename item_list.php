@@ -153,10 +153,10 @@ if(isset($_GET["sortkey"])){
                 </a>
                 </h1>
                 <div class="header_logo_area">
-                    <a href="<?php echo $server;?>login.php">
+                    <a href="/login.php">
                         <img class="header_logo" src="common/img/header_icon_member.png">
                     </a>
-                    <a href="mypage_favorite.php">
+                    <a href="/mypage_favorite.php">
                         <img class="header_logo" src="common/img/header_icon_like.png">
                     </a>
                     <a href="cart.php">

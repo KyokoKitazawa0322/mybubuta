@@ -1,6 +1,6 @@
 <?php
 //header(Location:)とa hrefに使用
-$server = "http://".$_SERVER['SERVER_NAME']."/sample/";
+$server = "http://".$_SERVER['SERVER_NAME']."/";
 
 class Connection{
     // くらす内からconst定数を参照するときにはself::定数名の形式で指定

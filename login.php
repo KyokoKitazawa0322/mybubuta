@@ -6,7 +6,7 @@ require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo();
 if(isset($_SESSION['customer_id'])){
-    header("Location:{$server}mypage.php");
+    header("Location:mypage.php");
 }
 ?>
 
@@ -15,7 +15,7 @@ if(isset($_SESSION['customer_id'])){
 <head>
 <meta charset="UTF-8">
 <title>商品詳細｜洋服の通販サイト</title>
-<link href="<?=$server?>common/css/style.css" rel="stylesheet" type="text/css" />
+<link href="common/css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body id="login">
 <div class="wrapper">
