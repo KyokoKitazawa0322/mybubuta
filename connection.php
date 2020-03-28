@@ -29,7 +29,7 @@ class Connection{
     }
 
     public function pdo(){
-        $dsn = "mysql:dbname=".self::DB_NAME.";host=".self::HOST;
+        $dsn = "mysql:dbname=".self::DB_NAME.";charset=utf8;host=".self::HOST;
         $db_user = self::USER;
         $db_pass = self::PASS;
 
