@@ -35,7 +35,7 @@ class Connection{
 
         try {
         $pdo = new PDO($dsn, $db_user, $db_pass);
-        mysqli_set_charset($pdo, "utf8");
+        $pdo->set_charset('utf8');
         }catch(PDOExeption $e){
             echo $e->getMesseage();
             die("MySQL接続エラー");
