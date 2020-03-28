@@ -140,8 +140,6 @@ if(isset($_GET["sortkey"])){
 <title>商品一覧｜洋服の通販サイト</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
 </head>
 <body id="item_list">
 <div class="wrapper">

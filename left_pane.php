@@ -1,6 +1,19 @@
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
 <script>
 <!--
+$(function() {
+    $('.bunner').bxSlider({
+      onSlideBefore: function(e) {
+          $($(e[0]).find('.lazy')).each(function(index,value){
+          var $target = $(value);
+          $target.attr('src', $target.data('src'))
+          $target.removeClass('lazy')
+        });
+      }
+    });
+});  
+
 $(function() {
     $(document).ready(function(){
         $('.bunner').bxSlider({
@@ -18,9 +31,9 @@ $(function() {
 </script>
 <div id="leftbox">
     <div class="bunner">
-        <img src="common/img/bunner01.jpg"/>
-        <img src="common/img/bunner02.jpg"/>
-        <img src="common/img/bunner03.jpg"/>
+        <img src="common/img/bunner01.jpg" class="lazy"/>
+        <img data-src="common/img/bunner02.jpg" class="lazy"/>
+        <img data-src="common/img/bunner03.jpg" class="lazy"/>
     </div>
     <form name="login_form" action="item_list.php" method="GET">
         <input type="hidden" name="cmd" value="do_search" />
