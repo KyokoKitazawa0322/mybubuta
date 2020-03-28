@@ -5,7 +5,7 @@
 $(function() {
     jQuery(window).load(function(){
     var height = $(this).height();
-    $( ".bx-viewport" ).css( "height", '112px' );
+    $(".bx-viewport").css( "height",'112px');
     });
 });
     
