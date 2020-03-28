@@ -171,7 +171,7 @@ if(isset($_GET["sortkey"])){
 
     <div class="container">
      <!-- 左メニュー -->
-    <?php include('left_pane.php')?>
+    <?php require_once('left_pane.php')?>
 
     <!-- メインコンテンツ -->
         <div class="main_wrapper">
