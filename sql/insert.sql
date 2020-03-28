@@ -28,13 +28,13 @@ insert into items values('T-0003', '–³’nƒVƒƒƒc', 5000, 'tops', 'tops03.png', '(
 
 insert into items values('T-0004', '”¼‘³ƒtƒŠƒ‹ƒuƒ‰ƒEƒX', 4000, 'tops', 'tops04.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 
-insert into items values('P-0001', 'ƒe[ƒp[ƒhƒ`ƒmƒpƒ“ƒc', 7000, 'pants', 'Pants01.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
+insert into items values('P-0001', 'ƒe[ƒp[ƒhƒ`ƒmƒpƒ“ƒc', 7000, 'pants', 'pants01.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 
-insert into items values('P-0002', 'ƒKƒEƒ`ƒ‡ƒpƒ“ƒc', 4000, 'pants', 'Pants02.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
+insert into items values('P-0002', 'ƒKƒEƒ`ƒ‡ƒpƒ“ƒc', 4000, 'pants', 'pants02.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 
-insert into items values('P-0003', 'ƒVƒ‡[ƒgƒpƒ“ƒc', 6000, 'pants', 'Pants03.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
+insert into items values('P-0003', 'ƒVƒ‡[ƒgƒpƒ“ƒc', 6000, 'pants', 'pants03.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 
-insert into items values('P-0004', 'ƒXƒLƒj[ƒpƒ“ƒc', 5000, 'pants', 'Pants04.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
+insert into items values('P-0004', 'ƒXƒLƒj[ƒpƒ“ƒc', 5000, 'pants', 'pants04.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 
 insert into items values('B-0001', 'ƒnƒ“ƒhƒoƒbƒN', 10000, 'bag', 'bag01.png', '(¤•iÚ×•\¦)ƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒgƒeƒLƒXƒg', 20, 0, now());
 

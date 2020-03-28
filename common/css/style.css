@@ -283,6 +283,7 @@ body {
     width: 200px;
     min-width: 200px;
     float: left;
+    overflow: hidden;
 }
 
 #leftbox .bunner {
