@@ -302,7 +302,7 @@ body {
 }
 
 .bx-viewport {
-    height: 112px;   
+    height: 112px!important;   
 }
 
 #leftbox .box {
