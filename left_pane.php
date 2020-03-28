@@ -3,16 +3,23 @@
 <script>
 <!--
 $(function() {
+    jQuery(window).load(function(){
+    var height = $(this).height();
+    $( ".bx-viewport" ).css( "height", '112px' );
+    });
+});
+    
+$(function() {
     jQuery(document).ready(function($){
-        $('.bunner').bxSlider({
-            auto: true,
-            mode:'fade',
-            speed: 1000,
-            pause: 3000,
-            controls: false,
-            infiniteLoop: true,
-            slideWidth: 200,
-         });
+    $('.bunner').bxSlider({
+        auto: true,
+        mode:'fade',
+        speed: 1000,
+        pause: 3000,
+        controls: false,
+        infiniteLoop: true,
+        slideWidth: 200,
+     });
     });
 });
 // --> 
