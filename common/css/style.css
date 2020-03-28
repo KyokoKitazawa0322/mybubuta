@@ -38,13 +38,13 @@ input, textarea, select {
     outline: none;
 }
 
-input[type="submit"]{
+input[type="submit"], input[type="button"] {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;   
 }
 
-input[type="submit"],input[type="radion"] {
+input[type="submit"],input[type="radio"] {
     cursor: pointer;    
 }
 
