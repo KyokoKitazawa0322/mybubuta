@@ -3,7 +3,7 @@
 <script>
 <!--
 $(function() {
-    $(document).ready(function(){
+    jQuery(document).ready(function($){
         $('.bunner').bxSlider({
             auto: true,
             mode:'fade',
