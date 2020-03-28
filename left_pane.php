@@ -1,21 +1,24 @@
-<!--
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
 <script>
-$(document).ready(function(){
-  $('.bunner').bxSlider({
-  auto: true,
-  mode:'fade',
-  speed: 1000,
-  pause: 3000,
-  controls: false,
-  infiniteLoop: true,
-  slideWidth: 200,
-                    });
+<!--
+$(function() {
+    $(document).ready(function(){
+        $('.bunner').bxSlider({
+            auto: true,
+            mode:'fade',
+            speed: 1000,
+            pause: 3000,
+            controls: false,
+            infiniteLoop: true,
+            slideWidth: 200,
+         });
+    });
 });
-</script>-->
-
+// --> 
+</script>
 <div id="leftbox">
     <div class="bunner">
         <img src="common/img/bunner01.jpg"/>
