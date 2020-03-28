@@ -3,13 +3,6 @@
 <script>
 <!--
 $(function() {
-    jQuery(window).load(function(){
-    var height = $(this).height();
-    $(".bx-viewport").css( "height",'112px');
-    });
-});
-    
-$(function() {
     jQuery(document).ready(function($){
     $('.bunner').bxSlider({
         auto: true,

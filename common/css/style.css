@@ -296,14 +296,13 @@ body {
     margin-bottom: 20px; 
 }
 
-/*#leftbox .bunner img{
-    width: 100%;  
-    display: block;
-}*/
-
 .bx-wrapper {
     margin-bottom: 40px!important;
     border-color: #FAEBD7!important;
+}
+
+.bx-viewport {
+    height: 112px;   
 }
 
 #leftbox .box {
