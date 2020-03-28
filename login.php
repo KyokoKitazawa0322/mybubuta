@@ -24,11 +24,11 @@ if(isset($_SESSION['customer_id'])){
     <div class="header">
         <div class="header_inner">
             <div class="header_contents">
-                <a href="/sample/item_list.php">
+                <a href="item_list.php">
                     <img class="main_logo" src="common/img/main_logo.png">
                 </a>
                 <div class="header_logo_area">
-                    <a href="<?=$server?>login.php">
+                    <a href="login.php">
                         <img class="header_logo" src="common/img/header_icon_member.png">
                     </a>
                     <a href="<?=$server?>mypage_favorite.php">
