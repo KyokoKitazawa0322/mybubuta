@@ -20,49 +20,23 @@ $pdo = $con->pdo();
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>商品一覧｜洋服の通販サイト</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
 <body class="mypage update_confirm">
 <div class="wrapper">
-    
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <a href="item_list.php">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                <div class="header_logo_area">
-                    <a href="login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--　ヘッダーここまで　-->
-    
-
+    <?php require_once('header_common.php')?>
     <div class="container">
-     <!-- 左メニュー -->
      <?php require_once('mypage_common.php'); ?>
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>登録内容の確認・変更</h2>
                 <div class="register_wrapper">
                     <div class="register_form">
- <!------------------------------------------------------------
-                           名前フォーム
- -------------------------------------------------------------->
                     <div class="register_field name_field">
                         <div class="register_form_row">
                             <p class="register_form_title">氏名</p>
@@ -86,10 +60,7 @@ $pdo = $con->pdo();
                                 <p><?php echo $_SESSION['update']['name04'];?></p>
                             </div>
                         </div>
-                    </div>
- <!------------------------------------------------------------
-                           住所フォーム
- -------------------------------------------------------------->                                              
+                    </div>                                         
                     <div class="register_field">
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
@@ -119,28 +90,19 @@ $pdo = $con->pdo();
                             <p class="register_form_title">建物名</p>
                             <p><?php echo $_SESSION['update']['add06'];?></p>
                         </div>
-                    </div>                     
- <!------------------------------------------------------------
-                           電話フォーム
- -------------------------------------------------------------->   
+                    </div>                       
                     <div class="register_field tel_field">
                         <div class="register_form_row">
                             <p class="register_form_title">電話番号</p>
                             <p><?php echo $_SESSION['update']['tel'];?></p>
                         </div>
                     </div>
- <!------------------------------------------------------------
-                           メールフォーム
- -------------------------------------------------------------->
                     <div class="register_field mail_field">
                         <div class="register_form_row">
                             <p class="register_form_title">メール</p>
                             <p><?php echo $_SESSION['update']['mail'];?></p>
                         </div>
                     </div>
- <!------------------------------------------------------------
-                           パスワードフォーム
- -------------------------------------------------------------->
                     <div class="register_field pass_field">
                         <div class="register_form_row">
                             <p class="register_form_title">パスワード</p>
@@ -149,9 +111,6 @@ $pdo = $con->pdo();
                             </div>
                         </div>
                     </div>
- <!------------------------------------------------------------
-                          会員登録ボタン
- -------------------------------------------------------------->
                     <div class="confirm_button_wrapper">
                         <div class="confirm_button_inner">
                             <input class="return_button btn_design_03" name="cmd" type="button" onClick="history.back()" value="前の画面に戻る"/>

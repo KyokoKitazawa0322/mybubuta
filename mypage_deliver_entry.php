@@ -77,49 +77,23 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>商品一覧｜洋服の通販サイト</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
 <body class="mypage" id="del_ent">
 <div class="wrapper">
-    
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <a href="item_list.php">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                <div class="header_logo_area">
-                    <a href="login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--　ヘッダーここまで　-->
-    
-
+    <?php require_once('header_common.php')?>
     <div class="container">
-     <!-- 左メニュー -->
      <?php require_once('mypage_common.php'); ?>
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>配送先の編集</h2>
                 <div class="register_wrapper">
                     <form method="POST" action="#" class="register_form">
-  <!------------------------------------------------------------
-                           名前フォーム
- -------------------------------------------------------------->
                     <div class="register_field name_field">
                         <div class="register_form_row">
                             <p class="register_form_title">氏名</p>
@@ -156,9 +130,6 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
                             <?php endif; ?>
                     </div>
                     </div>
-<!------------------------------------------------------------
-                       住所フォーム
--------------------------------------------------------------->                                        
                     <div class="register_field">
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
@@ -230,10 +201,7 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
 
                             </div>
                         </div>
-                    </div>
-<!------------------------------------------------------------
-                       電話フォーム
--------------------------------------------------------------->   
+                    </div>  
                     <div class="register_field tel_field">
                         <div class="register_form_row">
                             <p class="register_form_title">電話番号</p>
@@ -246,11 +214,8 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
                             </div>
                         </div>
                     </div>
-<!------------------------------------------------------------
-                      会員登録ボタン
--------------------------------------------------------------->
                     <div class="register_button_wrapper">
-                        <input class="register_button" type="submit" value="配送先を保存する" name="cmd">
+                        <input class="btn_cmn_l btn_design_01" type="submit" value="配送先を保存する" name="cmd">
                         <input type="hidden" name="cmd" value="register_del">
                     </div> 
                 </form>

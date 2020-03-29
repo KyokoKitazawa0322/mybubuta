@@ -21,7 +21,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
         //メールの登録はあったがパス不一致
     if(!password_verify($_POST['password'], $result['hash_password'])){
         $_SESSION['login_error'] = 'ログインできませんでした。メールアドレス、パスワードをご確認ください。';
-            header("Location:{$server}login.php");
+            header("Location:login.php");
         exit();  
     }else{
         //ログイン成功した際の処理    
@@ -34,28 +34,28 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
 
         //ログイン状態なしでカートからお気に入りに移動ボタンをおしたとき
         if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == "1"){
-            header("Location:{$server}cart.php");
+            header("Location:cart.php");
             exit();
         }
         
         //ログイン状態なしでカートからレジに進むボタンをおしたとき
         if(isset($_SESSION['order_flag']) && $_SESSION['order_flag'] == "1"){
-            header("Location:{$server}order_confirm.php");
+            header("Location:order_confirm.php");
             exit();
         }
 
         //ログイン状態なしでdetail.phpからお気に入りボタンをおしたとき
         if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
-            header("Location:{$server}mypage_favorite.php");
+            header("Location:mypage_favorite.php");
             exit();
         }
-        header("Location:{$server}mypage.php");
+        header("Location:mypage.php");
         exit();
         }
     //ログイン失敗
     }else{
         $_SESSION['login_error'] = '登録されていないメールアドレスです。';
-        header("Location:{$server}login.php");
+        header("Location:login.php");
         exit();
     }
     $con->close();
@@ -68,41 +68,18 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>商品一覧｜洋服の通販サイト</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
 <body class="mypage">
 <div class="wrapper">
-    
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <a href="item_list.php?cmd=item_list">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                <div class="header_logo_area">
-                    <a href="login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--　ヘッダーここまで　-->
-    
-
+    <?php require_once('header_common.php')?>
     <div class="container">
-     <!-- 左メニュー -->
      <?php require_once('mypage_common.php'); ?>
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>マイページ</h2>    

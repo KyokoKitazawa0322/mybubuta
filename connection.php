@@ -1,7 +1,4 @@
 <?php
-//header(Location:)とa hrefに使用
-$server = "http://".$_SERVER['SERVER_NAME']."/";
-
 class Connection{
     // くらす内からconst定数を参照するときにはself::定数名の形式で指定
     const DB_NAME = 'heroku_4f96fa5a824de8a';

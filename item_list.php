@@ -137,43 +137,18 @@ if(isset($_GET["sortkey"])){
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>商品一覧｜洋服の通販サイト</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA ss公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 <body id="item_list">
 <div class="wrapper">
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <h1 class="main_title">
-                <a href="item_list.php?cmd=item_list">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                </h1>
-                <div class="header_logo_area">
-                    <a href="/login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="/mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--　ヘッダーここまで　-->
-    
-
+    <?php require_once('header_common.php')?>
     <div class="container">
-     <!-- 左メニュー -->
     <?php require_once('left_pane.php')?>
-
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>

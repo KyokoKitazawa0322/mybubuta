@@ -51,8 +51,11 @@ if(isset($_SESSION["update_data"])){
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>商品一覧｜洋服の通販サイト</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
 <body class="mypage" id="del_comp">
