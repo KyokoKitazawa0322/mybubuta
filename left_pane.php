@@ -1,5 +1,4 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+
 <script>
 <!--
 $(function() {
@@ -18,10 +17,12 @@ $(function() {
 // --> 
 </script>
 <div id="leftbox">
-    <div class="bunner">
-        <img src="common/img/bunner01.jpg"/>
-        <img src="common/img/bunner02.jpg"/>
-        <img src="common/img/bunner03.jpg"/>
+    <div class="bunner_wrap_pc">
+        <div class="bunner">
+            <img src="common/img/bunner01.jpg"/>
+            <img src="common/img/bunner02.jpg"/>
+            <img src="common/img/bunner03.jpg"/>
+        </div>
     </div>
     <form name="login_form" action="item_list.php" method="GET">
         <input type="hidden" name="cmd" value="do_search" />

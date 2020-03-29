@@ -14,6 +14,8 @@ require_once(__DIR__."/connection.php");
 <title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
 </head>
 <body id="item_detail">
 <div class="wrapper">
@@ -39,6 +41,11 @@ $taxIn = 1.1;
                     </h2>
                 </div>
                 <div class="main_contents_inner">
+                    <div class="item_name_wrap">
+                        <h3 class="item_name-sp">
+                            <?php print( htmlspecialchars($item["item_name"])); ?>
+                        </h3>
+                    </div>
                     <p class="photo">
                         <img src="img/items/<?php print( htmlspecialchars( $item["item_image"])); ?>" />
                     </p>

@@ -250,30 +250,8 @@ $(function() {
 </head>
 <body id="cart">
 <div class="wrapper">
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <a href="item_list.php">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                <div class="header_logo_area">
-                    <a href="login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--　ヘッダーここまで　-->
+    <?php require_once('header_common.php')?>
     <div class="container">
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <div class="cart_title">
@@ -344,7 +322,7 @@ $(function() {
                                 <div class="cart_btn_wrap">
                                     <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?php print( $cart["item_code"] ); ?>">あとで買う<br/><span>(お気に入りに移動)</span>
                                     </a>
-                                    <a class="btn_cmn_mid btn_design_03" href="cart.php?cmd=del&item_code=<?php print( $cart["item_code"] ); ?>">削除</a>
+                                    <a class="btn_cmn_01 btn_design_03" href="cart.php?cmd=del&item_code=<?php print( $cart["item_code"] ); ?>">削除</a>
                                 </div>
                             </div>
                         </div>
@@ -363,7 +341,7 @@ $con->close();
                                     <dl class="mod_payment mod_payment_details">
                                         <dt>商品点数</dt>
                                         <dd><input name="total_amount" class="total_amount" type="text" value="<?php echo $total_amount;?>" readonly>点</dd>
-                                        <dt>商品代金合計(税込)</dt>
+                                        <dt>商品代金合計<span>(税込)</span></dt>
                                         <dd><input class="total_paymentDis" type="text" value="&yen;<?php print(number_format($total_price*$taxIn));?>" readonly></dd>
                                         <dt>送料</dt>
                                         <dd><input class="postageDis" type="text" value="&yen;<?php if($total_price<=10000){echo 500;}else{echo 0;}?>" readonly></dd>
@@ -383,10 +361,10 @@ $con->close();
                                 <input type="hidden" name="total_payment" class="total_payment" value="<?php print($total_price*$taxIn);?>">
                                 <input type="hidden" name="postage" class="postage" value="<?php if($total_price<=10000){echo 500;}else{echo 0;}?>">
                                 <input type="hidden" name="tax" class="tax" value="<?php print($total_price*$tax);?>">
-                                <input type="submit" class="btn_cmn_l btn_design_01" value="レジに進む" />
+                                <input type="submit" class="btn_cmn_full btn_design_01" value="レジに進む" />
                                 <input type="hidden" name="cmd" value="order_confirm">
                                 <div class="back_button">
-                                    <input class="btn_cmn_l btn_design_03" type="button" value="お買い物を続ける" onclick="history.back()" />   
+                                    <input class="btn_cmn_full btn_design_03" type="button" value="お買い物を続ける" onclick="history.back()" />   
                                 </div>
                             </div>
                         </div>   

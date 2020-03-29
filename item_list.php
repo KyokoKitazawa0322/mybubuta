@@ -6,6 +6,107 @@ require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo(); 
 $taxIn = 1.1;
+?>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
+<title>ぶぶた　BUBUTA ss公式 | レディースファッション通販のぶぶた【公式】</title>
+<link href="common/css/style.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
+<script>
+<!--
+$(function() {
+    jQuery(document).ready(function($){
+    $('.bunner-sp').bxSlider({
+        auto: true,
+        mode:'fade',
+        speed: 1000,
+        pause: 3000,
+        controls: false,
+        infiniteLoop: true,
+        slideWidth: 320,
+     });
+    });
+});
+// --> 
+</script>
+</head>
+<body id="item_list">
+<div class="wrapper">
+    <?php require_once('header_common.php')?>
+    <div class="container">
+<?php
+if(!(isset($_GET["cmd"])&&$_GET['cmd']=="do_search")
+    && !isset($_GET["sortkey"])){
+?>
+        <div class="bunner_wrap_center">
+            <div class="bunner-sp">
+                <img src="common/img/bunner01.jpg"/>
+                <img src="common/img/bunner02.jpg"/>
+                <img src="common/img/bunner03.jpg"/>
+            </div>
+        </div>
+<?php
+}
+?>
+    <?php require_once('left_pane.php')?>
+        <div class="main_wrapper">
+            <div class="main_contents">
+                <h2>
+                    <img class="product_logo" src="common/img/main_contents_title_products.png" alt="商品一覧">
+                </h2>
+                <div class="sort_item_wrapper">
+                    <div class="sort_item_byorder">
+                        <p>並び替え：</p>
+                        <form name="sort_form" class="sort_form" action="#" method="GET">
+                            <div class="select_wrap">
+                                <select name="sortkey" class="sortkey" onchange="submit(this.form)">
+                                    <option value="01" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="01"){echo "selected";} ?>>価格の安い順</option>
+                                    <option value="02" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="02"){echo "selected";} ?>>価格の高い順</option>
+                                    <option value="03" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="03"){echo "selected";}elseif(!isset($_GET['sortkey'])){echo "selected";} ?>>新着順</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="main_contents_inner">
+<?php
+if(!(isset($_GET["cmd"])&&$_GET['cmd']=="do_search")&& !isset($_GET["sortkey"])){  
+?>
+                    <ul class="item_list_rank">
+                        <h3>人気ランキング</h3>
+<?php                 
+$sql = "SELECT A.item_code, A.item_name, A.item_image, A.item_price, COUNT(B.item_code) AS '販売数量' FROM items AS A LEFT JOIN order_detail AS B ON A.item_code = B.item_code GROUP by A.item_code, A.item_code ORDER BY 販売数量 DESC LIMIT 4";
+$stmt = $pdo->query($sql); 
+$items = $stmt->fetchAll();
+$i=0;
+foreach ($items as $item){    
+$i++;
+?>
+                    <li class="products">
+                        <div class="product_inner">
+                            <span>No.<?= $i?></span>
+                            <a class="product_link" href="item_detail.php?item_code=<?php print(htmlspecialchars( $item["item_code"])); ?>">
+                                <img src="img/items/<?php print($item["item_image"]);?>" alt="" />
+                                <p class="item_name"><?php print($item["item_name"]); ?></p>
+                                <p class="item_list_price">&yen;<?php print(number_format($item["item_price"]*$taxIn));?></p>
+                            </a>
+                        </div>
+                    </li>
+<?php 
+    }
+}
+$con->close();
+?>
+                    </ul>
+                    <ul class="item_list_main">
+<?php
 /**-----------------------------------------------------------
     商品一覧表示
  ------------------------------------------------------------*/
@@ -56,17 +157,14 @@ if(isset($_GET['coat']) ||isset($_GET['dress']) || isset($_GET['skirt']) || isse
     if( isset($_GET['bag'])){
         $in = "{$in}'bag',";
     }
-//preg_replace( $正規表現パターン , $置換後の文字列 , $置換対象の文字列 )
-//正規表現$ = 直前の文字が行の末尾にある場合にマッチ
     $in = preg_replace( "/,$/", "", $in );
     $sql = $sql." AND item_category IN ( $in ) ";
 }    
 
-
 /**-----------------------------------------------------------
     商品名検索
  ------------------------------------------------------------*/
-  if( !empty($_GET['item_name'])){
+  if(!empty($_GET['item_name'])){
       $sql = "{$sql}AND item_name LIKE '%{$_GET["item_name"]}%'";
       $_SESSION['item_name'] = $_GET['item_name'];
     }
@@ -131,61 +229,22 @@ if(isset($_GET["sortkey"])){
 }else{
     $sql = $sql."ORDER BY item_insert_date asc";
 }
-?>
-
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
-<title>ぶぶた　BUBUTA ss公式 | レディースファッション通販のぶぶた【公式】</title>
-<link href="common/css/style.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-</head>
-<body id="item_list">
-<div class="wrapper">
-    <?php require_once('header_common.php')?>
-    <div class="container">
-    <?php require_once('left_pane.php')?>
-        <div class="main_wrapper">
-            <div class="main_contents">
-                <h2>
-                    <img class="product_logo" src="common/img/main_contents_title_products.png" alt="商品一覧">
-                </h2>
-                <div class="sort_item_wrapper">
-                    <div class="sort_item_byorder">
-                        <p>並び替え：</p>
-                        <form name="sort_form" class="sort_form" action="#" method="GET">
-                            <div class="select_wrap">
-                                <select name="sortkey" class="sortkey" onchange="submit(this.form)">
-                                    <option value="01" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="01"){echo "selected";} ?>>価格の安い順</option>
-                                    <option value="02" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="02"){echo "selected";} ?>>価格の高い順</option>
-                                    <option value="03" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="03"){echo "selected";}elseif(!isset($_GET['sortkey'])){echo "selected";} ?>>新着順</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="main_contents_inner">
-                    <div class="item_list_left">
-
-<?php
     $stmt = $pdo->query($sql); 
     $items = $stmt->fetchAll();
     if($items){
         foreach ($items as $item){
 ?>
-                        <div class="products">
+                        <li class="products">
                             <div class="product_inner">
                                 <a class="product_link" href="item_detail.php?item_code=<?php print(htmlspecialchars( $item["item_code"])); ?>">
                                     <img src="img/items/<?php print($item["item_image"]);?>" alt="" />
-                                    <p class="item_name"><?php print($item["item_name"]); ?></p>
-                                    <p class="item_list_price">&yen;<?php print(number_format($item["item_price"]*$taxIn));?></p>
+                                    <div class="item_txt_wrap">
+                                        <p class="item_name"><?php print($item["item_name"]); ?></p>
+                                        <p class="item_list_price">&yen;<?php print(number_format($item["item_price"]*$taxIn));?></p>
+                                    </div>
                                 </a>
                             </div>
-                        </div>
+                        </li>
 <?php 
     }
 }else{
@@ -196,32 +255,8 @@ if(isset($_GET["sortkey"])){
 <?php
 }
 ?>
-                        </div>
-                        <div class="item_list_rank">
-                            <h3>人気ランキング</h3>
-<?php    
-$sql = "SELECT A.item_code, A.item_name, A.item_image, A.item_price, COUNT(B.item_code) AS '販売数量' FROM items AS A LEFT JOIN order_detail AS B ON A.item_code = B.item_code GROUP by A.item_code, A.item_code ORDER BY 販売数量 DESC LIMIT 3";
-$stmt = $pdo->query($sql); 
-$items = $stmt->fetchAll();
-$i=0;
-foreach ($items as $item){    
-$i++;
-?>
-                        <div class="products">
-                            <div class="product_inner">
-                                <span>No.<?= $i?></span>
-                                <a class="product_link" href="item_detail.php?item_code=<?php print(htmlspecialchars( $item["item_code"])); ?>">
-                                    <img src="img/items/<?php print($item["item_image"]);?>" alt="" />
-                                    <p class="item_name"><?php print($item["item_name"]); ?></p>
-                                    <p class="item_list_price">&yen;<?php print(number_format($item["item_price"]*$taxIn));?></p>
-                                </a>
-                            </div>
-                        </div>
-<?php 
-}
-$con->close();
-?>
-                        </div>
+                        </ul>
+
                     </div>
                 </div>
             </div>
