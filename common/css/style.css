@@ -1276,7 +1276,6 @@ body {
 
 .payment_details dd{
     float: right;
-    
 }
 
 .mod_payment_details {
@@ -1314,8 +1313,7 @@ body {
 
 .mod_order_info input {
     border: none;
-    background-image: url(../img/main_image.png);
-    background-repeat: repeat;
+    background-color: transparent;
     float: left;
     width: 140px;
     height: 28px;
@@ -1376,12 +1374,13 @@ body {
 @media screen and (max-width: 767px) {
 #cart .cart_btn_wrap {
     width: 24%;
-    min-width: 120px;
+    min-width: 80px;
+    top: 32px; 
 }
     
 #cart .cart_item {
     height: 120px;
-    padding-left: 10px;
+    padding-left: 0;
 }
 
 #cart .cart_item_box {
@@ -1391,7 +1390,7 @@ body {
     
 #cart .cart_item_img img{
     width: 100px;
-    margin-top: 14px;
+    margin-top: 10px;
 }
     
 #cart .cart_item_txt {
@@ -1402,31 +1401,85 @@ body {
     
 #cart .product_link {
     position: absolute;
-    top: 14px;
-    left: 20px;    
+    top: 6px;
+    left: 0;    
 }
     
 #cart .mod_order_info input,#cart .mod_order_total {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
 }
     
-#cart .cart_btn_wrap .btn_design_02 {
-    padding-top: 2px;
+#cart .cart_btn_wrap .btn_design_02, #cart .cart_btn_wrap .btn_design_03 {
     height: 32px;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    letter-spacing: 1px!important;
 } 
+    
+#cart .cart_btn_wrap .btn_design_02 {
+    padding-top: 4px;
+}
     
 #cart .cart_btn_wrap .btn_design_03 {
     line-height: 32px;
-    height: 32px;
-    font-size: 1.2rem;
 } 
 }
 
 @media screen and (max-width: 479px) {
+#cart .cart_item_img img{
+    width: 80px;
+    margin-top: 12px;
+}
     
+#cart .cart_item_txt {
+    font-size: 1rem;
 }
 
+#cart .product_link, #cart .mod_order_total, #cart item_price {
+    font-size: 1.2rem;
+}
+    
+#cart .cart_item_txt {
+    padding-left: 4px;
+    width: 100px;
+}
+    
+#cart .cart_item_txt dt {
+    height: 1.2rem;
+}
+  
+#cart .item_count {
+    height: 26px;
+}
+    
+#cart .mod_order_total {
+    bottom: 34px;
+    left: 82px;
+}
+
+#cart .cart_btn_wrap .btn_design_03 {
+    margin-top: 24px;
+}
+    
+#cart .cart_item_txt dt {
+    margin-right: 2px;
+}
+
+#cart .main_contents_inner {
+    padding: 10px 6px 0 2px;
+}
+    
+#cart .main_contents {    
+    padding: 15px 8px 40px;
+}
+    
+.box-shipping-sub {
+    width: 100%;
+}
+    
+.mod_payment_details {
+    font-size: 1.4rem;
+}
+}
 /**-----------------------------------------------------------
         login.php
 ------------------------------------------------------------*/
@@ -2089,6 +2142,86 @@ body {
 
 #order_confirm .cart_item_img img{
     width: 120px;   
+}
+
+@media screen and (max-width: 767px) {
+#order_confirm .cart_item_box {
+    font-size: 1.2rem;
+    padding-left: 10px;
+    padding-right: 10px;
+
+}
+
+.shipping_address {
+    line-height: 1.8rem;
+}
+
+#order_confirm h4 {
+    font-size: 1.2rem;
+}
+    
+#order_confirm .cart_item_txt {
+    padding-left: 4px;
+}
+    
+#order_confirm .cart_item_txt dt{
+    margin-right: 2px;
+}
+    
+.buy_item_amount, #order_confirm .mod_order_total {
+    font-size: 1.6rem;
+}
+}
+
+@media screen and (max-width: 479px) {
+    
+#order_confirm .cart_item_box {
+    font-size: 1rem;
+    padding-left: 0;
+    padding-right: 0;
+}
+    
+#order_confirm .cart_item_img img {
+    width: 80px;
+}
+    
+#order_confirm .cart_item {
+    height: 80px;
+}
+    
+#order_confirm .mod_order_info {
+    margin-bottom: 0;
+}
+    
+#order_confirm .cart_item_txt {
+    width: 100px;
+}
+    
+.buy_item_amount, #order_confirm .mod_order_total {
+    font-size: 1.2rem;
+}
+    
+#order_confirm .mod_payment_total {
+    font-size: 1.6rem;
+}
+    
+#order_confirm .shipping_box {
+    padding-right: 10px;
+}
+    
+#order_confirm .btn_cmn_01 {
+    font-size: 1.2rem;
+}
+    
+#order_confirm .main_contents_inner {
+    padding: 0;
+}
+    
+#order_confirm .cart_button_area input {
+    width: 260px;
+    height: 50px;
+}
+    
 }
 /**--------------------------------------------------------
     order_delivery_list.php

@@ -160,17 +160,10 @@ $con->close();
 
 $(function() {
     $("a#move_fav").click(function(){
-        Swal.fire({
-            text: "お気に入りに移動しました",
-            confirmButtonText: '戻る',
-        }).then((result) => {
-        if (result.value) {
-        	var item_num = $(this).data('num');
+        var item_num = $(this).data('num');
         $('#move_num').val(item_num);
-            $("form#item_code").submit();
-        }
+        $("form#item_code").submit();
     });
-});
 });
     
 $(function() {
@@ -320,7 +313,7 @@ $(function() {
                                     </dd>
                                 </dl>
                                 <div class="cart_btn_wrap">
-                                    <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?php print( $cart["item_code"] ); ?>">あとで買う<br/><span>(お気に入りに移動)</span>
+                                    <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?php print( $cart["item_code"] ); ?>">あとで買う<br/><span>(お気に入りへ)</span>
                                     </a>
                                     <a class="btn_cmn_01 btn_design_03" href="cart.php?cmd=del&item_code=<?php print( $cart["item_code"] ); ?>">削除</a>
                                 </div>
