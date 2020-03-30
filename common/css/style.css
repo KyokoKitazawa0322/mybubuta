@@ -61,6 +61,12 @@ a:hover {
 	text-decoration: none;
 }
 
+@media (max-width: 767px){
+body {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+}
 /**--------------------------------------------------------
         ボタン
 ----------------------------------------------------------*/
@@ -142,7 +148,12 @@ a:hover {
     color: #FFF;
 }
 
-
+@media screen and (max-width: 479px) {
+.btn_cmn_l {
+    width: 240px;
+    font-size: 1.4rem;
+}
+}
 /**--------------------------------------------------------
         全体レイアウト
 ----------------------------------------------------------*/
@@ -150,12 +161,18 @@ body {
 	background-image: url(../img/_cotton-d.png);
 }
 
+.wrapper {
+    height: 100%;   
+    width: 100%;
+}
+
 @media screen and (min-width:1024px) {
 .wrapper {
 	min-width: 1024px;
-    height: 100%;
 }
 }
+
+
 
 .container {
     margin: 130px auto 70px;
@@ -175,6 +192,7 @@ body {
 .main_wrapper {
 	float: none;
     margin:0 auto;
+    width: 100%;
 }
 }
     
@@ -229,6 +247,23 @@ body {
     width: 100%;
     padding: 0 10px;
 }
+    
+#login .main_contents, #register .main_contents, #register_confirm .main_contents, #register_complete .main_contents, #order_del_list .main_contents, #order_pay_list .main_contents, #order_complete .main_contents{
+    width: 100%;
+}
+}
+
+@media screen and (max-width: 767px) {
+.main_contents {
+    padding: 10px 10px 40px;
+}
+}
+
+@media screen and (max-width: 479px) {
+.main_contents {
+    padding: 6px 6px 30px
+}
+    
 }
 /**--------------------------------------------------------
         ヘッダー
@@ -707,42 +742,10 @@ body {
 }
 }
 
-
-@media only screen and (max-width: 979px) {
-.bunner_wrap_center .bx-wrapper {
-    margin: 0 auto;
-}
-    
-.bunner_wrap_center {
-    margin: 0 auto;
-    width: 320px;
-    margin-bottom: 40px;
-}
-    
-.bunner-sp img:not(:first-child){
-    display: none;
-}
-    
-.bunner-sp img {
-    width: 310px!important;
-    margin: 0 auto;
-}
-    
-.bunner_wrap_center .bx-viewport{
-    height: 180px!important;
-}
-}
-
 .main_contents .products {
 	float: left;
     width: 25%;
     margin-bottom: 10px;
-}
-
-@media screen and (max-width:767px) { 
-.main_contents .products {
-    width: 33.33%;
-} 
 }
 
 #item_list .item_txt_wrap {
@@ -781,26 +784,6 @@ body {
     font-size: 1.4rem;   
 }
 
-@media screen and (max-width:767px) { 
-.item_list_rank {
-	float: none;
-    width: 100%; 
-    overflow: hidden;
-    padding-bottom: 0;
-    margin-bottom: 10px;
-}
-  
-.item_list_rank .products {
-    width: 25%;
-    float: left;
-    margin-bottom: 0;
-}
-    
-#item_list .item_name {
-    font-size: 1.2rem;
-}
-}
-
 .item_list_rank span {
     font-weight: bold;
     border-top: 3px solid #293b6a;
@@ -819,17 +802,6 @@ body {
 
 .main_contents .product_inner{
     padding: 0 10px 4px;   
-}
-
-@media screen and (max-width:767px) {
-.main_contents .product_inner {
-    padding-bottom: 10px;
-}
-
-.item_list_rank h3 {
-    height: 38px;
-    line-height: 38px;
-}
 }
 
 .main_contents .photo img {
@@ -853,13 +825,6 @@ body {
 .item_list_main {
     width: 552px;
     float: left;
-}
-
-@media screen and (max-width:767px) { 
-.item_list_main {
-    width: 100%;
-    float: none;
-} 
 }
 
 .product_logo {
@@ -923,6 +888,83 @@ body {
     background-color: rgba(255, 152, 211, 0.76);
     border: 1px solid transparent;
     text-align: center;
+}
+
+
+@media only screen and (max-width: 979px) {
+.bunner_wrap_center .bx-wrapper {
+    margin: 0 auto;
+}
+    
+.bunner_wrap_center {
+    margin: 0 auto;
+    width: 320px;
+    margin-bottom: 40px;
+}
+    
+.bunner-sp img:not(:first-child){
+    display: none;
+}
+    
+.bunner-sp img {
+    width: 310px!important;
+    margin: 0 auto;
+}
+    
+.bunner_wrap_center .bx-viewport{
+    height: 180px!important;
+}
+}
+
+
+@media screen and (max-width:767px) { 
+.main_contents .products {
+    width: 33.33%;
+    margin-bottom: 0;
+} 
+    
+.item_list_main {
+    width: 100%;
+    float: none;
+} 
+    
+.main_contents .product_inner {
+    padding-bottom: 10px;
+}
+
+.item_list_rank h3 {
+    height: 38px;
+    line-height: 38px;
+}
+    
+.item_list_rank {
+	float: none;
+    width: 100%; 
+    overflow: hidden;
+    padding-bottom: 0;
+    margin-bottom: 20px;
+}
+  
+.item_list_rank .products {
+    width: 25%;
+    float: left;
+    margin-bottom: 0;
+}
+    
+#item_list .item_name {
+    font-size: 1.2rem;
+}
+    
+#item_list .item_list_price {
+    font-size: 1.4rem;
+    margin-top: 4px;
+}
+}
+
+@media screen and (max-width: 479px) {
+#item_list .item_name, #item_list .item_list_price {
+    font-size: 1rem;
+}
 }
 /**--------------------------------------------------------
         item_detail.php
@@ -1028,112 +1070,47 @@ body {
 /**--------------------------------------------------------
         mypage_favorite.php
 ----------------------------------------------------------*/
-.main_contents table.fav_list {
-	border: #999999 solid 1px;
-	border-bottom: none;
-	width: 94%;
-    margin-bottom: 20px;
+#favorite .item_txt_wrap {
+    height: 64px;
 }
 
-.fav_list .fav_img {
-	border: #999999 solid 1px;
-    width: 100%;
+.fav_btn_wrap {
+    margin-bottom: 22px;
 }
 
-.fav_list td {
-	border-bottom: 1px #999999 solid;
-	padding: 5px;
+#favorite .btn_cmn_mid, #favorite .btn_cmn_01  {
+    width: 80%;   
 }
 
-.fav_list td.tc1 {
-	width: 15%;
+#favorite .btn_cmn_01  {
+    margin: 0 auto;
 }
 
-.fav_list td.tc2 {
-	width: 25%;
-    font-size: 1.4rem;
-}
-
-.fav_list td.tc3 {
-	width: 20%;
-    font-size: 1.4rem;
-}
-
-.fav_list td.tc4 {
-	width: 25%;
-    text-align: center;
-    position: relative;
-}
-
-.fav_list td.tc5 {
-	width: 15%;
-}
-
-.fav_list .btn_cmn_mid {
+@media screen and (max-width: 767px) {
+#favorite .item_name {
     font-size: 1.2rem;
-    width: 134px;
+}
+    
+#favorite .item_list_price {
+    font-size: 1.4rem;
+    margin-top: 4px;
+}
+    
+#favorite .item_txt_wrap {
+    height: 45px;
+}
 }
 
-.fav_list .btn_cmn_01 {
+@media screen and (max-width: 479px) {
+#favorite .item_name, #favorite .item_list_price {
+    font-size: 1rem;
+}
+    
+#favorite .btn_cmn_mid, #favorite .btn_cmn_01 {
     font-size: 1.2rem;
 }
 
-.fav_list .tc2:hover {
-    text-decoration: underline; 
 }
-
-.main_contents .fav_list .ln1 td {
-	background-color: #F5F5F5;
-}
-
-.main_contents .buy strong {
-	color: #CC0000;
-}
-.main_contents .info dl {
-	margin: 10px 0px 5px 5px;
-	width: 330px;
-	border-top: #CCCCCC solid 1px;
-}
-
-.main_contents .info dt {
-	line-height: 1.8;
-	clear:both;
-	float: left;
-	width: 80px;
-	border-bottom: #CCCCCC solid 1px;
-	height: 1.8em;
-}
-
-.main_contents .info dd {
-	line-height: 1.8;
-	float: right;
-	width: 250px;
-	border-bottom: #CCCCCC solid 1px;
-	height: 1.8em;
-}
-
-.main_contents .update {
-	clear: both;
-	margin-left: 295px;
-}
-
-.button_inner {
-    margin-left: 45px;
-}
-
-.button_icon{
-    vertical-align: middle;
-    height: 22px;
-    width: 22px; 
-}
-
-.menu span {
-    letter-spacing: 2px;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #444;
-}
-
 /**-----------------------------------------------------------
         cart.php
 ------------------------------------------------------------*/
@@ -1479,6 +1456,10 @@ body {
 .mod_payment_details {
     font-size: 1.4rem;
 }
+       
+.none_txt {
+    font-size: 1.4rem;
+}
 }
 /**-----------------------------------------------------------
         login.php
@@ -1579,7 +1560,7 @@ body {
 }
 
 .register_form_title {
-    width: 140px;
+    width: 142px;
     float: left;
     height: 30px;
     line-height: 30px;
@@ -1622,10 +1603,8 @@ body {
 
 .name_input_wrapper {
     float: left;
-}
-
-.name_input_wrapper .form_input_item {
-    width: 180px;   
+    width: 28%;
+    min-width: 80px;
 }
 
 .name_label {
@@ -1639,10 +1618,6 @@ body {
 
 #tel.form_input_item {
     width: 180px;
-}
-
-#mail.form_input_item {
-    width: 400px;    
 }
 
 #password.form_input_item, #confirm.form_input_item {
@@ -1662,12 +1637,14 @@ body {
 }
 
 #add01, #add02 {
-    width: 100px;
+    width: 10%;
+    min-width: 64px;
     float: left;
 }
 
-#add04, #add05, #add06 {
-    width: 400px;
+#add04, #add05, #add06, #mail.form_input_item {
+    min-width: 200px;
+    width: 70%;
 }
 
 .add_list {
@@ -1706,6 +1683,61 @@ body {
     margin-left: 140px;
     float: left; 
     margin-top: 6px;   
+}
+
+@media screen and (max-width: 767px) {
+.register_form_title {
+    float: none;
+    height: 20px;
+    line-height: 20px;
+}
+
+.name_input_wrapper {
+    width: 40%;
+}
+    
+#add04, #add05, #add06, #mail.form_input_item {
+    width: 90%;
+}
+    
+.register_form_row {
+    margin-bottom: 10px;
+}
+    
+.register_wrapper {
+    padding: 0 8px;
+}
+    
+.name_label {
+    width: 24px;
+    margin-right: 4px;
+}
+    
+.register_field {
+    padding: 10px 10px 8px 10px;
+}
+
+.memo {
+    margin-left: 0;
+}
+}
+
+@media screen and (max-width: 479px) {
+.register_field {
+    padding: 10px 0 8px 0;
+}
+    
+.name_input_wrapper {
+    width: 36%;
+}
+    
+.memo {
+    font-size: 1rem;
+}
+    
+.form_input_item {
+    font-size: 1.2rem;
+}
 }
 /**-----------------------------------------------------------
         register_confirm.php
@@ -1964,6 +1996,13 @@ body {
 #mypage_deliver .txt_wrapper{
     padding-top: 10px;
 }
+
+@media screen and (max-width: 479px) {
+.list_addr_info {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+}
+}
 /**--------------------------------------------------------
         mypage_deliver_entry.php
 ----------------------------------------------------------*/
@@ -2046,6 +2085,49 @@ body {
 #order_history .detail_link_wrap input {
     width: 100px;
     font-size: 1.3rem;
+}
+
+.his_ttl-sp {
+    display: none;
+}
+
+@media screen and (max-width: 767px) {
+.his_ttl-sp {
+    display: block;
+    float: left;
+    line-height: 2;
+    clear: both;
+    margin-right: 8px;
+}
+
+#order_history .box_order_info .box_row:first-of-type {
+    padding-top: 0;
+}
+    
+#order_history .box_order_header {
+    display: none;
+}
+    
+#order_history .box_order_info p {
+    line-height: 2;
+}
+    
+#order_history .box_row {
+    position: relative;
+    
+}
+    
+#order_history .detail_link_wrap {
+    position: absolute;
+    top: 23%;
+    right: 0;
+}
+}
+
+@media screen and (max-width: 479px) {
+#order_history .box_order_info p, .his_ttl-sp{
+    font-size: 1.2rem;
+} 
 }
 /**--------------------------------------------------------
         order_confirm.php
@@ -2213,7 +2295,7 @@ body {
     font-size: 1.2rem;
 }
     
-#order_confirm .main_contents_inner {
+.main_contents_inner {
     padding: 0;
 }
     
@@ -2222,14 +2304,13 @@ body {
     height: 50px;
 }
     
+#order_confirm .update_link_wrap {
+    padding-right: 10px;
+}
 }
 /**--------------------------------------------------------
     order_delivery_list.php
 ----------------------------------------------------------*/
-#order_del_list .cart_button_area input{
-    width: 320px;
-}
-
 #order_del_list .mypage_addr_box {
     position: relative;
     min-height: 110px;
@@ -2266,6 +2347,46 @@ body {
 #order_del_list .update_reg_link_wrap input {
     margin-top: 18px;
     margin-bottom: 18px;   
+}
+
+@media screen and (max-width: 767px) {
+    
+#order_del_list .btn_cmn_mid {
+    font-size: 1.2rem;
+}
+    
+.box_info, .update_reg_link_wrap {
+    display: block;
+    width: 100%;
+}
+      
+.box_info {
+    margin-bottom: 20px;
+}
+    
+#order_del_list .box_info input[type="radio"] + label:before {
+    top: 25%;
+}
+    
+.add_reg_wrap .update_reg_link_wrap {
+    text-align: center;
+}
+    
+.add_reg_wrap .btn_cmn_mid {
+    display: inline-block;
+    margin: 0 10px;
+    width: 140px;
+}
+}
+
+@media screen and (max-width: 479px) {
+.add_reg_wrap .btn_cmn_mid {
+    width: 100px;
+}
+    
+#order_del_list .btn_cmn_l {
+    width: 240px;
+}
 }
 /**--------------------------------------------------------
         order_pay_list.php
@@ -2320,6 +2441,20 @@ body {
 .select_pay_wrap:hover {
     font-weight: bold;
     transition: .6s;
+}
+
+@media screen and (max-width: 479px) {
+ #order_pay_list .btn_cmn_l {
+     width: 240px;
+}
+
+.list_cash_opt h3 {
+    font-size: 1.4rem;
+}
+    
+.list_cash_opt {
+    font-size: 1.2rem;
+}
 }
 
 /**--------------------------------------------------------
@@ -2386,6 +2521,11 @@ body {
 #history_detail .cart_item_box {
     padding: 0 30px 0 0;
     font-size: 1.4rem;
+    width: 65%; 
+}
+
+#history_detail .box-shipping-sub {
+    width: 35%;   
 }
 
 #history_detail .payment_box {
@@ -2426,6 +2566,62 @@ body {
     font-size: 2.0rem;   
 }
 
+@media screen and (max-width: 979px) {
+#history_detail .cart_item_box {
+    width: 100%; 
+}
+    
+#history_detail .box-shipping-sub {
+    width: 420px;   
+    padding-bottom: 10px;
+}
+
+#history_detail .btn_cmn_01 {
+    height: 50px;
+    line-height: 50px;
+}
+}
+
+@media screen and (max-width: 767px) {
+#history_detail .buy_item_amount, #history_detail .mod_order_total {
+    font-size: 1.5rem;   
+}
+}
+
+@media screen and (max-width: 479px) { 
+#history_detail .cart_item_img img {
+    width: 80px;
+}
+    
+#history_detail .cart_item_box {
+    padding: 0;
+    font-size: 1.2rem;
+}
+    
+#history_detail .cart_item {
+    height: 80px;
+}
+    
+#history_detail h4 {
+    font-size: 1.2rem;
+}
+    
+#history_detail .cart_item_txt {
+    padding-left: 4px;
+}
+    
+.list_order_detail_01 {
+    line-height: 2;
+}
+    
+#history_detail .buy_item_amount, #history_detail .mod_order_total {
+    font-size: 1.3rem;   
+}
+       
+#history_detail .box-shipping-sub {
+    width: 100%;   
+}
+}
 /**--------------------------------------------------------
         mypage_leave.php
 ----------------------------------------------------------*/

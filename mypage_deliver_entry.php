@@ -18,6 +18,8 @@ $pdo = $con->pdo();
 if(isset($_POST['del_update'])){
     unset($_SESSION['del_update']);
     $_SESSION['del_id'] = $_POST['del_id'];
+    echo $_POST['del_id'];
+    $i = $_POST['del_id'];
 }
 $sql = "SELECT * FROM delivery WHERE customer_id = ? && delivery_id = ?";
 $stmt = $pdo->prepare($sql);

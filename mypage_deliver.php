@@ -120,17 +120,31 @@ $('input[name="def_addr"]').click(function(){
 	$("#updId").val(seq);
 	$("form#addr-update").submit();
 });
-
+});
+    
+$(function(){
 $('form#addr-update').submit(function(){
     var scroll_top = $(window).scrollTop();  
     $('input.st',this).prop('value',scroll_top); 
+});
 });
 
 window.onload = function(){
 $(window).scrollTop(<?php echo @$_REQUEST['scroll_top']; ?>);
 }
+    	// 住所登録編集
+function updAddr(addrSeq){
+	var seq = addrSeq.getAttribute("data-value");
+	document.getElementById("updId02").value = seq;
+	$("form#exist_addr_update").submit();
+} 
 
-});
+        //削除
+function deleteAddr(addrSeq){
+	var seq = addrSeq.getAttribute("data-value");
+	document.getElementById("deleteId").value = seq;
+	$("form#exist-addr-delete").submit();
+}
 // --> 
 </script>
 </head>
@@ -207,14 +221,8 @@ $add_delFlag = $res['del_flag'];
                                 </dl>
                             </div>
                             <div class="update_reg_link_wrap">   
-                                <form method="POST" action="mypage_deliver_entry.php">
-                                    <input type="hidden" name="del_id" value="<?php echo $res['delivery_id']?>">
-                                    <input type="submit" class="btn_cmn_mid btn_design_02" value="編集する" name="del_update"> 
-                                </form>
-                                <form method="POST" action="#">
-                                    <input type="hidden" name="del_id" value="<?php echo $res['delivery_id']; ?>">
-                                    <input type="submit" name="del_item" class="btn_cmn_mid btn_cmn_01 btn_design_03" value="削除"> 
-                                </form>
+                                <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" data-value="<?php echo $res['delivery_id'];?>" onclick="updAddr(this)"> 
+                                <input type="button" data-value="<?php echo $res['delivery_id'];?>" class="btn_cmn_mid btn_cmn_01 btn_design_03" value="削除" onclick="deleteAddr(this)"> 
                             </div>
                         </div>
 <?php
@@ -241,6 +249,14 @@ $add_delFlag = $res['del_flag'];
         <input type="hidden" name="del_id" id="updId" value>
         <input type="hidden" name="set" value="">
         <input type="hidden" name="scroll_top" value="" class="st">
+    </form>
+    <form method="POST" id="exist_addr_update" action="mypage_deliver_entry.php">
+        <input type="hidden" name="del_update" value="">
+        <input type="hidden" name="del_id" id="updId02" value>
+    </form>
+    <form method="POST" id="exist-addr-delete" action="#">
+        <input type="hidden" name="del_id" id="deleteId" value>
+        <input type="hidden" name="del_item" value="">
     </form>
 </div>
 </body>

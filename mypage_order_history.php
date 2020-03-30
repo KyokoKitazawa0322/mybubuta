@@ -16,7 +16,7 @@ $pdo = $con->pdo();
 /**--------------------------------------------------------
  *　購入履歴の取得
  ---------------------------------------------------------*/
-$sql = "SELECT * FROM order_history where customer_id = ? order by purchase_date DESC";
+$sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_payment, payment FROM order_history where customer_id = ? order by purchase_date DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->bindvalue(1, $_SESSION['customer_id']);
@@ -54,10 +54,14 @@ $result = $stmt->fetchAll();
                             <div class="box_order_info">
                                 <?php foreach($result as $history):?>
                                     <div class="box_row">
-                                        <p class="box_col_date"><span class="txt_header_sp"><?php echo $history['purchase_date']?></span></p>
-                                        <p class="box_col_number"><span class="txt-header-sp"></span><?php echo $history['order_id']?></p>
-                                        <p class="box_col_price"><span class="txt_header_sp">&yen;<?php echo $history['total_payment']?></span></p>
-                                        <p class="box_col_method"><span class="txt_heade_-sp"><?php echo $history['payment']?></span></p>
+                                        <span class="his_ttl-sp">ご注文日:</span>
+                                        <p class="box_col_date"><?php echo $history['date']?></p>
+                                        <span class="his_ttl-sp">ご注文番号:</span>
+                                        <p class="box_col_number"><?php echo $history['order_id']?></p>
+                                        <span class="his_ttl-sp">合計金額:</span>
+                                        <p class="box_col_price">&yen;<?php echo $history['total_payment']?></p>
+                                        <span class="his_ttl-sp">決済方法:</span>
+                                        <p class="box_col_method"><?php echo $history['payment']?></p>
                                         <div class="detail_link_wrap">
                                             <form method="POST" action="mypage_order_detail.php">
                                                 <input type="submit" class="btn_cmn_01 btn_design_02" value="詳細を見る">

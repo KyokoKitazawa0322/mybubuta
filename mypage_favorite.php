@@ -93,9 +93,21 @@ $favorite = $stmt->fetchAll();
 <title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+<!--
+
+$(function() {
+    $("input#cartIn").click(function(){
+        var item_code = $(this).data('value');
+        $('#itemId').val(item_code);
+        $("form#cartInForm").submit();
+    });
+});
+// --> 
+</script>
 </head>
 
-<body class="mypage favorite">
+<body class="mypage" id="favorite">
 <div class="wrapper">
     <?php require_once('header_common.php')?>
     <div class="container">
@@ -107,36 +119,30 @@ $favorite = $stmt->fetchAll();
                 </div>
                 <div class="main_contents_inner">
 <?php if($favorite): ?>
-                    <table class="fav_list" cellpadding="0" cellspacing="0">
+                    <ul class="fav_list">
 <?php  $taxIn = 1.1; ?>
 <?php foreach($favorite as $item): ?>
-                    <tr>
-                        <td class="tc1">
-                            <a href="item_detail.php?item_code=<?php print( $item["item_code"] ); ?>">
-                                <img class="fav_img" src="img/items/<?php print( $item["item_image"] ); ?>"/>
-                            </a>
-                        </td>
-                        <td class="tc2">
-                            <a href="item_detail.php?item_code=<?php print( $item["item_code"] ); ?>">
-                                <?php print( $item["item_name"] );?>
-                            </a>
-                        </td>
-                        <td class="tc3">
-                            &yen;<?php print(number_format($item["item_price"]*$taxIn));?>(税込)
-                        </td>
-                        <td class="tc4">
-                            <form action="cart.php" method="POST">
-                                <input type="submit" class="btn_cmn_mid btn_design_01" value="カートにいれる">
-                                <input type="hidden" name="cmd" value="add_cart_fromFav" />
-                                <input type="hidden" name="item_code" value="<?php print(htmlspecialchars($item["item_code"])); ?>" />
-                            </form>
-                        </td>
-                        <td class="tc5">
-                            <a href="mypage_favorite.php?cmd=del&item_code=<?php print( $item["item_code"] ); ?>" class="btn_cmn_01 btn_design_03">削除</a>
-                        </td>
-                    </tr>
+                        <li class="products">
+                            <div class="product_inner">
+                                <a class="product_link" href="item_detail.php?item_code=<?php print(htmlspecialchars( $item["item_code"])); ?>">
+                                    <img src="img/items/<?php print($item["item_image"]);?>" alt="" />
+                                    <div class="item_txt_wrap">
+                                        <p class="item_name"><?php print($item["item_name"]); ?></p>
+                                        <p class="item_list_price">&yen;<?php print(number_format($item["item_price"]*$taxIn));?></p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="fav_btn_area">
+                                <div class="fav_btn_wrap">
+                                    <input type="button" class="btn_cmn_mid btn_design_02" value="カートにいれる" id="cartIn" data-value="<?php print(htmlspecialchars($item["item_code"])); ?>">
+                                </div>
+                                <div class="fav_btn_wrap">
+                                    <a href="mypage_favorite.php?cmd=del&item_code=<?php print( $item["item_code"] ); ?>" class="btn_cmn_01 btn_design_03">削除</a>
+                                </div>
+                            </div>
+                        </li>
 <?php endforeach; ?>
-                    </table><br/>
+                    </ul>
 <?php else:?>
                     <div class="txt_wrapper">
                         <p class="none_txt">お気に入りに登録されている商品はありません。</p>
@@ -149,6 +155,10 @@ $favorite = $stmt->fetchAll();
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
     </div>
+    <form method="POST" id="cartInForm" action="cart.php">
+        <input type="hidden" name="cmd" value="add_cart_fromFav">
+        <input type="hidden" name="item_code" id="itemId" value>
+    </form>
 </div>
 </body>
 </html>
