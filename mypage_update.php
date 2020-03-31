@@ -279,7 +279,7 @@ $isSession = (isset($_POST['cmd']) && $_POST['cmd']=="confirm");
                       会員登録ボタン
 -------------------------------------------------------------->
                     <div class="register_button_wrapper">
-                        <input class="register_button btn_design_01" type="submit" value="変更内容を確認する">
+                        <input class="btn_cmn_l btn_design_01" type="submit" value="変更内容を確認する">
                         <input type="hidden" name="cmd" value="confirm">
                     </div> 
                     </form>

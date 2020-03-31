@@ -106,14 +106,14 @@ if(!(isset($_GET["cmd"])&&$_GET['cmd']=="do_search")&& !isset($_GET["sortkey"]))
                     <ul class="item_list_rank">
                         <h3>人気ランキング</h3>
 <?php                 
-$sql = "SELECT A.item_code, A.item_name, A.item_image, A.item_price, COUNT(B.item_code) AS '販売数量' FROM items AS A LEFT JOIN order_detail AS B ON A.item_code = B.item_code GROUP by A.item_code, A.item_code ORDER BY 販売数量 DESC LIMIT 4";
+$sql = "SELECT A.item_code, A.item_name, A.item_image, A.item_price, COUNT(B.item_code) AS '販売数量' FROM items AS A LEFT JOIN order_detail AS B ON A.item_code = B.item_code GROUP by A.item_code, A.item_code ORDER BY 販売数量 DESC LIMIT 5";
 $stmt = $pdo->query($sql); 
 $items = $stmt->fetchAll();
 $i=0;
 foreach ($items as $item){    
 $i++;
 ?>
-                    <li class="products">
+                    <li class="products <?php if($i=='5'){echo "rank05";}?>">
                         <div class="product_inner">
                             <span>No.<?= $i?></span>
                             <a class="product_link" href="item_detail.php?item_code=<?php print(htmlspecialchars( $item["item_code"])); ?>">
