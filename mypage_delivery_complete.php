@@ -82,13 +82,7 @@ if(isset($_SESSION["update_data"])){
             </div>
         </div>
     </div>
-    <!--　ヘッダーここまで　-->
-    
-
     <div class="container">
-     <!-- 左メニュー -->
-     <?php require_once('mypage_common.php'); ?>
-    <!-- メインコンテンツ -->
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>配送先の編集</h2>
@@ -103,6 +97,7 @@ if(isset($_SESSION["update_data"])){
                 </div>
             </div>
         </div>
+     <?php require_once('mypage_common.php'); ?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved. </p>

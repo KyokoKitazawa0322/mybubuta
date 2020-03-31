@@ -46,7 +46,6 @@ $history = $stmt->fetch();
 <div class="wrapper">
     <?php require_once('header_common.php')?>
     <div class="container">
-     <?php require_once('mypage_common.php'); ?>
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>ご注文履歴明細</h2>
@@ -156,6 +155,7 @@ if($result){
                 </div>
             </div>
         </div>
+     <?php require_once('mypage_common.php'); ?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

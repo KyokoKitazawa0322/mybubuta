@@ -8,7 +8,8 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
     exit();
 }
 ?>
-        <div id="leftbox">
+    <div id="mypage_menu">
+        <div class="side_menu">
             <div class="box" id="mypage">
                 <div class="box_2">
                     <p class="list_title">マイページメニュー</p>
@@ -53,3 +54,4 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
                 </form>
             </div>
         </div>
+    </div>

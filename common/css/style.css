@@ -63,7 +63,7 @@ a:hover {
 
 @media (max-width: 767px){
 body {
-    font-size: 1.2rem;
+    font-size: 1rem;
     line-height: 1;
 }
 }
@@ -150,8 +150,9 @@ body {
 
 @media screen and (max-width: 479px) {
 .btn_cmn_l {
-    width: 240px;
+    max-width: 240px;
     font-size: 1.4rem;
+    width: 80%;
 }
 }
 /**--------------------------------------------------------
@@ -191,8 +192,13 @@ body {
 @media only screen and (max-width: 979px) {
 .main_wrapper {
 	float: none;
-    margin:0 auto;
+    margin:0 auto 40px;
     width: 100%;
+}
+    
+#item_list .main_wrapper {
+    width: 740px;
+    float: none;
 }
 }
     
@@ -269,7 +275,7 @@ body {
         ヘッダー
 ----------------------------------------------------------*/
 
-.header {
+#header {
     height: 100px;
     width: 100%;
     border-bottom: 1px solid #A2A2A2;
@@ -346,11 +352,49 @@ body {
     opacity: 1;
 }
 
+.is-open_wrap {
+    display: none;
+}
+
+.is-open {
+    display: none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+}
+
+#header .side_menu {
+    width: 260px;
+    border: 3px solid #293b6a;
+}
+
+#header .box {
+    margin-bottom: 0;
+}
+
+#header .box p {
+    float: left;
+    font-size: 1.8rem;
+}
+
+#header .side_title {
+    font-size: 2rem;
+}
+
+#header .category_list {
+    font-size: 1.6rem;   
+}
+
+#header .search_category {
+    text-align: left;   
+    padding-left: 50px;
+}
 
 @media screen and (min-width:980px) { 
 .top_search_logo {
     display: none; 
 }
+    
 }
 
 @media screen and (max-width:979px) { 
@@ -362,7 +406,7 @@ body {
     left: 40px;
 }
     
-.top_search_logo:hover {
+.top_search_logo:active, .top_search_logo:hover {
     width: 34px;
 }
     
@@ -375,7 +419,7 @@ body {
     height: auto;
 }
 
-.header {
+#header {
     height: 80px;
 }  
 
@@ -416,20 +460,19 @@ body {
 /**--------------------------------------------------------
         左サイドバー
 ----------------------------------------------------------*/
-#leftbox {
+.side_menu {
     width: 200px;
-    min-width: 200px;
     float: left;
     overflow: hidden;
 }
 
 @media only screen and (max-width: 979px) {
-#leftbox {
+.side_menu-sp {
     display: none;
 }
 }
 
-#leftbox .bunner {
+.side_menu .bunner {
     margin-bottom: 20px; 
 }
 
@@ -454,12 +497,12 @@ body {
     margin-bottom: 40px;
 }
 
-#leftbox .box {
+.side_menu .box {
 	background-image: url(../img/leftbox_image.png);
     margin-bottom: 10px;
 }
 
-#leftbox .side_title {
+.side_menu .side_title {
     display: inline-block;
     letter-spacing: 2px;
     font-size: 1.6rem;
@@ -470,11 +513,11 @@ body {
     border-bottom: 3px solid #293b6a;
 }
 
-#leftbox .side_title span {
+.side_menu .side_title span {
     font-weight: bold;
 }
 
-#leftbox .side_title_wrap {
+.side_menu .side_title_wrap {
     text-align: center;   
 }
 
@@ -484,29 +527,7 @@ body {
     width: 20px;
 }
 
-#leftbox .box .bottom {
-	clear: both;
-	padding-bottom: 10px;
-}
-
-#leftbox .box dl {
-	padding-left: 10px;
-	padding-right: 15px;
-}
-
-#leftbox .box dt {
-	width: 30px;
-	padding-bottom: 3px;
-	float: left;
-	clear: both;
-}
-
-#leftbox .box dd {
-	float: right;
-	padding-bottom: 5px;
-}
-
-#leftbox .box input.text {
+.side_menu .box input.text {
     width: 100%;
     height: 32px;
     padding: 5px 40px 5px 10px;
@@ -515,32 +536,9 @@ body {
     border-radius: 5px;
 }
 
-#leftbox .box input.text:focus, #leftbox .box input.text:hover  {
+.side_menu .box input.text:focus, .side_menu .box input.text:hover  {
   border: 2px solid #FAEBD7;
   outline: 0;
-}
-
-#leftbox .box input.bt {
-	clear: both;
-	padding-right: 15px;
-}
-
-
-#leftbox #search dl.cat {
-	clear: both;
-}
-
-#leftbox #search .cat dt {
-	padding-bottom: 0px;
-}
-
-#leftbox #search .cat dd {
-	float: right;
-	line-height: 1em;
-	font-size: 85%;
-	padding: 0px;
-	width: 107px;
-	vertical-align: middle;
 }
 
 .box_2 {
@@ -548,7 +546,7 @@ body {
     overflow: hidden;
 }
 
-#search p {
+.side_menu .box p {
     font-weight: bold;
     font-size: 1.5rem;
     display: inline-block;
@@ -559,27 +557,27 @@ body {
     font-size: 1.5rem;
 }
 
-#search input[type=checkbox] { display:none; } 
+.side_menu .box input[type=checkbox] { display:none; } 
 
-#search input[type=checkbox] + label:before {
+.side_menu .box input[type=checkbox] + label:before {
     font-family: FontAwesome;
     display: inline-block;
     font-size: 1.6rem;
 }
 
-#search input[type=checkbox] + label:before { 
+.side_menu .box input[type=checkbox] + label:before { 
     content: "\f096"; 
 } 
 
-#search input[type=checkbox] + label:before { 
+.side_menu .box input[type=checkbox] + label:before { 
     letter-spacing: 10px; 
 } 
 
-#search input[type=checkbox]:checked + label:before { 
+.side_menu .box input[type=checkbox]:checked + label:before { 
     content: "\f046"; 
 } 
 
-#search input[type=checkbox]:checked + label:before { 
+.side_menu .box input[type=checkbox]:checked + label:before { 
     letter-spacing: 5px; 
 } 
 
@@ -608,7 +606,7 @@ body {
 	display: none;
 }
 
-#leftbox .box .person {
+.side_menu .box .person {
 	font-size: 110%;
 	font-weight: bold;
 	color: #000099;
@@ -795,19 +793,8 @@ body {
     background-color: white;
 }
 
-.main_contents .photo {
-    float: left;
-    width: 400px;
-}
-
 .main_contents .product_inner{
     padding: 0 10px 4px;   
-}
-
-.main_contents .photo img {
-	border: #999999 solid 1px;
-    width: 380px;
-    float: left;
 }
 
 .products img {
@@ -816,7 +803,6 @@ body {
     display: block;
     margin-bottom: 6px; 
 }
-
 
 #item_list .main_contents_inner {
     padding: 10px 0 0 0;
@@ -976,6 +962,17 @@ body {
     padding: 10px 20px 0;
 }
 
+.main_contents .photo {
+    float: left;
+    width: 380px;
+}
+
+.main_contents .photo img {
+	border: #999999 solid 1px;
+    width: 100%;
+    float: left;
+}
+
 .item_detail_txt{
     margin-bottom: 20px;
 }
@@ -1028,7 +1025,18 @@ body {
     display: none;
     }
 
+@media screen and (max-width: 979px) {
+#item_detail .main_wrapper {
+    width: 740px;
+}
+}
+
 @media screen and (max-width:767px) { 
+    
+#item_detail .main_wrapper {
+    width: 100%;
+}
+    
 #item_detail .main_contents .photo {
     margin: 0 auto;
     float: none;
@@ -1048,7 +1056,7 @@ body {
     font-size: 1.8rem;
     border-bottom: 3px solid white;
     padding-bottom: 2px;
-    }
+}
     
 #item_detail .text_side {
     float: none;
@@ -1067,6 +1075,27 @@ body {
 }
 }
 
+@media screen and (max-width: 479px) {
+#item_detail .text_side {   
+    width: 100%;
+}
+    
+#item_detail .main_contents .photo {
+    width: 100%;
+}
+  
+#item_detail .item_name-sp {
+    font-size: 1.4rem;
+}
+    
+#item_detail .main_contents_inner {
+    padding: 0 10px;
+}
+    
+#item_detail .price {
+    font-size: 1.4rem;
+}
+}
 /**--------------------------------------------------------
         mypage_favorite.php
 ----------------------------------------------------------*/
@@ -1534,6 +1563,40 @@ body {
     padding: 0 30px 60px;
 }
 
+@media screen and (max-width: 767px) {
+
+.account_wrapper {
+    width: 100%;
+    float: none;
+    padding: 0px 0 30px;
+    max-width: 470px;
+    margin: 0 auto;
+}
+    
+.center_line {
+    border-right: 0;
+    border-bottom: 1px solid #A2A2A2;
+}
+   
+.login_wrapper h3 {
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.account_wrapper:last-of-type {
+    padding-top: 20px;
+}
+}
+
+@media screen and (max-width: 479px) {
+.login_wrapper h3 {
+    font-size: 1.3rem;
+}
+    
+.login_title_wrapper {
+    margin-bottom: 20px;
+}
+}
 /**-----------------------------------------------------------
         register.php
 ------------------------------------------------------------*/
@@ -1744,6 +1807,8 @@ body {
 ------------------------------------------------------------*/
 .confirm_button_wrapper {
     margin-top: 30px;
+    overflow: hidden;
+    padding: 10px 0;
 }
 
 .confirm_button_wrapper input {
@@ -1759,14 +1824,6 @@ body {
 
 .register_form {
     font-weight: bold;
-}
-
-#register_confirm .return_button {
-    margin-left: 100px;
-}
-
-#register_confirm .register_button {
-    margin-right: 100px;
 }
 
 #register_confirm .register_field {
@@ -1791,6 +1848,59 @@ body {
     width: 160px;
 }
 
+@media screen and (max-width: 979px) {
+#register_confirm .main_contents {
+    max-width: 616px;
+}
+    
+.register_form_title {
+    width: 120px;
+    font-size: 1.2rem;
+}
+    
+#register_confirm .name_input_wrapper, .update_confirm .name_input_wrapper {
+    width: 120px;
+}
+}
+    
+@media screen and (max-width: 767px) {
+#register_confirm .name_input_wrapper, .update_confirm .name_input_wrapper {
+    max-width: 100px;
+    width: 33.3%;
+}
+
+.confirm_button_wrapper input {
+    width: 160px;
+}
+}
+
+@media screen and (max-width: 479px) {
+.confirm_button_inner {
+    width: 100%;
+    float: none;
+    margin-bottom: 30px;
+}
+    
+.name_field .register_form_title {
+    width: 100%!important; 
+    font-size: 1rem;
+}
+    
+.register_form_title {
+    width: 30%; 
+    font-size: 1rem;
+}
+    
+.register_form_row {
+    margin-bottom: 0!important;
+}
+    
+#register_confirm .name_label, .update_confirm .name_label {
+    width: 30px;
+    text-align: left;
+}
+
+}
 /**--------------------------------------------------------
         register_complete.php
 ----------------------------------------------------------*/
@@ -1807,12 +1917,13 @@ body {
 /**--------------------------------------------------------
         mypage_common.php
 ----------------------------------------------------------*/
-
-.list_title {
+#mypage_menu .list_title {
     padding: 16px 0;
     border-bottom: 1px solid #3b3b3b;
     font-size: 1.6rem;
     font-weight: bold;   
+    background: none;
+    display: block;
 }
 
 .list_nav li{
@@ -1873,6 +1984,23 @@ body {
 
 .mypage .box_2 {
     padding-bottom: 24px;
+}
+
+@media screen and (max-width: 979px) {
+#mypage_menu  .side_menu {
+    float: none;
+    width: 100%;
+}
+    
+.logout_button_wrapper form {
+    width: 280px;
+    margin: 0 auto;  
+}
+    
+.logout_button_wrapper .btn_cmn_full {
+    width: 100%;
+    height: 50px;
+    font-size: 1.2rem;
 }
 /**--------------------------------------------------------
         mypage_deliver.php
@@ -2308,6 +2436,7 @@ body {
     padding-right: 10px;
 }
 }
+
 /**--------------------------------------------------------
     order_delivery_list.php
 ----------------------------------------------------------*/
@@ -2469,6 +2598,12 @@ body {
 #order_complete p {
     font-size: 1.6rem;
     line-height: 1.8;
+}
+
+@media screen and (max-width: 479px) {
+#order_complete p {
+    font-size: 1.2rem;
+}
 }
 
 /**--------------------------------------------------------

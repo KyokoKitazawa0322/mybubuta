@@ -16,7 +16,7 @@ $(function() {
 });
 // --> 
 </script>
-<div id="leftbox">
+<div class="side_menu side_menu-sp">
     <div class="bunner_wrap_pc">
         <div class="bunner">
             <img src="common/img/bunner01.jpg"/>
@@ -26,7 +26,7 @@ $(function() {
     </div>
     <form name="login_form" action="item_list.php" method="GET">
         <input type="hidden" name="cmd" value="do_search" />
-        <div class="box" id="search">
+        <div class="box">
             <div class="box_2">
                 <div class="side_title_wrap">
                     <h3 class="side_title">

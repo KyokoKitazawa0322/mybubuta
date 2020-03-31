@@ -6,6 +6,30 @@ require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo(); 
 $taxIn = 1.1;
+
+if(isset($_GET["cmd"])){
+    if($_GET['cmd']=="do_search" || $_GET['cmd']=="item_list") {
+        $_SESSION["search_sql"] = NULL;
+        $_SESSION["dress"] = NULL;
+        $_SESSION["coat"] = NULL;
+        $_SESSION["skirt"] = NULL;
+        $_SESSION["tops"] = NULL;
+        $_SESSION["pants"] = NULL;
+        $_SESSION["bag"] = NULL;
+        $_SESSION['item_name'] = NULL;
+        $_SESSION["minimum_price"] = NULL;
+        $_SESSION["maximum_price"] = NULL;
+    }
+}
+if(isset($_GET['coat'])){$_SESSION['coat'] = $_GET['coat'];}
+if(isset($_GET['dress'])){$_SESSION['dress'] = $_GET['dress'];}
+if(isset($_GET['skirt'])){$_SESSION['skirt'] = $_GET['skirt'];}
+if(isset($_GET['tops'])){$_SESSION['tops'] = $_GET['tops'];}
+if(isset($_GET['pants'])){$_SESSION['pants'] = $_GET['pants'];}
+if(isset($_GET['bag'])){$_SESSION['bag'] = $_GET['bag'];}
+if(isset($_GET['item_name'])){$_SESSION['item_name'] = $_GET['item_name'];}
+if(isset($_GET["minimum_price"])){$_SESSION['minimum_price'] = $_GET['minimum_price'];}
+if(isset($_GET["maximum_price"])){$_SESSION['maximum_price'] = $_GET['maximum_price'];}
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +38,7 @@ $taxIn = 1.1;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
-<title>ぶぶた　BUBUTA ss公式 | レディースファッション通販のぶぶた【公式】</title>
+<title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="common/css/style.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -112,31 +136,10 @@ $con->close();
  ------------------------------------------------------------*/
 $sql = "SELECT * FROM items WHERE item_del_flag = '0' ";
 
-if(isset($_GET["cmd"])){
-    if($_GET['cmd']=="do_search" || $_GET['cmd']=="item_list") {
-        $_SESSION["search_sql"] = NULL;
-        $_SESSION["dress"] = NULL;
-        $_SESSION["coat"] = NULL;
-        $_SESSION["skirt"] = NULL;
-        $_SESSION["tops"] = NULL;
-        $_SESSION["pants"] = NULL;
-        $_SESSION["bag"] = NULL;
-        $_SESSION['item_name'] = NULL;
-        $_SESSION["minimum_price"] = NULL;
-        $_SESSION["maximum_price"] = NULL;
-    }
-}
-
 /**-----------------------------------------------------------
     カテゴリのみ検索)
  ------------------------------------------------------------*/
 if(isset($_GET['coat']) ||isset($_GET['dress']) || isset($_GET['skirt']) || isset($_GET['tops']) || isset($_GET['pants'])|| isset($_GET['bag'])) {
-    if(isset($_GET['coat'])){$_SESSION['coat'] = $_GET['coat'];}
-    if(isset($_GET['dress'])){$_SESSION['dress'] = $_GET['dress'];}
-    if(isset($_GET['skirt'])){$_SESSION['skirt'] = $_GET['skirt'];}
-    if(isset($_GET['tops'])){$_SESSION['tops'] = $_GET['tops'];}
-    if(isset($_GET['pants'])){$_SESSION['pants'] = $_GET['pants'];}
-    if(isset($_GET['bag'])){$_SESSION['bag'] = $_GET['bag'];}
     
     $in = "";
     if( isset($_GET['coat'])){
@@ -166,7 +169,6 @@ if(isset($_GET['coat']) ||isset($_GET['dress']) || isset($_GET['skirt']) || isse
  ------------------------------------------------------------*/
   if(!empty($_GET['item_name'])){
       $sql = "{$sql}AND item_name LIKE '%{$_GET["item_name"]}%'";
-      $_SESSION['item_name'] = $_GET['item_name'];
     }
     
 /**-----------------------------------------------------------

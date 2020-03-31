@@ -79,12 +79,12 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
 <div class="wrapper">
     <?php require_once('header_common.php')?>
     <div class="container">
-     <?php require_once('mypage_common.php'); ?>
         <div class="main_wrapper">
             <div class="main_contents">
                 <h2>マイページ</h2>    
             </div>
         </div>
+        <?php require_once('mypage_common.php'); ?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
