@@ -28,7 +28,11 @@ $(function(){
     
 $(function(){
 $(window).on("scroll", function(){
+    var $window = $(this).height();
+    var bp = 560;
+    if($window < bp){
 	$(".is-open").css("top", -$(window).scrollTop()+80);
+    }
 });
 });
 // --> 
