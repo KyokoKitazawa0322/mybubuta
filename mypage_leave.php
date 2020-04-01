@@ -40,6 +40,7 @@ if(isset($_POST['cmd'])&&$_POST['cmd']=="leave"){
         }
     }
 }
+$con->close();
 ?>
 
 <!DOCTYPE html>

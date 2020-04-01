@@ -22,6 +22,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->bindvalue(1, $_SESSION['customer_id']);
 $stmt->execute();
 $result = $stmt->fetchAll();
+$con->close();
 ?>
 
 <!DOCTYPE html>

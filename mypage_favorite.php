@@ -5,7 +5,6 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo();
-
 /**--------------------------------------------------------
  * 詳細画面で「お気に入り保存」ボタンが押された時に処理を行う
  ---------------------------------------------------------*/
@@ -82,6 +81,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->bindvalue(1, $_SESSION['customer_id']);  
 $stmt->execute();
 $favorite = $stmt->fetchAll();
+$con->close();
 ?>
 
 <!DOCTYPE html>

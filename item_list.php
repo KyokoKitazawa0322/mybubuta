@@ -126,7 +126,6 @@ $i++;
 <?php 
     }
 }
-$con->close();
 ?>
                     </ul>
                     <ul class="item_list_main">
@@ -256,6 +255,7 @@ if(isset($_GET["sortkey"])){
                         </div>                    
 <?php
 }
+$con->close();
 ?>
                         </ul>
 

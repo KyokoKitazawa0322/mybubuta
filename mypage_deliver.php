@@ -99,7 +99,7 @@ $name = $res['last_name'].$res['first_name'];
 $post = $res['address_01']."-".$res['address_02'];
 $address = $res['address_03'].$res['address_04'].$res['address_05'].$res['address_06'];
 $def_delFlag = $res['del_flag'];
-
+$con->close();
 ?>
 
 <!DOCTYPE html>

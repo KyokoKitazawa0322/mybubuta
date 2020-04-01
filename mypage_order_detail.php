@@ -13,6 +13,9 @@ $pdo = $con->pdo();
     exit();
  }
 
+if(!isset($_POST['order_id'])&&!isset($_SESSION['order_id'])){
+    header('Location:mypage_order_history.php');
+}
 /**--------------------------------------------------------
  *　購入履歴の取得
  ---------------------------------------------------------*/
@@ -28,7 +31,7 @@ $stmt->bindvalue(1, $_SESSION['customer_id']);
 $stmt->bindvalue(2, $_SESSION['order_id']);
 $stmt->execute();
 $history = $stmt->fetch();
-
+$con->close();
 ?>
 
 <!DOCTYPE html>

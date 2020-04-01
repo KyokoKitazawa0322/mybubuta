@@ -59,7 +59,7 @@ $taxIn = 1.1;
                             <?php print( htmlspecialchars( $item["item_detail"])); ?>
                         </p>
                         <div class="detail_form_wrap">
-                            <form action="cart.php" method="GET" class="item_num_form">
+                            <form action="cart.php" method="POST" class="item_num_form">
                                 <div class="select_wrap">
                                     <select name="item_count" class="item_count_sl">
                                     <?php  for($i=1; $i<=10; $i++){

@@ -45,6 +45,7 @@ if(isset($_SESSION["update_data"])){
         exit;
     }
 }
+$con->close();
 ?>
 
 <!DOCTYPE html>
@@ -60,28 +61,7 @@ if(isset($_SESSION["update_data"])){
 
 <body class="mypage" id="del_comp">
 <div class="wrapper">
-    
-    <!--　ヘッダー　-->
-    <div class="header">
-        <div class="header_inner">
-            <div class="header_contents">
-                <a href="item_list.php">
-                    <img class="main_logo" src="common/img/main_logo.png">
-                </a>
-                <div class="header_logo_area">
-                    <a href="login.php">
-                        <img class="header_logo" src="common/img/header_icon_member.png">
-                    </a>
-                    <a href="mypage_favorite.php">
-                        <img class="header_logo" src="common/img/header_icon_like.png">
-                    </a>
-                    <a href="cart.php">
-                        <img class="header_logo" src="common/img/header_icon_cart.png">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php require_once('header_common.php')?>
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
@@ -91,7 +71,7 @@ if(isset($_SESSION["update_data"])){
                         <p>配送先の編集が完了しました。</p>
                         
                         <div class="complete_button_wrapper">
-                            <input class="" type="button" value="配送先の登録・変更" onClick="location.href='mypage_deliver.php'" >
+                            <input class="btn_cmn_l btn_design_01" type="button" value="配送先の登録・変更" onClick="location.href='mypage_deliver.php'" >
                         </div>
                     </div>
                 </div>

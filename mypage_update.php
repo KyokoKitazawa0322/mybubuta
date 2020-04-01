@@ -91,6 +91,7 @@ if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
     }
 }
 $isSession = (isset($_POST['cmd']) && $_POST['cmd']=="confirm");
+$con->close();
 ?>
 
 <!DOCTYPE html>

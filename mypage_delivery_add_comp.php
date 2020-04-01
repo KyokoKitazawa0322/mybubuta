@@ -45,6 +45,7 @@ if(isset($_SESSION['add_data'])) {
         exit;
     }
 }
+$con->close();
 ?>
 <!DOCTYPE html>
 <html lang="ja">

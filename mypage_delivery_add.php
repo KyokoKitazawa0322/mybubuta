@@ -46,7 +46,7 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='add'){
     }
 }
 
-
+$con->close();
 ?>
 
 <!DOCTYPE html>

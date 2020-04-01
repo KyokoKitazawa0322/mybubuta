@@ -44,6 +44,7 @@ if(isset($_SESSION['from_order_flag'])){
     $_SESSION['from_order_flag']=NULL;
     exit;
 }
+$con->close();
 ?>
 
 <!DOCTYPE html>

@@ -5,7 +5,6 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo();
-
 ?>
 
 <!DOCTYPE html>

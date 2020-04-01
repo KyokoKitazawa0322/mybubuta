@@ -103,12 +103,12 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "move_fav" ){
  * リクエスト cmd の中身が、「add_cart」であった場合の処理。
  ------------------------------------------------------------*/
 
- if(isset($_GET["cmd"]) && $_GET["cmd"] == "add_cart"){
+ if(isset($_POST["cmd"]) && $_POST["cmd"] == "add_cart"){
     $is_already_exists  = 0;
     for( $i=0 ; $i<count($_SESSION["cart"]); $i++){
-        if( $_SESSION["cart"][$i]["item_code"] == $_GET["item_code"] ){
+        if( $_SESSION["cart"][$i]["item_code"] == $_POST["item_code"] ){
             // 追加する商品がカートに既に存在している場合は数量を合算。
-            $_SESSION["cart"][$i]["item_count"] = $_SESSION["cart"][$i]["item_count"] + $_GET["item_count"];
+            $_SESSION["cart"][$i]["item_count"] = $_SESSION["cart"][$i]["item_count"] + $_POST["item_count"];
             $is_already_exists = 1;
         }
     }
@@ -117,11 +117,11 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "move_fav" ){
     if( $is_already_exists == 0 ){ 
         $sql = "select * from items where item_code = ?";
         $stmt = $pdo->prepare($sql);
-        $stmt->bindvalue(1,($_GET["item_code"]));
+        $stmt->bindvalue(1,($_POST["item_code"]));
         $stmt->execute();
         if($record = $stmt->fetch()) {
-            $item["item_code"] = $_GET["item_code"];
-            $item["item_count"] = $_GET["item_count"];
+            $item["item_code"] = $_POST["item_code"];
+            $item["item_count"] = $_POST["item_count"];
             $item["item_image"] = $record["item_image"];
             $item["item_name"] = $record["item_name"];
             $item["item_price"] = $record["item_price"];
@@ -143,7 +143,6 @@ if(isset($_GET["cmd"]) && $_GET["cmd"] == "del")
     }
     $_SESSION["cart"] = array_merge($_SESSION["cart"]);
 }
-$con->close();  
 ?>
 
 <!DOCTYPE html>

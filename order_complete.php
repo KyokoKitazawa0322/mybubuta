@@ -79,6 +79,7 @@ if(isset($_POST['cmd']) && $_POST['cmd'] == "order_comp"){
     header('Location:login.php');
     exit();  
 }
+$con->close();
 ?>
 
 <!DOCTYPE html>

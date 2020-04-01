@@ -5,6 +5,10 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo();
+
+if(!isset($_POST['del_upd'])&&!isset($_POST['del_update'])){
+    header('Location:login.php');   
+}
 /**--------------------------------------------------------
  * ログイン状態の判定(セッション切れの場合はlogin.phpへ)
  ---------------------------------------------------------*/
@@ -18,8 +22,6 @@ $pdo = $con->pdo();
 if(isset($_POST['del_update'])){
     unset($_SESSION['del_update']);
     $_SESSION['del_id'] = $_POST['del_id'];
-    echo $_POST['del_id'];
-    $i = $_POST['del_id'];
 }
 $sql = "SELECT * FROM delivery WHERE customer_id = ? && delivery_id = ?";
 $stmt = $pdo->prepare($sql);
@@ -44,7 +46,6 @@ $stmt->bindvalue(1, $_SESSION['customer_id']);
 $stmt->bindvalue(2, $_SESSION['del_id']);
 $stmt->execute();
 $result = $stmt->fetch();
-
 /**--------------------------------------------------------
  * 配送先の保存ボタンがおされたときの処理
  ---------------------------------------------------------*/
@@ -72,7 +73,7 @@ if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
     }
 }
 
-
+$con->close();
 ?>
 
 <!DOCTYPE html>

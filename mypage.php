@@ -81,7 +81,15 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
-                <h2>マイページ</h2>    
+                <div class="mypage_title">
+                    <h2>マイページ</h2>
+                </div>
+                <div class="main_contents_inner">
+                    <h3 class="ttl_cmn">会員様へのお知らせ</h3>
+                </div>
+                <div class="txt_wrapper">
+                    <p class="none_txt">現在お知らせはありません。</p>
+                </div>
             </div>
         </div>
         <?php require_once('mypage_common.php'); ?>

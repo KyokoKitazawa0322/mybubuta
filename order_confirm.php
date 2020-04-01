@@ -5,6 +5,29 @@ mb_internal_encoding("utf-8");
 require_once(__DIR__."/connection.php");
 $con = new Connection();
 $pdo = $con->pdo();
+
+/**--------------------------------------------------------
+   決済方法確定ボタンが押されたときの処理
+ ---------------------------------------------------------*/
+if(isset($_POST['cmd']) && $_POST['cmd']=="pay_comp") {
+        unset($_SESSION['pay_error']);
+        unset($_SESSION['isPay']);
+        unset($_SESSION['payment']);
+    if(!isset($_POST['payTypeSelect'])){
+        $_SESSION['pay_error']="is";
+        header('Location:order_pay_list.php');
+        exit();   
+    }
+    
+    $_SESSION['pay'] = $_POST['payTypeSelect'];
+    if($_POST['payTypeSelect']=="1") {
+        $_SESSION['payment'] = "クレジットカード";
+    } elseif ($_POST['payTypeSelect']=="2") {
+        $_SESSION['payment'] = "代引き";
+    } else{
+        $_SESSION['payment'] = "銀行振込";
+    } 
+}
 /**-------------------------------------------------------
    前ページ情報をセッションへ格納
  ---------------------------------------------------------*/
@@ -75,7 +98,7 @@ if(isset($_POST['cmd']) && $_POST['cmd']=="del_comp") {
         $_SESSION['address'] = $res['address_03'].$res['address_04'].$res['address_05'].$res['address_06'];
         $_SESSION['tel'] = $res['tel'];
 }
-
+$con->close();
 ?>
 
 <!DOCTYPE html>
@@ -133,29 +156,6 @@ if(isset($_SESSION['isPay'])){
                         <div class="shipping_box_wrap">
                             <div class="shipping_box">
 <?php
-/**--------------------------------------------------------
-   決済方法確定ボタンが押されたときの処理
- ---------------------------------------------------------*/
-if(isset($_POST['cmd']) && $_POST['cmd']=="pay_comp") {
-        unset($_SESSION['pay_error']);
-        unset($_SESSION['isPay']);
-        unset($_SESSION['payment']);
-    if(!isset($_POST['payTypeSelect'])){
-        $_SESSION['pay_error'] = "is";
-        header('Location:order_pay_list.php');
-        exit();   
-    }
-    
-    $_SESSION['pay'] = $_POST['payTypeSelect'];
-    if($_POST['payTypeSelect']=="1") {
-        $_SESSION['payment'] = "クレジットカード";
-    } elseif ($_POST['payTypeSelect']=="2") {
-        $_SESSION['payment'] = "代引き";
-    } else{
-        $_SESSION['payment'] = "銀行振込";
-    } 
-}
-    
 if(isset($_SESSION['payment'])){
     if($_SESSION['payment'] == "クレジットカード"){
         echo <<<EOM
