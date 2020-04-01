@@ -28,7 +28,7 @@ $(function(){
     
 $(function(){
 $(window).on("scroll", function(){
-	$(".is-open").css("top", -$(window).scrollTop());
+	$(".is-open").css("top", -$(window).scrollTop()+80);
 });
 });
 // --> 
