@@ -20,11 +20,16 @@ $(function(){
 });
 });
 
-<!--
 $(function(){
   $("#openMenu").on('click',function(){
     $(".is-open").slideToggle();
   });
+});
+    
+$(function(){
+$(window).on("scroll", function(){
+	$(".is-open").css("top", -$(window).scrollTop());
+});
 });
 // --> 
 </script>
