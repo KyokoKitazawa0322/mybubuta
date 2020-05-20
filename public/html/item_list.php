@@ -1,10 +1,9 @@
 <?php
-require_once (__DIR__ ."/../../vendor/autoload.php");
+require_once (__DIR__ ."/../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
 
-mb_internal_encoding("utf-8");
 $itemList = new \Controllers\ItemListAction();
 $itemList->execute();
 $items = $itemList->getItems();
