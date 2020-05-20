@@ -39,7 +39,7 @@ class OrderConfirmAction{
                     $_SESSION['order']['payment'] = NULL;
                 if(!isset($_POST['payType'])){   
                     $_SESSION['pay_error']="is";
-                    header('Location:order_pay_list.php');
+                    header('Location:/html/order/order_pay_list.php');
                     exit();   
                 }
 

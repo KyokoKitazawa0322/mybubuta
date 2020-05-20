@@ -43,14 +43,14 @@ class LoginAction{
                         //①非ログイン状態でカートからお気に入りに移動ボタンをおした後ログイン
                         if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == "1"){
                             //カート画面へもどす
-                            header("Location:cart.php");
+                            header("Location:/html/cart.php");
                             exit();
                         }
 
                         //②非ログイン状態でカートからレジに進むボタンをおした後ログイン
                         elseif(isset($_SESSION['order_flag']) && $_SESSION['order_flag'] == "1"){
                             //購入確認画面へ移動
-                            header("Location:order_confirm.php");
+                            header("Location:/html/order/order_confirm.php");
                             exit();
                         }
 

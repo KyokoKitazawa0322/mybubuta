@@ -28,7 +28,7 @@ class OrderCompleteAction{
              ---------------------------------------------------------*/
             if(isset($_POST['cmd']) && $_POST['cmd'] == "order_comp"){
                 if(!isset($_SESSION['order']['payment'])){
-                    header('Location:order_confirm.php');
+                    header('Location:/html/order/order_confirm.php');
                     $_SESSION['isPay'] = "none";
                     exit();
                 }
