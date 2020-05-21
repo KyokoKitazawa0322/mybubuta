@@ -9,6 +9,10 @@ class MyPageFavoriteAction{
         
     public function execute(){
         
+        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+            $_SESSION['customer_id'] = null;
+        }
+        
         try{
             $dao = new MyPageFavoriteDao();
             $customerId = $_SESSION['customer_id'];
@@ -63,7 +67,7 @@ class MyPageFavoriteAction{
             die('SQLエラー :'.$e->getMessage());
         }  
     }
-
+    
     /** @return ItemsDto */
     public function getFavoriteDto(){
         return $this->favoriteDto;   

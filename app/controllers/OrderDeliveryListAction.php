@@ -15,10 +15,7 @@ class OrderDeliveryListAction{
         
         $customerDao = new CustomerDao();
         $deliveryDao = new DeliveryDao();
-        
-        /**-----------------------------------------------
-         * ログイン状態の判定(セッション切れの場合はlogin.phpへ)
-         ------------------------------------------------*/
+
          if(!isset($_SESSION['customer_id'])){
             header('Location:/html/login.php');
             exit();
@@ -29,6 +26,7 @@ class OrderDeliveryListAction{
          ------------------------------------------------*/
         $customerDto = $customerDao->getCustomerById($_SESSION['customer_id']);
         $this->customer = $customerDto;
+        
         /**------------------------------------------------
            削除ボタンがおされたときの処理
          -------------------------------------------------*/

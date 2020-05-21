@@ -1,7 +1,5 @@
 <?php
 namespace Controllers;
-use \Models\ItemsDto;
-use \Models\ItemsDao;
 use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
@@ -27,7 +25,6 @@ class OrderConfirmAction{
         
         try{
             $customerDao = new CustomerDao();
-            $itemsDao = new ItemsDao();
             $deliveryDao = new DeliveryDao();
 
             /**--------------------------------------------------------
@@ -93,7 +90,7 @@ class OrderConfirmAction{
                     $delivery = $deliveryDao->getDefDeliveryInfo($customerId);
                     $this->saveDeliveryData($delivery);
                 }else{
-                    $this->saveDeliveryData($customer);
+                    $this->saveCustomerData($customer);
                 }
             }
 
@@ -102,7 +99,7 @@ class OrderConfirmAction{
              ---------------------------------------------------------*/
             if(isset($_POST['cmd']) && $_POST['cmd']=="del_comp") {
                 $_SESSION['def_addr'] = $_POST['def_addr'];
-                if($_POST['def_addr']!=="1") {
+                if($_POST['def_addr'] !== "customer") {
                     $delivery  = $deliveryDao->getDeliveryInfoById($customerId, $_POST['def_addr']);
                     $this->saveDeliveryData($delivery);
                 } else {

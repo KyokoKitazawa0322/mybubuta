@@ -15,7 +15,7 @@ class ItemDetailAction {
             if($item){
                 $this->item = $item;
             }else {
-                header("Location:/html/item_list.php");  
+                header("Location:item_list.php");  
                 exit();
             } 
         }catch(\PDOException $e){
