@@ -1,11 +1,11 @@
 
 <?php
 require_once (__DIR__ ."/../../../vendor/autoload.php");
+ini_set("display_errors", 'On');
+error_reporting(E_ALL);
 
 session_cache_limiter('none');
 session_start();
-
-mb_internal_encoding("utf-8");
 
 $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
 $orderDeliveryList->execute();

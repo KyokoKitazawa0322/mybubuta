@@ -4,8 +4,6 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
-mb_internal_encoding("utf-8");
-
 $mypageOrderHistory = new \Controllers\MyPageOrderHistoryAction();
 $mypageOrderHistory->execute();
 $orders = $mypageOrderHistory->getOrders();
