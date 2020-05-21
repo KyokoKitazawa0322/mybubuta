@@ -1,10 +1,8 @@
 
 <?php
 require_once (__DIR__ ."/../../../vendor/autoload.php");
-ini_set("display_errors", 'On');
-error_reporting(E_ALL);
 
-session_cache_limiter('none');
+/*session_cache_limiter('none');*/
 session_start();
 
 $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
@@ -47,7 +45,6 @@ function deleteAddr(addrSeq){
 	document.getElementById("deleteId").value = seq;
 	$("form#exist-addr-delete").submit();
 }
-    
 // --> 
 </script>
 </head>
