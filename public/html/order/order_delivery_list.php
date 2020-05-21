@@ -106,7 +106,7 @@ function deleteAddr(addrSeq){
                                     </div>
                                     <div class="update_reg_link_wrap">
                                         <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" onclick="updAddr(this)" data-value="<?=$delivery->getDeliveryId();?>"> 
-                                        <input type="button" onclick="deleteAddr(this)" class="btn_cmn_mid btn_design_03" value="削除" data-value="<?php=$delivery->getDeliveryId();?>"> 
+                                        <input type="button" onclick="deleteAddr(this)" class="btn_cmn_mid btn_design_03" value="削除" data-value="<?=$delivery->getDeliveryId();?>"> 
                                     </div>
                                 </div>
                                 <?php endforeach;?>
