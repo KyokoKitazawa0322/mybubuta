@@ -42,6 +42,8 @@ function updAddr(addrSeq){
         //削除
 function deleteAddr(addrSeq){
 	var seq = addrSeq.getAttribute("data-value");
+    
+    
 	document.getElementById("deleteId").value = seq;
 	$("form#exist-addr-delete").submit();
 }

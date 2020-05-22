@@ -37,9 +37,9 @@ class ItemsDao extends \Models\Model {
     
     public function findItemsExecute(){
 
-        $stmt = $this->pdo->query($this->sql); 
+        $stmt = $this->pdo->query($this->sql);
+        $i = $this->sql;
         $res = $stmt->fetchAll();
-
         $items = [];
         if($res){
             foreach($res as $row) {
@@ -53,29 +53,27 @@ class ItemsDao extends \Models\Model {
         }
     }
     
-    public function findItemsByCategory($category){
+    public function setCategoryIntoSql($category){
         $in = "";
-        foreach($category as $key=>$value)
-            if(isset($_GET[$key])){
-                $in = "{$in}'{$key}',";
-            }
+        foreach($category as $key)
+            $in = "{$in}'{$key}',";
         $in = preg_replace( "/,$/", "", $in );
-        $this->sql = $this->sql." AND item_category IN ( $in ) ";
+        $this->sql = $this->sql." AND item_category IN ( $in) ";
     }    
     
-    public function findItemsByName($itemName){
-      $this->sql = "{$this->sql}AND item_name LIKE '%{$itemName}%'";
+    public function setKeywordIntoSql($keyWord){
+      $this->sql = "{$this->sql}AND item_name LIKE '%{$keyWord}%' ";
     }
 
-    public function findItemsByMinPrice($minPrice){
-      $this->sql =  "{$this->sql} AND item_price >={$minPrice} ";          
+    public function setMinPriceIntoSql($minPrice){
+      $this->sql = "{$this->sql} AND item_price >={$minPrice} ";          
     }
     
-    public function findItemsByMaxPrice($maxPrice){  
-        $this->sql =  "{$this->sql} AND item_price <={$maxPrice} ";    
+    public function setMaxPriceIntoSql($maxPrice){  
+        $this->sql = "{$this->sql} AND item_price <={$maxPrice} ";    
     }
 
-    public function findItemsByPrice($minPrice, $maxPrice){
+    public function setPriceIntoSql($minPrice, $maxPrice){
         $this->sql = "{$this->sql} AND item_price >={$minPrice} && item_price <={$maxPrice} ";    
     }
     
@@ -83,7 +81,7 @@ class ItemsDao extends \Models\Model {
         return $this->sql;
     }
 
-    public function itemsSortOnly($sortkey){
+    public function setOnlySortIntoSql($sortkey){
         if($sortkey == "01"){
         $this->sql = $this->sql."ORDER BY item_price asc";
         }
@@ -95,7 +93,7 @@ class ItemsDao extends \Models\Model {
         }
     }
     
-    public function itemsSort($sortkey, $sql){
+    public function setSortIntoSql($sortkey, $sql){
         if($sortkey == "01"){
         $this->sql = $sql."ORDER BY item_price asc";
         }
@@ -107,8 +105,9 @@ class ItemsDao extends \Models\Model {
         }
     }
     
-    public function itemsOrder() {
+    public function setOrderDefaultIntoSql() {
         $this->sql = $this->sql."ORDER BY item_insert_date asc";
+        var_dump($this->sql);
     }
     
     public function selectItemsRank() {
@@ -131,6 +130,5 @@ class ItemsDao extends \Models\Model {
         }
         return $items;
     }
-
 }
 ?>

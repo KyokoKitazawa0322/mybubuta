@@ -37,7 +37,7 @@ $(function() {
                 <div class="search_item">
                     <p>商品名</p>
                     <div class="text_wrapper">
-                        <input type="text" name="item_name" class="text" placeholder="キーワード" value="<?php if(isset($_SESSION['search']["item_name"])){echo $_SESSION['search']["item_name"]; }?>" />
+                        <input type="text" name="keyword" class="text" placeholder="キーワード" value="<?php if(isset($_SESSION['search']["keyword"])){echo $_SESSION['search']["keyword"]; }?>" />
                     </div>
                 </div>
                 <div class="search_item_bycategory">
