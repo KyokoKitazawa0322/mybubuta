@@ -43,7 +43,7 @@ $orders = $mypageOrderHistory->getOrders();
                                         <span class="his_ttl-sp">ご注文番号:</span>
                                         <p class="box_col_number"><?= $order->getOrderId(); ?></p>
                                         <span class="his_ttl-sp">合計金額:</span>
-                                        <p class="box_col_price">&yen;<?= $order->getTotalPayment();?></p>
+                                        <p class="box_col_price">&yen;<?= number_format($order->getTotalPayment());?></p>
                                         <span class="his_ttl-sp">決済方法:</span>
                                         <p class="box_col_method"><?= $order->getPayment(); ?></p>
                                         <div class="detail_link_wrap">

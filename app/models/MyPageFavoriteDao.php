@@ -27,7 +27,7 @@ class MyPageFavoriteDao extends \Models\Model {
                 $dto->setItemName($row['item_name']);
                 $dto->setItemImage($row['item_image']);
                 $dto->setItemPrice($row['item_price']);
-
+                $dto->setTax($row['tax']);
                 $items[] = $dto; 
             }
             return $items;

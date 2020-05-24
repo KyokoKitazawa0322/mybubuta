@@ -1475,6 +1475,12 @@ body {
     font-size: 1.6rem;
 }
 
+#postage_message {
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+}
+
 @media screen and (max-width: 979px) {
 .cart_item_box {
     float: none;   
@@ -1557,7 +1563,11 @@ body {
     
 #cart .cart_btn_wrap .btn_design_03 {
     line-height: 32px;
-} 
+}
+    
+#postage_message {
+    font-size: 16px;
+}
 }
 
 @media screen and (max-width: 479px) {

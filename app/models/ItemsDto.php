@@ -2,14 +2,13 @@
 namespace Models;
 use \Models\ItemsDao;
 use \Config\Config;
-//ACTIONクラス(use DAO;)　入力値の受けとりとメソッドの実行。DTOオブジェクトが返り値として得られる
-//DAOクラス(use DTO;)　メソッドの定義。SQLで取得した値をDTOにsetterで渡し格納させる
-//DTOクラス　getter/setterでデータ保持、DTOオブジェクトを返す
+
 class ItemsDto{
     
     private $itemCode;
     private $itemName;
     private $itemPrice;
+    private $tax;
     private $itemCategory;
     private $itemImage;
     private $itemDetail;
@@ -30,12 +29,12 @@ class ItemsDto{
         return $this->itemPrice;
     }
     
-    public function getitemPriceWithTax(){
-        return $this->itemPrice * Config::TAX;   
+    public function getTax(){
+        return $this->tax;   
     }
     
-    public function getitemTax(){
-        return $this->itemPrice * Config::TAXRATE;   
+    public function getitemPriceWithTax(){
+        return $this->itemPrice + $this->tax;   
     }
     
     public function getItemCategory(){
@@ -73,6 +72,10 @@ class ItemsDto{
     
     public function setitemPrice($itemPrice){
         $this->itemPrice = $itemPrice;
+    }
+    
+    public function setTax($tax){
+        $this->tax = $tax;
     }
     
     public function setItemCategory($itemCategory){

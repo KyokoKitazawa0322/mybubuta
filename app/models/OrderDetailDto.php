@@ -72,12 +72,10 @@ class OrderDetailDto extends \Models\Model{
         $this->itemCount = $itemCount;   
     }
     
-    //new
     public function setItemPrice($itemPrice){
         $this->itemPrice = $itemPrice;
     }
     
-    //new
     public function setItemTax($itemTax){
         $this->itemTax = $itemTax;
     }

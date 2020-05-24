@@ -50,7 +50,6 @@ class OrderDetailDao extends \Models\Model{
                 $dto->setItemImage($row['item_image']);
                 $dto->setItemCount($row['item_count']);
                 $dto->setitemPrice($row['item_price']);
-                //new
                 $dto->setItemTax($row['item_tax']);
                 $orderDetail[] = $dto;
             }

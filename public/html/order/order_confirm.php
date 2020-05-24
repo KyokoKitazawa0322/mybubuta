@@ -4,7 +4,6 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 /*session_cache_limiter('none');*/
 session_start();
 
-use \Config\Config;
 $orderConfirm = new \Controllers\OrderConfirmAction();
 $orderConfirm->execute();
 ?>
@@ -78,7 +77,7 @@ $orderConfirm->execute();
                         <div class="shipping_box_wrap">                        
                         <?php
                             foreach($_SESSION["cart"] as $cart) {
-                            $item_total_price = $cart['item_price'] * $cart['item_count'];
+                            $item_total_price = $cart['item_price_with_tax'] * $cart['item_count'];
                         ?>
                             <div class="cart_item">
                                 <div class="cart_item_img">
@@ -91,7 +90,7 @@ $orderConfirm->execute();
                                     <dl class="buy_itemu_menu mod_order_info">
                                         <dt>価格:</dt>
                                         <dd>
-                                            &yen;<?= number_format($cart["item_price"]*Config::TAX); ?>(税込)
+                                            &yen;<?= number_format($cart["item_price_with_tax"]); ?>(税込)
                                         </dd>
                                     </dl>
                                     <dl class="buy_item_amount mod_order_info">
@@ -103,7 +102,7 @@ $orderConfirm->execute();
                                     <dl class="mod_order_info mod_order_total">
                                         <dt>小計:</dt>
                                         <dd>
-                                            &yen;<?= number_format($item_total_price*Config::TAX);?>(税込)
+                                            &yen;<?= number_format($item_total_price);?>(税込)
                                         </dd>
                                     </dl>
                                 </div>

@@ -24,7 +24,7 @@ class ItemListAction {
             foreach(Config::CATEGORY as $key=>$value){ 
                 if(isset($_GET[$key])){
                     $categories[] = $key;
-                    $_SESSION['search']['category'][$key] = $_GET[$key];
+                    $_SESSION['search']['category'][$key] = $value;
                 } 
             }
         }elseif(isset($_SESSION['search']['category'])){
@@ -76,7 +76,7 @@ class ItemListAction {
             $this->topItems = $dao->selectItemsRank();
         }catch(\PDOException $e){
             die('SQLエラー :'.$e->getMessage());
-        }
+        }        
     }
     
     public function getItems(){

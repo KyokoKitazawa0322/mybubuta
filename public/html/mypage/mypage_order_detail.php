@@ -68,7 +68,7 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                                             <dl class="buy_itemu_menu mod_order_info">
                                                 <dt>価格:</dt>
                                                 <dd>
-                                                    &yen;<?= $detail->getitemPriceWithTax();?>(税込)
+                                                    &yen;<?= number_format($detail->getitemPriceWithTax());?>(税込)
                                                 </dd>
                                             </dl>
                                             <dl class="buy_item_amount mod_order_info">

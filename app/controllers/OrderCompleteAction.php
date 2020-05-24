@@ -64,7 +64,7 @@ class OrderCompleteAction{
                         $itemCount = $item['item_count'];
                         //new
                         $itemPrice = $item['item_price'];
-                        $itemTax = $item['item_tax'];
+                        $itemTax = $item['tax'];
                         $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax);
                     }
                     

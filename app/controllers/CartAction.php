@@ -54,7 +54,7 @@ class CartAction{
                     $item['item_image'] = $dto->getItemImage();
                     $item['item_name'] = $dto->getItemName();
                     $item['item_price'] = $dto->getItemPrice();
-                    $item['item_tax'] = $dto->getItemTax();
+                    $item['tax'] = $dto->getTax();
                     $item['item_price_with_tax'] = $dto->getItemPriceWithTax();
                     $item['item_count'] = 1;
                     array_push($_SESSION['cart'], $item);
@@ -138,7 +138,7 @@ class CartAction{
                     $item['item_image'] = $dto->getItemImage();
                     $item['item_name'] = $dto->getItemName();
                     $item['item_price'] = $dto->getItemPrice();
-                    $item['item_tax'] = $dto->getItemTax();
+                    $item['tax'] = $dto->getTax();
                     $item['item_price_with_tax'] = $dto->getItemPriceWithTax();
                     array_push($_SESSION['cart'], $item);
                 }
