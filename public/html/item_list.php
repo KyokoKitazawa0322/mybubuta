@@ -7,7 +7,7 @@ session_start();
 $itemList = new \Controllers\ItemListAction();
 $itemList->execute();
 $items = $itemList->getItems();
-$topITems = $itemList->getTopItems();
+$topITems = $itemList->getTopItems(); 
 ?>
 
 <!DOCTYPE html>

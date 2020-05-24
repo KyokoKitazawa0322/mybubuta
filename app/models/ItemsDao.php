@@ -3,8 +3,6 @@ namespace Models;
 use \Models\ItemsDto;
 
 class ItemsDao extends \Models\Model { 
-        
-    private $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
 
     public function __construct(){
         parent::__construct();
@@ -34,12 +32,54 @@ class ItemsDao extends \Models\Model {
         $dto->setItemImage($res['item_image']);
         $dto->setItemDetail($res['item_detail']); 
     }
-    
-    public function findItemsExecute(){
-
-        $stmt = $this->pdo->query($this->sql);
-        $i = $this->sql;
+        
+    public function test($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
+        $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
+        if(!empty($categories)){
+            $category = "";
+            foreach($categories as $key){
+                $category = $category.':'.$key.',';
+            }
+            $category = preg_replace("/,$/", "", $category);
+            $sql = $sql."AND item_category IN ($category) ";
+        }
+        if(!empty($keyWord)){
+            $sql = $sql."AND item_name LIKE :keyword ";
+        }        
+        if(!empty($minPrice)){
+            $sql = $sql."AND item_price >= :minprice ";
+        }
+        if(!empty($maxPrice)){
+            $sql = $sql."AND item_price <= :maxprice ";
+        }
+        if($sortKey == "01"){
+            $sql = $sql."ORDER BY item_price asc";
+        }elseif($sortKey == "02"){
+            $sql = $sql."ORDER BY item_price desc";
+        }else{     
+            $$sql = $sql."ORDER BY item_insert_date asc";
+        }
+        
+        $stmt = $this->pdo->prepare($sql);
+        
+        if(!empty($categories)){
+            foreach($categories as $category){
+                $stmt->bindvalue(":{$category}", $category, \PDO::PARAM_STR);
+                //IN (:skirt, :tops, :dress)-> 「''」がはいるとエスケープされるためバラバラに定義
+            }
+        }
+        if(!empty($keyWord)){
+            $stmt->bindvalue(":keyword", '%'.$keyWord.'%', \PDO::PARAM_STR);
+        }
+        if(!empty($minPrice)){
+            $stmt->bindvalue(":minprice", $minPrice, \PDO::PARAM_INT);
+        }
+        if(!empty($maxPrice)){
+            $stmt->bindvalue(":maxprice", $maxPrice, \PDO::PARAM_INT);
+        }
+        $stmt->execute();
         $res = $stmt->fetchAll();
+        
         $items = [];
         if($res){
             foreach($res as $row) {
@@ -51,63 +91,6 @@ class ItemsDao extends \Models\Model {
         }else {
             return false;   
         }
-    }
-    
-    public function setCategoryIntoSql($category){
-        $in = "";
-        foreach($category as $key)
-            $in = "{$in}'{$key}',";
-        $in = preg_replace( "/,$/", "", $in );
-        $this->sql = $this->sql." AND item_category IN ( $in) ";
-    }    
-    
-    public function setKeywordIntoSql($keyWord){
-      $this->sql = "{$this->sql}AND item_name LIKE '%{$keyWord}%' ";
-    }
-
-    public function setMinPriceIntoSql($minPrice){
-      $this->sql = "{$this->sql} AND item_price >={$minPrice} ";          
-    }
-    
-    public function setMaxPriceIntoSql($maxPrice){  
-        $this->sql = "{$this->sql} AND item_price <={$maxPrice} ";    
-    }
-
-    public function setPriceIntoSql($minPrice, $maxPrice){
-        $this->sql = "{$this->sql} AND item_price >={$minPrice} && item_price <={$maxPrice} ";    
-    }
-    
-    public function getSql(){
-        return $this->sql;
-    }
-
-    public function setOnlySortIntoSql($sortkey){
-        if($sortkey == "01"){
-        $this->sql = $this->sql."ORDER BY item_price asc";
-        }
-        if($sortkey == "02"){
-        $this->sql = $this->sql."ORDER BY item_price desc";
-        }
-        if($sortkey == "03"){
-        $this->sql = $this->sql."ORDER BY item_insert_date asc";
-        }
-    }
-    
-    public function setSortIntoSql($sortkey, $sql){
-        if($sortkey == "01"){
-        $this->sql = $sql."ORDER BY item_price asc";
-        }
-        if($sortkey == "02"){
-        $this->sql = $sql."ORDER BY item_price desc";
-        }
-        if($sortkey == "03"){
-        $this->sql = $sql."ORDER BY item_insert_date asc";
-        }
-    }
-    
-    public function setOrderDefaultIntoSql() {
-        $this->sql = $this->sql."ORDER BY item_insert_date asc";
-        var_dump($this->sql);
     }
     
     public function selectItemsRank() {

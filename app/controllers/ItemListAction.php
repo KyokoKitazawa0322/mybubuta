@@ -11,7 +11,8 @@ class ItemListAction {
     public function execute() {
         
         $dao = new itemsDao();
-
+        
+        //検索条件をリセット
         if(isset($_GET['cmd'])){
             if($_GET['cmd']=="do_search" || $_GET['cmd']=="item_list") {
                 $_SESSION['search'] = array();
@@ -19,70 +20,59 @@ class ItemListAction {
         }
 
         if(isset($_GET['coat']) || isset($_GET['dress']) || isset($_GET['skirt']) || isset($_GET['tops']) || isset($_GET['pants']) || isset($_GET['bag'])) {
-            //SQL文にカテゴリー追加
-            $category = [];
-            foreach(Config::CATEGORY as $key=>$value){
+            $categories = [];
+            foreach(Config::CATEGORY as $key=>$value){ 
                 if(isset($_GET[$key])){
-                    $category[] = $key;
-                    $_SESSION['search'][$key] = $_GET[$key];
+                    $categories[] = $key;
+                    $_SESSION['search']['category'][$key] = $_GET[$key];
                 } 
             }
-            $dao->setCategoryIntoSql($category);
+        }elseif(isset($_SESSION['search']['category'])){
+            $categories = [];
+            foreach(Config::CATEGORY as $key=>$value){
+                if(isset($_SESSION['search']['category'][$key])){
+                    $categories[] = $key;
+                }
+            }
+        }else{
+            $categories = "";   
         }
 
         if(!empty($_GET['keyword'])){
             $keyWord = $_GET['keyword'];
-            //SQL文に検索キーワード追加
-            $dao->setKeywordIntoSql($keyWord);
             $_SESSION['search']['keyword'] = $keyWord;
+        }elseif(isset($_SESSION['search']['keyword'])){
+            $keyWord = $_SESSION['search']['keyword'];
+        }else{
+            $keyWord = "";   
         }
         
         if(isset($_GET['min_price'])){
-            $minPrice = $_GET['min_price'];   
-        }
-        if(isset($_GET['max_price'])){
-            $maxPrice = $_GET['max_price'];   
-        }
-
-        if(!empty($minPrice) && empty($maxPrice)){
-            //SQL文に下限価格追加
-            $dao->fsetMinPriceIntoSql($minPrice);
+            $minPrice = $_GET['min_price'];
             $_SESSION['search']['min_price'] = $minPrice;
-        }
-
-        if(empty($minPrice) && !empty($maxPrice)){
-            //SQL文に上限価格追加
-            $dao->setMaxPriceIntoSql($maxPrice);
-            $_SESSION['search']['max_price'] = $maxPrice;
-        }
-
-        if(!empty($minPrice) && !empty($maxPrice)){
-            //SQL文に下限、上限価格追加
-            $dao->setPriceIntoSql($minPrice, $maxPrice);
-            $_SESSION['search']['min_price'] = $minPrice;
-            $_SESSION['search']['max_price'] = $maxPrice;            
-        }
-
-        if(isset($_GET['cmd']) && $_GET['cmd'] == "do_search" ){
-            //SQL文をセッションに保存
-            $_SESSION['search']['sql'] = $dao->getSql();
-        }
-
-        if(isset($_GET['sortkey'])){
-            $sortkey = $_GET['sortkey'];
-            if(!isset($_SESSION['search']['sql'])){
-                $dao->setOnlySortSqlInto($sortkey);
-            }else{
-                $searchsql = $_SESSION['search']['sql'];
-                $dao->setSortIntoSql($sortkey, $searchsql);   
-            }
+        }elseif(isset($_SESSION['search']['min_price'])){   
+            $minPrice = $_SESSION['search']['min_price'];
         }else{
-            $dao->setOrderDefaultIntoSql();   
+            $minPrice = "";   
+        }
+        
+        if(isset($_GET['max_price'])){
+            $maxPrice = $_GET['max_price'];  
+            $_SESSION['search']['max_price'] = $maxPrice;
+        }elseif(isset($_SESSION['search']['max_price'])){   
+            $maxPrice = $_SESSION['search']['max_price'];
+        }else{
+            $maxPrice = "";   
+        }
+        
+        if(isset($_GET['sortkey'])){
+            $sortKey = $_GET['sortkey'];
+        }else{
+            $sortKey = "03";//"ORDER BY item_insert_date asc"
         }
 
         try{
-            //SQL実行
-            $this->items = $dao->findItemsExecute();
+            $this->items = $dao->test($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
             $this->topItems = $dao->selectItemsRank();
         }catch(\PDOException $e){
             die('SQLエラー :'.$e->getMessage());

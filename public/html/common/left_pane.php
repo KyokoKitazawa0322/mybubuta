@@ -46,7 +46,7 @@ $(function() {
                         <ul class="category_list">
                             <?php foreach(Config::CATEGORY as $key=>$value):?>
                             <li>
-                                <input type="checkbox" name="<?= $key?>" id="<?= $key?>_l" value="1" <?php if(isset($_SESSION['search'][$key])){ echo "checked"; } ?> />
+                                <input type="checkbox" name="<?= $key?>" id="<?= $key?>_l" value="<?= $key?>" <?php if(isset($_SESSION['search']['category'][$key])){ echo "checked"; } ?> />
                                 <label for="<?= $key?>_l"><?= $value?></label>
                             </li>
                             <?php endforeach;?>
