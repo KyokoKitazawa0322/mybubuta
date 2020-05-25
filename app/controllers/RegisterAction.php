@@ -25,21 +25,20 @@ class RegisterAction{
         $validator = new CommonValidator();
 
         if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
-
-            $lastName = $_POST['last_name'];
-            $firstName = $_POST['first_name'];
-            $rubyLastName = $_POST['ruby_last_name'];
-            $rubyFirstName = $_POST['ruby_first_name'];
-            $address01 = $_POST['address01'];
-            $address02 = $_POST['address02'];
-            $address03 = $_POST['address03'];
-            $address04 = $_POST['address04'];
-            $address05 = $_POST['address05'];
-            $address06 = $_POST['address06'];
-            $tel = $_POST['tel'];
-            $mail = $_POST['mail'];
-            $password = $_POST['password'];
-            $passwordConfirm = $_POST['passwordConfirm'];
+            $lastName = filter_input(INPUT_POST, 'last_name');
+            $firstName = filter_input(INPUT_POST, 'first_name');
+            $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
+            $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
+            $address01 = filter_input(INPUT_POST, 'address01');
+            $address02 = filter_input(INPUT_POST, 'address02');
+            $address03 = filter_input(INPUT_POST, 'address03');
+            $address04 = filter_input(INPUT_POST, 'address04');
+            $address05 = filter_input(INPUT_POST, 'address05');
+            $address06 = filter_input(INPUT_POST, 'address06');
+            $tel = filter_input(INPUT_POST, 'tel');
+            $mail = filter_input(INPUT_POST, 'mail');
+            $password = filter_input(INPUT_POST, 'password');
+            $passwordConfirm = filter_input(INPUT_POST, 'passwordConfirm');
 
             $_SESSION['register'] = array(
              'last_name' => $lastName,
