@@ -117,7 +117,7 @@ $myPageUpdateConfirm->execute();
                     </div>
                     <div class="confirm_button_wrapper">
                         <div class="confirm_button_inner">
-                            <input class="return_button btn_design_03" name="cmd" type="button" onClick="history.back()" value="前の画面に戻る"/>
+                            <input class="return_button btn_design_03" name="cmd" type="button" onClick="location.href='/html/mypage/mypage_update.php'" value="前の画面に戻る"/>
                         </div>
                         <form action="mypage_update_complete.php" method="POST">
                             <div class="confirm_button_inner">
