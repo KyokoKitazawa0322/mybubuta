@@ -1,5 +1,4 @@
 <?php
-//削除フラグ
 namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;

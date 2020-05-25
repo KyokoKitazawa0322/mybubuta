@@ -88,7 +88,7 @@ class CommonValidator {
         }
         return $error;  
     }
-    
+
     public function checkMail($mail, $customerMail){
         $error = false;
         $customerDao = new \Models\CustomerDao();
