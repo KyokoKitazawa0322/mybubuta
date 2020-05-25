@@ -4,6 +4,10 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+function h($s){
+  return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+}
+
 use \Config\Config;
 
 $myPageUpdateConfirm = new \Controllers\MyPageUpdateConfirmAction();
@@ -35,22 +39,22 @@ $myPageUpdateConfirm->execute();
                             <p class="register_form_title">氏名</p>
                             <p class="name_label">姓:</p>
                             <div class="name_input_wrapper">
-                                <p><?= $_SESSION['update']['last_name'];?></p>
+                                <p><?= h($_SESSION['update']['last_name']);?></p>
                             </div>
                             <p class="name_label">名:</p>
                             <div class="name_input_wrapper">
-                                <p><?= $_SESSION['update']['first_name'];?></p>
+                                <p><?= h($_SESSION['update']['first_name']);?></p>
                             </div>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">フリガナ(カタカナ)</p>
                             <p class="name_label">セイ:</p>
                             <div class="name_input_wrapper">
-                                <p><?= $_SESSION['update']['ruby_last_name'];?></p>
+                                <p><?= h($_SESSION['update']['ruby_last_name']);?></p>
                             </div>
                             <p class="name_label">メイ:</p>
                             <div class="name_input_wrapper">
-                                <p><?= $_SESSION['update']['ruby_first_name'];?></p>
+                                <p><?= h($_SESSION['update']['ruby_first_name']);?></p>
                             </div>
                         </div>
                     </div>                                         
@@ -58,42 +62,42 @@ $myPageUpdateConfirm->execute();
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
                             <div class="addr01_input_wrapper">
-                                <p><?= $_SESSION['update']['address01'];?></p>
+                                <p><?= h($_SESSION['update']['address01']);?></p>
                             </div>
                             <span class="txt_dash">－</span>
                             <div class="addr01_input_wrapper">
-                                <p><?= $_SESSION['update']['address02'];?></p>
+                                <p><?= h($_SESSION['update']['address02']);?></p>
                             </div>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">都道府県</p>
                             <div class="add_list_wrapper">
-                               <p><?= $_SESSION['update']['address03'];?></p>
+                               <p><?= h($_SESSION['update']['address03']);?></p>
                             </div>		
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">市区町村</p>
-                            <p><?= $_SESSION['update']['address04'];?></p>
+                            <p><?= h($_SESSION['update']['address04']);?></p>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">番地</p>
-                            <p><?= $_SESSION['update']['address05'];?></p>
+                            <p><?= h($_SESSION['update']['address05']);?></p>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">建物名</p>
-                            <p><?= $_SESSION['update']['address06'];?></p>
+                            <p><?= h($_SESSION['update']['address06']);?></p>
                         </div>
                     </div>                       
                     <div class="register_field tel_field">
                         <div class="register_form_row">
                             <p class="register_form_title">電話番号</p>
-                            <p><?= $_SESSION['update']['tel'];?></p>
+                            <p><?= h($_SESSION['update']['tel']);?></p>
                         </div>
                     </div>
                     <div class="register_field mail_field">
                         <div class="register_form_row">
                             <p class="register_form_title">メール</p>
-                            <p><?= $_SESSION['update']['mail'];?></p>
+                            <p><?= h($_SESSION['update']['mail']);?></p>
                         </div>
                     </div>
                     <div class="register_field pass_field">
