@@ -8,9 +8,10 @@ class ItemDetailAction {
     private $item;
     
     public function execute() {
+        $dao = new ItemsDao();
+        $itemCode = $_GET['item_code'];
+        
         try{
-            $dao = new ItemsDao();
-            $itemCode = $_GET['item_code'];
             $item = $dao->findItemByItemCode($itemCode);
             if($item){
                 $this->item = $item;

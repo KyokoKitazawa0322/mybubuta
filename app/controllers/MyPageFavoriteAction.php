@@ -13,59 +13,63 @@ class MyPageFavoriteAction{
             $_SESSION['customer_id'] = null;
         }
         
-        try{
-            $dao = new MyPageFavoriteDao();
-            $customerId = $_SESSION['customer_id'];
-            if(isset($_GET['item_code'])){
-                $itemCode = $_GET['item_code'];   
-            }
+        $dao = new MyPageFavoriteDao();
+        $customerId = $_SESSION['customer_id'];
+        
+        if(isset($_GET['item_code'])){
+            $itemCode = $_GET['item_code'];   
+        }
 
-            /**---------------------------------------------------
-             * 詳細画面で「お気に入り保存」ボタンが押された時に処理を行う
-             ----------------------------------------------------*/
-            if(isset($_GET["cmd"]) && $_GET["cmd"] == "add_favorite" ){
-                //非ログイン状態の場合はフラグをたててログイン画面へ
-                if(!isset($customerId)){    
-                    $_SESSION['fav_flug']=1;
-                    $_SESSION['add_item_code'] = $itemCode;
-                    header('Location:/html/login.php');
-                    exit();
-                }else{
-                    $dao->insertIntoFavorite($itemCode, $customerId);
-                }
-            }
-            
-            /**---------------------------------------------------
-             * ログイン状態の判定(セッション切れの場合はlogin.phpへ)
-             ----------------------------------------------------*/
-             if(!isset($customerId)){
+        //詳細画面で「お気に入り保存」ボタンが押された時の処理
+        if(isset($_GET["cmd"]) && $_GET["cmd"] == "add_favorite" ){
+            //非ログイン状態の場合はフラグをたててログイン画面へ
+            if(!isset($customerId)){    
+                $_SESSION['fav_flug']=1;
+                $_SESSION['add_item_code'] = $itemCode;
                 header('Location:/html/login.php');
                 exit();
-             }
-
-            /**---------------------------------------------------
-             * 詳細画面で「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
-             ----------------------------------------------------*/
-            if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
-                $dao->insertIntoFavorite($_SESSION['add_item_code'], $customerId);
-                unset($_SESSION['fav_flug']);
-                unset($_SESSION['add_item_code']);
+            }else{
+                try{
+                    $dao->insertIntoFavorite($itemCode, $customerId);
+                }catch(\PDOEexception $e){
+                    die('SQLエラー :'.$e->getMessage());
+                }
             }
+        }
 
-            /**----------------------------------------------------
-              「削除」ボタンが押された時の処理
-            ------------------------------------------------------*/
-            if(isset($_GET["cmd"]) && $_GET["cmd"] == "del"){
+         //ログイン状態の判定(セッション切れの場合はlogin.phpへ)
+         if(!isset($customerId)){
+            header('Location:/html/login.php');
+            exit();
+         }
+
+        //詳細画面で「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
+        if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
+            $addItemCode = $_SESSION['add_item_code'];
+            try{
+                $dao->insertIntoFavorite($addItemCode, $customerId);
+            }catch(\PDOEexception $e){
+                die('SQLエラー :'.$e->getMessage());
+            }
+                $_SESSION['fav_flug'] = NULL;
+                $_SESSION['add_item_code'] = NULL;
+        }
+
+        //削除」ボタンが押された時の処理
+        if(isset($_GET["cmd"]) && $_GET["cmd"] == "del"){
+            try{
                 $dao->deleteFavorite($itemCode, $customerId);
+            }catch(\PDOEexception $e){
+                die('SQLエラー :'.$e->getMessage());
             }
+        }
 
-            /**----------------------------------------------------
-              一覧表示
-            ------------------------------------------------------*/
+        //お気に入り商品一覧表示
+        try{
             $this->favoriteDto = $dao->getFavoriteAll($customerId);
         }catch(\PDOEexception $e){
             die('SQLエラー :'.$e->getMessage());
-        }  
+        }
     }
     
     /** @return ItemsDto */

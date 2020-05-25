@@ -11,7 +11,7 @@ class MyPageFavoriteDao extends \Models\Model {
     /** @return ItemsDto */
     public function getFavoriteAll($customer_id){
 
-        $sql = "select items.item_name, items.item_image, items.item_price, items.item_code FROM items left join favorite on items.item_code = favorite.item_code where favorite.customer_id = ?";
+        $sql = "select  items.item_code, items.item_name, items.item_image, items.item_price, items.tax FROM items left join favorite on items.item_code = favorite.item_code where favorite.customer_id = ?";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindvalue(1, $customer_id);  
