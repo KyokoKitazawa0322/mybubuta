@@ -31,37 +31,63 @@ class MyPageDeliveryAction {
             $deliveryId = $_POST['del_id'];   
         }
         
-        if(isset($_POST['del_item'])){         
-            $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
-
+        if(isset($_POST['del_item'])){
+            try{
+                $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
+            } catch(\PDOException $e){
+                die('SQLエラー :'.$e->getMessage());
+            }
+            
             //全件削除した場合にデフォルト住所を基本登録にもどす
-            $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            try{
+                $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            } catch(\PDOException $e){
+                die('SQLエラー :'.$e->getMessage());
+            }
+            
             if(!$deliveryDto){
-                $deliveryDao->setDeliveryDefault($customerId);
+                try{
+                    $deliveryDao->setDeliveryDefault($customerId);
+                } catch(\PDOException $e){
+                    die('SQLエラー :'.$e->getMessage());
+                }
             }
         }
         /**--------------------------------------------------------
            配送先設定ボタンがおされたときの処理
          ---------------------------------------------------------*/
         if(isset($_POST['set'])){
-        //会員登録情報であれば値はdef
+
             if($_POST['del_id']=="def"){
                 //customers:del_flag=0(デェフォルト)
-                //delivery:del_flag=1に(customer_idで取得した全件対象)
-                $customerDao->setDeliveryDefault($customerId);
-                $deliveryDao->releaseDeliveryDefault($customerId);
+                //delivery:del_flag=1に
+                try{
+                    $customerDao->setDeliveryDefault($customerId);
+                    $deliveryDao->releaseDeliveryDefault($customerId);
+                } catch(\PDOException $e){
+                    die('SQLエラー :'.$e->getMessage());
+                }
         //配送先登録情報であれば値はdelivery_id
             }else{
                 //いつもの配送先に設定されている住所を解除
-                $deliveryDao->releaseDeliveryDefault($customerId);
-                $customerDao->releaseDeliveryDefault($customerId);
-                $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
+                try{
+                    $deliveryDao->releaseDeliveryDefault($customerId);
+                    $customerDao->releaseDeliveryDefault($customerId);
+                    $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
+                } catch(\PDOException $e){
+                    die('SQLエラー :'.$e->getMessage());
+                }
             }
         }
-        //会員登録情報の取得
-        $this->customerDto = $customerDao->getCustomerById($customerId);
-        //配送先情報の取得（あれば表示）
-        $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+        
+        try{
+            //会員登録情報の取得
+            $this->customerDto = $customerDao->getCustomerById($customerId);
+            //配送先情報の取得（あれば表示）
+            $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+        } catch(\PDOException $e){
+            die('SQLエラー :'.$e->getMessage());
+        }
     }
     
     public function getCustomerDto(){

@@ -36,8 +36,12 @@ class MyPageDeliveryAddCompleteAction {
             $address06 = $_SESSION['del_add']['address06'];
             $tel = $_SESSION['del_add']['tel'];
             
-            $deliveryDao->insertDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $customerId);
-            
+            try{
+                $deliveryDao->insertDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $customerId);
+            } catch(\PDOException $e){
+                die('SQLエラー :'.$e->getMessage());
+            }
+
             $_SESSION['add_data']=NULL;
             $_SESSION['del_add']=NULL;
 

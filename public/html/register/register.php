@@ -44,11 +44,11 @@ $register->execute();
                                 <p class="register_form_title">氏名*</p>
                                 <p class="name_label">姓</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?php if(isset($_SESSION['register']['last_name'])){echo h($_SESSION['register']['last_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?php if(isset($_SESSION['register'])){echo h($_SESSION['register']['last_name']);}?>">
                                 </div>
                                 <p class="name_label">名</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?php if(isset($_SESSION['register']['first_name'])){echo h($_SESSION['register']['first_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?php if(isset($_SESSION['register'])){echo h($_SESSION['register']['first_name']);}?>">
                                 </div>
                                 <?php if($register->getLastNameError()):?>
                                     <p class="error_txt error_cmn"><?= $register->getLastNameError();?></p>
@@ -61,11 +61,11 @@ $register->execute();
                                 <p class="register_form_title">氏名(全角カナ)*</p>
                                 <p class="name_label">セイ</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?php if(isset($_SESSION['register']['ruby_last_name'])){echo h($_SESSION['register']['ruby_last_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?php if(isset($_SESSION['register'])){echo h($_SESSION['register']['ruby_last_name']);}?>">
                                 </div>
                                 <p class="name_label">メイ</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getRubyFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="ruby_first_name" value="<?php if(isset($_SESSION['register']['ruby_first_name'])){echo h($_SESSION['register']['ruby_first_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getRubyFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="ruby_first_name" value="<?php if(isset($_SESSION['register'])){echo h($_SESSION['register']['ruby_first_name']);}?>">
                                 </div>
                                 <?php if($register->getRubyLastNameError()):?>
                                     <p class="error_txt error_cmn"><?= $register->getRubyLastNameError(); ?></p>
