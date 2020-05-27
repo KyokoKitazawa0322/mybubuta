@@ -2,6 +2,7 @@
 namespace Controllers;
 use \Models\DeliveryDao;
 use \Models\CustomerDao;    
+use \Models\OriginalException;
 
 class MyPageDeliveryAction {
     
@@ -65,8 +66,13 @@ class MyPageDeliveryAction {
                     $customerDao->setDeliveryDefault($customerId);
                     $deliveryDao->releaseDeliveryDefault($customerId);
                 } catch(\PDOException $e){
+                    $this->OutPutLog('SQLエラー:.'.$e->getMessage());
                     die('SQLエラー :'.$e->getMessage());
+                }catch(OriginalException $e){
+                    $this->OutPutLog('不正値エラー:.'.$e->getMessage());
+                    die('エラー:'.$e->getMessage());
                 }
+                
         //配送先登録情報であれば値はdelivery_id
             }else{
                 //いつもの配送先に設定されている住所を解除
@@ -96,6 +102,16 @@ class MyPageDeliveryAction {
     
     public function getDeliveryDto(){
         return $this->deliveryDto;   
+    }
+    
+    public static function OutPutLog($str){
+        date_default_timezone_set('Asia/Tokyo');
+        $datetime = date( "Y/m/d H:i:s");
+        $dbg = debug_backtrace();
+        $request_url = $dbg[0]["file"];
+        $line = $dbg[0]["line"];
+        $msg = "[{$datetime}]\t[url:{$request_url}][{$line}]\t{$str}\r\n";
+        error_log($msg);
     }
 }
 ?>

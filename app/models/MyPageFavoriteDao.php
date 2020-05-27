@@ -19,10 +19,8 @@ class MyPageFavoriteDao extends \Models\Model {
         $res = $stmt->fetchAll();
         if($res){
             $items = [];
-
             foreach($res as $row) {
                 $dto = new ItemsDto();
-
                 $dto->setItemCode($row['item_code']);
                 $dto->setItemName($row['item_name']);
                 $dto->setItemImage($row['item_image']);
@@ -39,16 +37,16 @@ class MyPageFavoriteDao extends \Models\Model {
     public function insertIntoFavorite($item_code, $customer_id){
         $sql = "select * from favorite where item_code=? && customer_id=? ";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $item_code);
-        $stmt->bindvalue(2, $customer_id);  
+        $stmt->bindvalue(1, $item_code, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $customer_id, \PDO::PARAM_INT);
         $stmt->execute();
         $res = $stmt->fetch();
         if(!$res){
-        $sql = "insert into favorite(item_code, customer_id) values(?,?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $item_code);
-        $stmt->bindvalue(2, $customer_id);  
-        $stmt->execute();
+            $sql = "insert into favorite(item_code, customer_id) values(?,?)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $item_code, \PDO::PARAM_INT);
+            $stmt->bindvalue(2, $customer_id, \PDO::PARAM_INT);
+            $stmt->execute();
         }   
     }
     
@@ -56,8 +54,8 @@ class MyPageFavoriteDao extends \Models\Model {
         
         $sql = "delete from favorite where item_code = ? && customer_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $item_code);  
-        $stmt->bindvalue(2, $customer_id);  
+        $stmt->bindvalue(1, $item_code, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $customer_id, \PDO::PARAM_INT);  
         $stmt->execute();     
     }
 }

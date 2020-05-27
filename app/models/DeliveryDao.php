@@ -8,7 +8,10 @@ class DeliveryDao extends \Models\Model{
         parent::__construct();
     }
     
-    public function setDto($dto, $res){
+    public function setDto($res){
+        
+        $dto = new DeliveryDto();
+        
         $dto->setDeliveryId($res['delivery_id']);
         $dto->setLastName($res['last_name']);
         $dto->setFirstName($res['first_name']);
@@ -22,6 +25,7 @@ class DeliveryDao extends \Models\Model{
         $dto->setAddress06($res['address_06']); 
         $dto->setTel($res['tel']);
         $dto->setDelFlag($res['del_flag']);
+        
         return $dto;
     }
     
@@ -31,17 +35,17 @@ class DeliveryDao extends \Models\Model{
         $sql ="INSERT INTO delivery(last_name, first_name, ruby_last_name, ruby_first_name, address_01, address_02, address_03, address_04, address_05, address_06, tel, customer_id, del_flag, delivery_insert_date)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
     
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $lastName);
-        $stmt->bindvalue(2, $firstName);
-        $stmt->bindvalue(3, $rubyLastName);
-        $stmt->bindvalue(4, $rubyFirstName);
-        $stmt->bindvalue(5, $address01);
-        $stmt->bindvalue(6, $address02);
-        $stmt->bindvalue(7, $address03);
-        $stmt->bindvalue(8, $address04);
-        $stmt->bindvalue(9, $address05);
-        $stmt->bindvalue(10, $address06);
-        $stmt->bindvalue(11, $tel);
+        $stmt->bindvalue(1, $lastName, \PDO::PARAM_STR);
+        $stmt->bindvalue(2, $firstName, \PDO::PARAM_STR);
+        $stmt->bindvalue(3, $rubyLastName, \PDO::PARAM_STR);
+        $stmt->bindvalue(4, $rubyFirstName, \PDO::PARAM_STR);
+        $stmt->bindvalue(5, $address01, \PDO::PARAM_STR);
+        $stmt->bindvalue(6, $address02, \PDO::PARAM_STR);
+        $stmt->bindvalue(7, $address03, \PDO::PARAM_STR);
+        $stmt->bindvalue(8, $address04, \PDO::PARAM_STR);
+        $stmt->bindvalue(9, $address05, \PDO::PARAM_STR);
+        $stmt->bindvalue(10, $address06, \PDO::PARAM_STR);
+        $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
         $stmt->bindvalue(12, $customerId);
         $stmt->bindvalue(13, "1");
         $result = $stmt->execute();
@@ -54,19 +58,19 @@ class DeliveryDao extends \Models\Model{
         $sql ="UPDATE delivery SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, address_01=?, address_02=?, address_03=?, address_04=?, address_05=?, address_06=?, tel=?, delivery_updated_date = now() where customer_id=? && delivery_id=?";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $lastName);
-        $stmt->bindvalue(2, $firstName);
-        $stmt->bindvalue(3, $rubyLastName);
-        $stmt->bindvalue(4, $rubyFirstName);
-        $stmt->bindvalue(5, $address01);
-        $stmt->bindvalue(6, $address02);
-        $stmt->bindvalue(7, $address03);
-        $stmt->bindvalue(8, $address04);
-        $stmt->bindvalue(9, $address05);
-        $stmt->bindvalue(10, $address06);
-        $stmt->bindvalue(11, $tel);
-        $stmt->bindvalue(12, $customerId);
-        $stmt->bindvalue(13, $deliveryId);
+        $stmt->bindvalue(1, $lastName, \PDO::PARAM_STR);
+        $stmt->bindvalue(2, $firstName, \PDO::PARAM_STR);
+        $stmt->bindvalue(3, $rubyLastName, \PDO::PARAM_STR);
+        $stmt->bindvalue(4, $rubyFirstName, \PDO::PARAM_STR);
+        $stmt->bindvalue(5, $address01, \PDO::PARAM_STR);
+        $stmt->bindvalue(6, $address02, \PDO::PARAM_STR);
+        $stmt->bindvalue(7, $address03, \PDO::PARAM_STR);
+        $stmt->bindvalue(8, $address04, \PDO::PARAM_STR);
+        $stmt->bindvalue(9, $address05, \PDO::PARAM_STR);
+        $stmt->bindvalue(10, $address06, \PDO::PARAM_STR);
+        $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
+        $stmt->bindvalue(12, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(13, $deliveryId, \PDO::PARAM_INT);
         $result = $stmt->execute();
     }
     
@@ -75,7 +79,7 @@ class DeliveryDao extends \Models\Model{
         $sql ="UPDATE delivery SET del_flag=? where customer_id=? && del_flag=?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindvalue(1, '1');
-        $stmt->bindvalue(2, $customerId);
+        $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
         $stmt->bindvalue(3, '0');
         $stmt->execute();
     }
@@ -85,8 +89,8 @@ class DeliveryDao extends \Models\Model{
         $sql ="UPDATE delivery SET del_flag=? where customer_id=? && delivery_id=?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindvalue(1, '0');
-        $stmt->bindvalue(2, $customerId);
-        $stmt->bindvalue(3, $deliveryId);
+        $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(3, $deliveryId, \PDO::PARAM_INT);
         $stmt->execute();
     }
     
@@ -94,8 +98,8 @@ class DeliveryDao extends \Models\Model{
     public function deleteDeliveryInfo($customerId, $deliveryId){
         $sql = "DELETE FROM delivery WHERE customer_id = ? && delivery_id = ?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
-        $stmt->bindvalue(2, $deliveryId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $deliveryId, \PDO::PARAM_INT);
         $stmt->execute();
     }
     
@@ -110,9 +114,8 @@ class DeliveryDao extends \Models\Model{
         $deliveries = [];
         if($res){
             foreach($res as $row){
-            $dto = new DeliveryDto();
-            $dto = $this->setDto($dto, $row);
-            $deliveries[] = $dto;
+                $dto = $this->setDto($row);
+                $deliveries[] = $dto;
             }
             return $deliveries;
         }else{
@@ -122,15 +125,14 @@ class DeliveryDao extends \Models\Model{
     
     public function getDefDeliveryInfo($customerId){
 
-        $dto = new DeliveryDto();
         $sql = "SELECT * FROM delivery WHERE customer_id = ? && del_flag =?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
         $stmt->bindvalue(2, "0");
         $stmt->execute();
         $res = $stmt->fetch();
         if($res){
-            $dto = $this->setDto($dto, $res);
+            $dto = $this->setDto($res);
             return $dto;
         }else {
             return false;    
@@ -139,15 +141,14 @@ class DeliveryDao extends \Models\Model{
     
     public function getDeliveryInfoById($customerId, $deliveryId){
 
-        $dto = new DeliveryDto();
         $sql = "SELECT * FROM delivery WHERE customer_id = ? && delivery_id =?";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
-        $stmt->bindvalue(2, $deliveryId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $deliveryId, \PDO::PARAM_INT);
         $stmt->execute();
         $res = $stmt->fetch();
         if($res){
-            $dto = $this->setDto($dto, $res);
+            $dto = $this->setDto($res);
             return $dto;
         }else {
             return false;    

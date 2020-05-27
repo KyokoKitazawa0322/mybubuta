@@ -72,10 +72,12 @@ class ItemListAction {
         }
 
         try{
-            $this->items = $dao->test($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
+            $this->items = $dao->searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
             $this->topItems = $dao->selectItemsRank();
         }catch(\PDOException $e){
-            die('SQLエラー :'.$e->getMessage());
+            header('Content-Type: text/plain; charset=UTF-8', true, 404);
+            error_log($e->getMessage(), 0);
+            die('エラーが発生しました。');
         }        
     }
     

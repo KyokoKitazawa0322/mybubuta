@@ -8,7 +8,10 @@ class OrderHistoryDao extends \Models\Model{
         parent::__construct();
     }
     
-    public function setDto($dto, $res){
+    public function setDto($res){
+        
+        $dto = new OrderHistoryDto();
+        
         $dto->setOrderId($res['order_id']);
         $dto->setTotalPayment($res['total_payment']);
         $dto->setTotalAmount($res['total_amount']);
@@ -20,6 +23,8 @@ class OrderHistoryDao extends \Models\Model{
         $dto->setDeliveryAddr($res['delivery_addr']); 
         $dto->setDeliveryTel($res['delivery_tel']); 
         $dto->setPurchaseDate($res['purchase_date']); 
+        
+        return $dto;
     }
     
     public function insertOrderHistory($customerId, $totalPayment, $totalAmount, $tax, $postage, $payment, $name, $address, $post, $tel){
@@ -27,16 +32,16 @@ class OrderHistoryDao extends \Models\Model{
         $sql ="insert into order_history(customer_id, total_payment, total_amount, tax, postage, payment, delivery_name, delivery_addr, delivery_post, delivery_tel, purchase_date)values(?,?,?,?,?,?,?,?,?,?,now())";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
-        $stmt->bindvalue(2, $totalPayment);
-        $stmt->bindvalue(3, $totalAmount);
-        $stmt->bindvalue(4, $tax);
-        $stmt->bindvalue(5, $postage);
-        $stmt->bindvalue(6, $payment);
-        $stmt->bindvalue(7, $name);
-        $stmt->bindvalue(8, $address);
-        $stmt->bindvalue(9, $post);
-        $stmt->bindvalue(10,$tel);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $totalPayment, \PDO::PARAM_INT);
+        $stmt->bindvalue(3, $totalAmount, \PDO::PARAM_INT);
+        $stmt->bindvalue(4, $tax, \PDO::PARAM_INT);
+        $stmt->bindvalue(5, $postage, \PDO::PARAM_INT);
+        $stmt->bindvalue(6, $payment, \PDO::PARAM_STR);
+        $stmt->bindvalue(7, $name, \PDO::PARAM_STR);
+        $stmt->bindvalue(8, $address, \PDO::PARAM_STR);
+        $stmt->bindvalue(9, $post, \PDO::PARAM_STR);
+        $stmt->bindvalue(10,$tel, \PDO::PARAM_STR);
         $result = $stmt->execute();
     }
     
@@ -46,14 +51,13 @@ class OrderHistoryDao extends \Models\Model{
         $sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_payment, payment FROM order_history where customer_id = ? order by purchase_date DESC";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
         $stmt->execute();
         $res = $stmt->fetchAll();
         if($res){
             $orders = [];
             foreach($res as $row){
                 $dto = new OrderHistoryDto();
-                
                 $dto->setOrderId($row['order_id']);
                 $dto->setTotalPayment($row['total_payment']);
                 $dto->setPayment($row['payment']); 
@@ -72,17 +76,12 @@ class OrderHistoryDao extends \Models\Model{
         $sql = "SELECT * FROM order_history where customer_id = ? && order_id = ?";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
-        $stmt->bindvalue(2, $orderId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+        $stmt->bindvalue(2, $orderId, \PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch();
-        if($result){
-            $dto = new OrderHistoryDto();
-            $this->setDto($dto, $result);
-            return $dto;
-        }else{
-            return false;   
-        }
+        $dto = $this->setDto($result);
+        return $dto;
     }
     
     public function getOrderId($customerId){
@@ -91,7 +90,7 @@ class OrderHistoryDao extends \Models\Model{
         $sql = "SELECT order_id FROM order_history where customer_id = ? order by purchase_date DESC LIMIT 1";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId);
+        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
         $stmt->execute();
         $res = $stmt->fetch();
         return $res;

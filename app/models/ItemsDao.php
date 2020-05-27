@@ -16,15 +16,15 @@ class ItemsDao extends \Models\Model {
         $stmt->bindvalue(1, $itemCode); 
         $stmt->execute();   
         $res = $stmt->fetch();
-        if($res){
-            $this->setDto($dto, $res);
-            return $dto;
-        }else {
-            return false;    
-        }
+        $dto = $this->setDto($res);
+        
+        return $dto;
     }
         
-    public function setDto($dto, $res){
+    public function setDto($res){
+        
+        $dto = new ItemsDto();
+        
         $dto->setItemCode($res['item_code']);
         $dto->setItemName($res['item_name']);
         $dto->setItemPrice($res['item_price']);
@@ -32,9 +32,11 @@ class ItemsDao extends \Models\Model {
         $dto->setItemCategory($res['item_category']);
         $dto->setItemImage($res['item_image']);
         $dto->setItemDetail($res['item_detail']); 
+        
+        return $dto;
     }
         
-    public function test($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
+    public function searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
         $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
         if(!empty($categories)){
             $category = "";
@@ -84,8 +86,7 @@ class ItemsDao extends \Models\Model {
         $items = [];
         if($res){
             foreach($res as $row) {
-                $dto = new ItemsDto();
-                $this->setDto($dto, $row);
+                $dto = $this->setDto($row);
                 $items[] = $dto;
             }
             return $items;
