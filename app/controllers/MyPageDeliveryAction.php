@@ -40,11 +40,11 @@ class MyPageDeliveryAction{
                     $customerDao->setDeliveryDefault($customerId);
                 }
             } catch(\PDOException $e){
-                Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                Config::outputLog($e);
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);
                 die('エラー:データベースの処理に失敗しました。');
             }catch(OriginalException $e){
-                Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                Config::outputLog($e);
                 header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 die('エラー:'.$e->getMessage());
             }
@@ -60,11 +60,11 @@ class MyPageDeliveryAction{
                     $customerDao->setDeliveryDefault($customerId);
                     $deliveryDao->releaseDeliveryDefault($customerId);
                 } catch(\PDOException $e){
-                    Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                    Config::outputLog($e);
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-                    Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                    Config::outputLog($e);
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }
@@ -77,11 +77,11 @@ class MyPageDeliveryAction{
                     $customerDao->releaseDeliveryDefault($customerId);
                     $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
                 } catch(\PDOException $e){
-                    Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                    Config::outputLog($e);
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-                    Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                    Config::outputLog($e);
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }
@@ -94,14 +94,14 @@ class MyPageDeliveryAction{
             //配送先情報の取得（あれば表示）
             $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
         } catch(\PDOException $e){
+            Config::outputLog($e);
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            Config::OutPutLog('SQLエラー:.'.$e->getMessage());
             die('エラー:データベースの処理に失敗しました。');
         }catch(OriginalException $e){
+            Config::outputLog($e);
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
             die('エラー:'.$e->getMessage());
-        } 
+        }
     }
     
     public function getCustomerDto(){

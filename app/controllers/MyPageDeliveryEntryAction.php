@@ -70,7 +70,8 @@ class MyPageDeliveryEntryAction {
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
         }catch(OriginalException $e){
-            Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+/*            Config::OutPutLog('不正値エラー:'.$e->getMessage().'ExceptionCode='.$e->getCode().$e->getTraceAsString());*/
+            Config::OutPutLog('不正値エラー:', $e);
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
             die('エラー:'.$e->getMessage());
         }
