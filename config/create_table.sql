@@ -32,6 +32,7 @@ CREATE TABLE items (
 	item_code      varchar(6) not null primary key,  -- 商品コード
 	item_name      varchar(255),          -- 商品名
 	item_price     int(11),               -- 税別単価
+    tax            int(11),                -- 消費税      
 	item_category  varchar(255),          -- カテゴリ
 	item_image     varchar(255),          -- 商品画像
 	item_detail    varchar(255),          -- 詳細説明
