@@ -112,7 +112,7 @@ class CustomerDao extends \Models\Model{
      * @param string $tel　入力されたユーザーの電話番号
      * @param string $mail　入力されたユーザーのメールアドレス
      * @throws PDOException 
-     * @throws OriginalException(登録失敗時:code400)
+     * @throws OriginalException(登録失敗時:code444)
      */
     public function insertCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail){
 
@@ -153,7 +153,7 @@ class CustomerDao extends \Models\Model{
      * del_flag(=0)と$customerIdをキーにカスタマー情報を更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
-     * @throws OriginalException(更新失敗時:code200)
+     * @throws OriginalException(更新失敗時:code222)
      */
     public function setDeliveryDefault($customerId){
         try{
@@ -181,7 +181,7 @@ class CustomerDao extends \Models\Model{
      * $customerIdをキーに更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
-     * @throws OriginalException(更新失敗時:code200)
+     * @throws OriginalException(更新失敗時:code222)
      */
     public function releaseDeliveryDefault($customerId){
         try{
@@ -209,7 +209,7 @@ class CustomerDao extends \Models\Model{
      * $customerIdをキーにカスタマー情報を削除
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
-     * @throws OriginalException(削除失敗時:code300)
+     * @throws OriginalException(削除失敗時:code333)
      */
     public function deleteCustomerInfo($customerId){
         try{
@@ -232,7 +232,7 @@ class CustomerDao extends \Models\Model{
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @return CustomerDto[]
      * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code100) 
+     * @throws OriginalException(取得失敗時:code111) 
      */
     public function getCustomerById($customerId){
         try{
@@ -270,7 +270,7 @@ class CustomerDao extends \Models\Model{
      * @param string $mail　入力されたユーザーのメールアドレス
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
-     * @throws OriginalException(更新失敗時：code200)
+     * @throws OriginalException(更新失敗時：code222)
      */
     public function updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail, $customerId){
 
