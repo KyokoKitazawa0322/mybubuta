@@ -81,7 +81,7 @@ class MyPageDeliveryAction{
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-                    Config::outputLog($e);
+                    Config::outputLog($e->getMessage().$e->getTraceAsString());
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }

@@ -66,12 +66,11 @@ class MyPageDeliveryEntryAction {
         try{
             $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
         } catch(\PDOException $e){
-            Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+            Config::outputLog($e);
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
         }catch(OriginalException $e){
-/*            Config::OutPutLog('不正値エラー:'.$e->getMessage().'ExceptionCode='.$e->getCode().$e->getTraceAsString());*/
-            Config::OutPutLog('不正値エラー:', $e);
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
             die('エラー:'.$e->getMessage());
         }
