@@ -52,8 +52,7 @@ class MyPageDeliveryAction{
         /**--------------------------------------------------------
            配送先設定ボタンがおされたときの処理
          ---------------------------------------------------------*/
-        if(isset($_POST['set'])){
-
+        if(isset($_POST['set']) && $deliveryId){
             if($deliveryId=="def"){
                 //customers:del_flag=0(デェフォルト)
                 //delivery:del_flag=1に
@@ -65,8 +64,8 @@ class MyPageDeliveryAction{
                     Config::OutPutLog('SQLエラー:.'.$e->getMessage());
                     die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }
                 
@@ -82,7 +81,7 @@ class MyPageDeliveryAction{
                     Config::OutPutLog('SQLエラー:.'.$e->getMessage());
                     die('データベースに関するエラーが発生しました。');
                 }catch(OriginalException $e){
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+/*                    header('Content-Type: text/plain; charset=UTF-8', true, 400);*/
                     Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
                     die('エラー:'.$e->getMessage());
                 }
