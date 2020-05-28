@@ -3,8 +3,9 @@ namespace Controllers;
 use \Models\DeliveryDao;
 use \Models\CustomerDao;    
 use \Models\OriginalException;
+use \Config\Config;
 
-class MyPageDeliveryAction {
+class MyPageDeliveryAction{
     
     private $customerDto; 
     private $deliveryDto;
@@ -24,34 +25,28 @@ class MyPageDeliveryAction {
 
         $deliveryDao = new DeliveryDao();
         $customerDao = new CustomerDao();
+        
+        $deliveryId = filter_input(INPUT_POST, 'del_id');
         /**--------------------------------------------------------
            削除ボタンがおされたときの処理
          ---------------------------------------------------------*/
-
-        if(isset($_POST['del_id'])){
-            $deliveryId = $_POST['del_id'];   
-        }
-        
         if(isset($_POST['del_item'])){
             try{
                 $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
-            } catch(\PDOException $e){
-                die('SQLエラー :'.$e->getMessage());
-            }
-            
-            //全件削除した場合にデフォルト住所を基本登録にもどす
-            try{
+
+                //全件削除した場合にデフォルト住所を基本登録にもどす
                 $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
-            } catch(\PDOException $e){
-                die('SQLエラー :'.$e->getMessage());
-            }
-            
-            if(!$deliveryDto){
-                try{
-                    $deliveryDao->setDeliveryDefault($customerId);
-                } catch(\PDOException $e){
-                    die('SQLエラー :'.$e->getMessage());
+                if(!$deliveryDto){
+                    $customerDao->setDeliveryDefault($customerId);
                 }
+            } catch(\PDOException $e){
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                die('エラー:データベースの処理に失敗しました。');
+            }catch(OriginalException $e){
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                die('エラー:'.$e->getMessage());
             }
         }
         /**--------------------------------------------------------
@@ -59,17 +54,19 @@ class MyPageDeliveryAction {
          ---------------------------------------------------------*/
         if(isset($_POST['set'])){
 
-            if($_POST['del_id']=="def"){
+            if($deliveryId=="def"){
                 //customers:del_flag=0(デェフォルト)
                 //delivery:del_flag=1に
                 try{
                     $customerDao->setDeliveryDefault($customerId);
                     $deliveryDao->releaseDeliveryDefault($customerId);
                 } catch(\PDOException $e){
-                    $this->OutPutLog('SQLエラー:.'.$e->getMessage());
-                    die('SQLエラー :'.$e->getMessage());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                    die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-                    $this->OutPutLog('不正値エラー:.'.$e->getMessage());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                    Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
                     die('エラー:'.$e->getMessage());
                 }
                 
@@ -81,7 +78,13 @@ class MyPageDeliveryAction {
                     $customerDao->releaseDeliveryDefault($customerId);
                     $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
                 } catch(\PDOException $e){
-                    die('SQLエラー :'.$e->getMessage());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                    die('データベースに関するエラーが発生しました。');
+                }catch(OriginalException $e){
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                    Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                    die('エラー:'.$e->getMessage());
                 }
             }
         }
@@ -92,8 +95,14 @@ class MyPageDeliveryAction {
             //配送先情報の取得（あれば表示）
             $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
         } catch(\PDOException $e){
-            die('SQLエラー :'.$e->getMessage());
-        }
+            header('Content-Type: text/plain; charset=UTF-8', true, 500);
+            Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+            die('エラー:データベースの処理に失敗しました。');
+        }catch(OriginalException $e){
+            header('Content-Type: text/plain; charset=UTF-8', true, 400);
+            Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+            die('エラー:'.$e->getMessage());
+        } 
     }
     
     public function getCustomerDto(){
@@ -102,16 +111,6 @@ class MyPageDeliveryAction {
     
     public function getDeliveryDto(){
         return $this->deliveryDto;   
-    }
-    
-    public static function OutPutLog($str){
-        date_default_timezone_set('Asia/Tokyo');
-        $datetime = date( "Y/m/d H:i:s");
-        $dbg = debug_backtrace();
-        $request_url = $dbg[0]["file"];
-        $line = $dbg[0]["line"];
-        $msg = "[{$datetime}]\t[url:{$request_url}][{$line}]\t{$str}\r\n";
-        error_log($msg);
     }
 }
 ?>

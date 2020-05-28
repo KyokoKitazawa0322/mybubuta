@@ -12,7 +12,7 @@ class CustomerDao extends \Models\Model{
     /**
      * ログイン認証
      * $mailをキーにカスタマー情報を取得する。
-     * 取得出来ない場合はfalseを返す。
+     * なければfalseを返す。
      * @param string $mail 入力されたユーザーのメールアドレス
      * @return CustomerDto[]
      * @throws PDOException
@@ -40,7 +40,7 @@ class CustomerDao extends \Models\Model{
     /**
      * メールアドレス重複確認
      * $mailをキーにカスタマー情報(メールアドレス)を取得する。
-     * 取得出来ない場合はfalseを返す。
+     * なければfalseを返す。
      * @param string $mail　入力されたユーザーのメールアドレス
      * @return CustomerDto[]
      * @throws PDOException 
@@ -120,7 +120,7 @@ class CustomerDao extends \Models\Model{
             $sql = "insert into customers(last_name, first_name, ruby_last_name, ruby_first_name, address_01, address_02, address_03, address_04, address_05, address_06, tel, mail, hash_password, del_flag, customer_insert_date)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
 
             $hash_pass = password_hash($password, PASSWORD_DEFAULT);
-            $del_flag = 0;
+            $delFlag= 0;
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $lastName, \PDO::PARAM_STR);
@@ -136,11 +136,12 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
             $stmt->bindvalue(12, $mail, \PDO::PARAM_STR);
             $stmt->bindvalue(13, $hash_pass);
-            $stmt->bindvalue(14, $del_flag);
+            $stmt->bindvalue(14, $delFlag);
             $res = $stmt->execute();
-
-            if(!$res){
-                throw new OriginalException('登録に失敗しました。',400);
+            
+            $count = $stmt->rowCount();
+            if($count<1){
+                throw new OriginalException('登録に失敗しました。',444);
             }
         }catch(\PDOException $e){
             throw $e;
@@ -148,24 +149,27 @@ class CustomerDao extends \Models\Model{
     }
     
     /**
-     * 会員情報の住所を配送先住所に設定(del_flagを'1'→'0'に)
-     * del_flagとcustomer_idをキーにカスタマー情報を更新
+     * 会員情報の住所をいつもの配送先住所に設定(del_flagを'1'→'0'に)
+     * del_flag(=0)と$customerIdをキーにカスタマー情報を更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
      * @throws OriginalException(更新失敗時:code200)
      */
     public function setDeliveryDefault($customerId){
         try{
-            $sql = "UPDATE customers SET del_flag=? where customer_id=?";
-            $del_flag = 0;
-            $customerId = 'あ';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindvalue(1, $del_flag, \PDO::PARAM_INT);
-            $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-            $stmt->execute();
-            $count = $stmt->rowCount();
-            if($count<1){
-                throw new OriginalException('更新に失敗しました。',200);
+            $customerDto = $this->getCustomerById($customerId);
+            if($customerDto->getDelFlag() == 1){
+                $sql = "UPDATE customers SET del_flag=? where customer_id=?";
+                $delFlag= 0;
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindvalue(1, $delFlag, \PDO::PARAM_INT);
+                $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
+                $stmt->execute();
+
+                $count = $stmt->rowCount();
+                if($count<1){
+                    throw new OriginalException('更新に失敗しました。',222);
+                }
             }
         }catch(\PDOException $e){
             throw $e;
@@ -173,23 +177,27 @@ class CustomerDao extends \Models\Model{
     }
     
     /**
-     * 会員情報の住所を配送先住所からはずす(del_flagを'0'→'1'に)
-     * del_flagとcustomer_idをキーにカスタマー情報を更新
+     * 会員情報の住所がいつもの配送先住所になっていれば解除(del_flagを'0'→'1'に)
+     * $customerIdをキーに更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
      * @throws OriginalException(更新失敗時:code200)
      */
     public function releaseDeliveryDefault($customerId){
         try{
-            $sql = "UPDATE customers SET del_flag=? where customer_id=?";
-            $del_flag = 1;
+            $customerDto = $this->getCustomerById($customerId);
+            if($customerDto->getDelFlag() == 0){
+                $sql = "UPDATE customers SET del_flag=? where customer_id=?";
+                $delFlag= 1;
 
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->bindvalue(1, $del_flag, \PDO::PARAM_INT);
-            $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-            $res = $stmt->execute();  
-            if(!$res){
-                throw new OriginalException('更新に失敗しました。',200);
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->bindvalue(1, $delFlag, \PDO::PARAM_INT);
+                $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
+                $res = $stmt->execute();  
+                $count = $stmt->rowCount();
+                if($count<1){
+                    throw new OriginalException('更新に失敗しました。',222);
+                }
             }
         }catch(\PDOException $e){
             throw $e;
@@ -198,7 +206,7 @@ class CustomerDao extends \Models\Model{
     
     /**
      * 会員情報削除(退会時)
-     * customer_idをキーにカスタマー情報を削除
+     * $customerIdをキーにカスタマー情報を削除
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
      * @throws OriginalException(削除失敗時:code300)
@@ -209,8 +217,9 @@ class CustomerDao extends \Models\Model{
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
             $res = $stmt->execute();
-            if(!$res){
-                throw new OriginalException('削除に失敗しました。',300);
+            $count = $stmt->rowCount();
+            if($count<1){
+                throw new OriginalException('削除に失敗しました。',333);
             }
         }catch(\PDOException $e){
             throw $e;
@@ -219,7 +228,7 @@ class CustomerDao extends \Models\Model{
     
     /**
      * 会員情報取得
-     * $cutomerIdをキーにカスタマー情報(メールアドレス)を取得する。
+     * $cutomerIdをキーにカスタマー情報を取得する。
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @return CustomerDto[]
      * @throws PDOException 
@@ -236,7 +245,7 @@ class CustomerDao extends \Models\Model{
             if($dto){
                 return $dto;
             }else{
-                throw new OriginalException('取得に失敗しました。',100);
+                throw new OriginalException('取得に失敗しました。',111);
             }
         }catch(\PDOException $e){
             throw $e;
@@ -287,9 +296,9 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(13, $hash_pass);
             $stmt->bindvalue(14, $customerId);
             $res = $stmt->execute();
-            
-            if(!$res){
-                throw new OriginalException('更新に失敗しました。',200);
+            $count = $stmt->rowCount();
+            if($count<1){
+                throw new OriginalException('更新に失敗しました。',222);
             }
         }catch(\PDOException $e){
             throw $e;
