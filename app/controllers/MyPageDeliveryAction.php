@@ -40,12 +40,12 @@ class MyPageDeliveryAction{
                     $customerDao->setDeliveryDefault($customerId);
                 }
             } catch(\PDOException $e){
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
                 Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
                 die('エラー:データベースの処理に失敗しました。');
             }catch(OriginalException $e){
-                header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 die('エラー:'.$e->getMessage());
             }
         }
@@ -60,8 +60,8 @@ class MyPageDeliveryAction{
                     $customerDao->setDeliveryDefault($customerId);
                     $deliveryDao->releaseDeliveryDefault($customerId);
                 } catch(\PDOException $e){
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     Config::OutPutLog('SQLエラー:.'.$e->getMessage());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
                     Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
@@ -77,12 +77,12 @@ class MyPageDeliveryAction{
                     $customerDao->releaseDeliveryDefault($customerId);
                     $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
                 } catch(\PDOException $e){
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     Config::OutPutLog('SQLエラー:.'.$e->getMessage());
-                    die('データベースに関するエラーが発生しました。');
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    die('エラー:データベースの処理に失敗しました。');
                 }catch(OriginalException $e){
-/*                    header('Content-Type: text/plain; charset=UTF-8', true, 400);*/
                     Config::OutPutLog('不正値エラー:.'.$e->getMessage().'ExceptionCode='.$e->getCode());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }
             }
