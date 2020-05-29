@@ -4,11 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
-function h($s){
-  return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
-}
-
 use \Config\Config;
+
 $myPageDeliveryEntry = new \Controllers\MyPageDeliveryEntryAction();
 $myPageDeliveryEntry->execute();
 $deliveryDto = $myPageDeliveryEntry->getDeliveryDto();

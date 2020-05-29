@@ -4,11 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
-function h($s){
-  return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
-}
-
 use \Config\Config;
+
 $myPageDeliveryAdd = new \Controllers\MyPageDeliveryAddAction();
 $myPageDeliveryAdd->execute();
 ?>
@@ -38,11 +35,11 @@ $myPageDeliveryAdd->execute();
                             <p class="register_form_title">氏名</p>
                             <p class="name_label">姓</p>
                             <div class="name_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['last_name']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['last_name']);}?>">
                             </div>
                             <p class="name_label">名</p>
                             <div class="name_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['first_name']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['first_name']);}?>">
                             </div>
                             <?php if($myPageDeliveryAdd->getLastNameError()):?>
                                 <p class="error_txt error_cmn"><?= $myPageDeliveryAdd->getLastNameError();?></p>
@@ -55,11 +52,11 @@ $myPageDeliveryAdd->execute();
                             <p class="register_form_title">フリガナ(カタカナ)</p>
                             <p class="name_label">セイ</p>
                             <div class="name_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['ruby_last_name']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['ruby_last_name']);}?>">
                             </div>
                             <p class="name_label">メイ</p>
                             <div class="name_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_first_name" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['ruby_first_name']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_first_name" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['ruby_first_name']);}?>">
                             </div>
                             <?php if($myPageDeliveryAdd->getRubyLastNameError()):?>
                                 <p class="error_txt error_cmn"><?= $myPageDeliveryAdd->getRubyLastNameError(); ?></p>
@@ -73,11 +70,11 @@ $myPageDeliveryAdd->execute();
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress01Error()){echo "error_box";}?>" type="tel" name="address01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['address01']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress01Error()){echo "error_box";}?>" type="tel" name="address01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['address01']);}?>">
                             </div>
                             <span class="txt_dash">―</span>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress02Error()){echo "error_box";}?>" type="tel" name="address02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['address02']);}?>">
+                                <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress02Error()){echo "error_box";}?>" type="tel" name="address02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['address02']);}?>">
                             </div>
                             <?php if($myPageDeliveryAdd->getAddress01Error()):?>
                                 <p class="error_txt memo zip_memo"><?= $myPageDeliveryAdd->getaddress01Error(); ?></p>
@@ -101,19 +98,19 @@ $myPageDeliveryAdd->execute();
                                     </select>
                             </div>
                             <?php if(isset($isAdd03Error) && $isAdd03Error):?>
-                                <p class="error_txt memo"><?php echo htmlspecialchars($add03Errors); ?></p>
+                                <p class="error_txt memo"><?php echo Config::htmlspecialchars($add03Errors); ?></p>
                             <?php endif; ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">市区町村*</p>
-                            <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress04Error()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="address04"  value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['address04']);}?>">
+                            <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress04Error()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="address04"  value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['address04']);}?>">
                             <?php if($myPageDeliveryAdd->getAddress04Error()):?>
                                 <p class="error_txt memo"><?= $myPageDeliveryAdd->getaddress04Error(); ?></p>
                             <?php endif; ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">番地*</p>
-                            <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress05Error()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="address05" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['address05']);}?>">
+                            <input class="form_input_item <?php if($myPageDeliveryAdd->getAddress05Error()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="address05" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['address05']);}?>">
                             <div class="memo_wrapper">
                                 <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>	
                                 <?php if($myPageDeliveryAdd->getAddress05Error()):?>
@@ -123,7 +120,7 @@ $myPageDeliveryAdd->execute();
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">建物名</p>
-                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="address06" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['address06']);}?>"/>
+                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="address06" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['address06']);}?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
 
@@ -133,7 +130,7 @@ $myPageDeliveryAdd->execute();
                     <div class="register_field tel_field">
                         <div class="register_form_row">
                             <p class="register_form_title">電話番号</p>
-                            <input class="form_input_item <?php if($myPageDeliveryAdd->getTelError()){echo "error_box";}?>" name="tel" type="tel" maxlength="11" id="tel" value="<?php if(isset($_SESSION['del_add'])){echo h($_SESSION['del_add']['tel']);}?>">
+                            <input class="form_input_item <?php if($myPageDeliveryAdd->getTelError()){echo "error_box";}?>" name="tel" type="tel" maxlength="11" id="tel" value="<?php if(isset($_SESSION['del_add'])){echo Config::h($_SESSION['del_add']['tel']);}?>">
                             <div class="memo_wrapper">
                                 <p class="memo">※ハイフン(-)なし</p>
                                 <?php if($myPageDeliveryAdd->getTelError()):?>

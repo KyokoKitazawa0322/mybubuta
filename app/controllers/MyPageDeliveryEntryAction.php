@@ -66,12 +66,12 @@ class MyPageDeliveryEntryAction {
         try{
             $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
         } catch(\PDOException $e){
-            Config::outputLog($e);
+                        Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
         }catch(OriginalException $e){
+            header('Content-Type: text/plain; charset=UTF-8', true, 777);
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
             die('エラー:'.$e->getMessage());
         }
         //配送先の保存ボタンがおされたときの処理

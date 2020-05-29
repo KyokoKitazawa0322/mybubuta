@@ -23,5 +23,9 @@ class Config{
         $message = "[time]=>{$datetime}\r\n[ExceptionCode]=>{$code}\r\n[String]=>{$str}\r\n[Trace]=>{$trace}\r\n";
         error_log($message);
     }
+
+    function h($s){
+      return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+    }
 }
 ?>
