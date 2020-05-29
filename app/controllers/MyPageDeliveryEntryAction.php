@@ -71,8 +71,8 @@ class MyPageDeliveryEntryAction {
             die('エラー:データベースの処理に失敗しました。');
         }catch(OriginalException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 403);
-            die('エラー:'.$e->getMessage());
+            header('Content-Type: text/plain; charset=UTF-8', true, 400);
+           /* die('エラー:'.$e->getMessage());*/
         }
         //配送先の保存ボタンがおされたときの処理
         if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
