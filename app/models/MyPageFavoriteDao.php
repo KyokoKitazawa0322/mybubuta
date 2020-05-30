@@ -48,40 +48,42 @@ class MyPageFavoriteDao extends \Models\Model {
      * お気に入り商品を登録
      * 既に登録がない(=select文の結果false)場合のみ登録処理
      * $itemCodeと$customerIdをキーに商品情報を登録する。
-     * @param int $itemCode 　 商品コード    
+     * @param string $itemCode 　 商品コード    
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException
      * @throws OriginalException(登録失敗時:code444)
      */
     public function insertIntoFavorite($itemCode, $customerId){
-        $sql = "select * from favorite where item_code=? && customer_id=? ";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $itemCode, \PDO::PARAM_INT);
-        $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-        $stmt->execute();
-        $res = $stmt->fetch();
-        if(!$res){
-            try{
+        try{
+            $sql = "select * from favorite where item_code=? && customer_id=? ";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $itemCode, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
+            $stmt->execute();
+            $res = $stmt->fetch();
+            
+            if(!$res){
                 $sql = "insert into favorite(item_code, customer_id) values(?,?)";
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->bindvalue(1, $itemCode, \PDO::PARAM_INT);
+                $stmt->bindvalue(1, $itemCode, \PDO::PARAM_STR);
                 $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
                 $stmt->execute();
                 
+                $count = $stmt->rowCount();
                 if($count<1){
-                    throw new OriginalException('登録に失敗しました。',444);
+                    throw new \Models\OriginalException('登録に失敗しました。',444);
                 }
-            }catch(\PDOException $e){
-                throw $e;
-            }   
-        }
+            }
+        }catch(\PDOException $e){
+            throw $e;
+        }   
     }
   
     /**
      * お気に入り商品を削除
      * $itemCodeと$customerIdをキーに商品情報を削除する。
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @param int $itemCode 　 商品コード
+     * @param string $itemCode 　 商品コード
      * @throws PDOException
      * @throws OriginalException(削除失敗時:code333)
      */
@@ -89,9 +91,11 @@ class MyPageFavoriteDao extends \Models\Model {
         try{
             $sql = "delete from favorite where item_code = ? && customer_id = ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindvalue(1, $itemCode, \PDO::PARAM_INT);
+            $stmt->bindvalue(1, $itemCode, \PDO::PARAM_STR);
             $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);  
             $stmt->execute();     
+        
+            $count = $stmt->rowCount();
             if($count<1){
                 throw new OriginalException('削除に失敗しました。',333);
             }

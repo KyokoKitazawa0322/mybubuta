@@ -31,8 +31,14 @@ class MyPageFavoriteAction{
             }else{
                 try{
                     $dao->insertIntoFavorite($itemCode, $customerId);
-                }catch(\PDOEexception $e){
-                    die('SQLエラー :'.$e->getMessage());
+                } catch(\PDOException $e){
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    die('エラー:データベースの処理に失敗しました。');
+                }catch(OriginalException $e){
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                    die('エラー:'.$e->getMessage());
                 }
             }
         }
@@ -48,8 +54,14 @@ class MyPageFavoriteAction{
             $addItemCode = $_SESSION['add_item_code'];
             try{
                 $dao->insertIntoFavorite($addItemCode, $customerId);
-            }catch(\PDOEexception $e){
-                die('SQLエラー :'.$e->getMessage());
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
+            }catch(OriginalException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                die('エラー:'.$e->getMessage());
             }
                 $_SESSION['fav_flug'] = NULL;
                 $_SESSION['add_item_code'] = NULL;
@@ -67,8 +79,10 @@ class MyPageFavoriteAction{
         //お気に入り商品一覧表示
         try{
             $this->favoriteDto = $dao->getFavoriteAll($customerId);
-        }catch(\PDOEexception $e){
-            die('SQLエラー :'.$e->getMessage());
+        } catch(\PDOException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+            header('Content-Type: text/plain; charset=UTF-8', true, 500);
+            die('エラー:データベースの処理に失敗しました。');
         }
     }
     

@@ -13,9 +13,11 @@ class CartAction{
         if(!isset($_SESSION['cart'])){
             $_SESSION['cart'] = array();
         }
-        if(isset($_POST['item_code'])){
-            $itemCode = $_POST['item_code'];
-        }
+//        if(isset($_POST['item_code'])){
+//            $itemCode = $_POST['item_code'];
+//        }
+        $itemCode = filter_input(INPUT_POST, 'item_code');
+        
         if(isset($_SESSION['customer_id'])){
             $customerId = $_SESSION['customer_id'];   
         }
@@ -25,7 +27,7 @@ class CartAction{
             $deleteItemcode = $_GET['item_code'];
             for($i=0; $i<count($_SESSION['cart']); $i++){
                 if($_SESSION['cart'][$i]['item_code'] == $deleteItemcode){
-                    $_SESSION['cart'][$i] = NULL;
+                    unset($_SESSION['cart'][$i]);
                 }
             }
             $_SESSION['cart'] = array_merge($_SESSION['cart']);
@@ -78,7 +80,7 @@ class CartAction{
                 //カートから削除
                  for($i=0; $i<count($_SESSION['cart']); $i++ ){
                     if( $_SESSION['cart'][$i]['item_code'] == $itemCode){
-                        $_SESSION['cart'][$i] = NULL;
+                        unset($_SESSION['cart'][$i]);
                     }
                 }
                 $_SESSION['cart'] = array_merge($_SESSION['cart']); 
@@ -116,7 +118,7 @@ class CartAction{
                 //カートから削除
                  for( $i=0; $i<count($_SESSION['cart']); $i++ ){
                     if( $_SESSION['cart'][$i]['item_code'] == $moveItemCode){
-                        unset( $_SESSION['cart'][$i]);
+                        unset($_SESSION['cart'][$i]);
                     }
                 }
                 
