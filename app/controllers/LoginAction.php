@@ -23,8 +23,10 @@ class LoginAction{
             
             try{
                 $customer = $dao->getCustomerByMail($mail);
-            }catch(\PDOException $e){
-                die('SQLエラー :'.$e->getMessage());
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
             }
             
             if(!$customer){ 

@@ -74,11 +74,11 @@ class ItemListAction {
         try{
             $this->items = $dao->searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
             $this->topItems = $dao->selectItemsRank();
-        }catch(\PDOException $e){
-            header('Content-Type: text/plain; charset=UTF-8', true, 404);
-            error_log($e->getMessage(), 0);
-            die('エラーが発生しました。');
-        }        
+        } catch(\PDOException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+            header('Content-Type: text/plain; charset=UTF-8', true, 500);
+            die('エラー:データベースの処理に失敗しました。');  
+        }
     }
     
     public function getItems(){

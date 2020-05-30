@@ -241,8 +241,8 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
             $stmt->execute();
             $res = $stmt->fetch();
-            $dto = $this->setDto($res);
-            if($dto){
+            if($res){
+                $dto = $this->setDto($res);
                 return $dto;
             }else{
                 throw new OriginalException('取得に失敗しました。',111);

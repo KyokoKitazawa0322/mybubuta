@@ -12,13 +12,13 @@ class ItemsDao extends \Models\Model {
     /**
      * 商品詳細を取得
      * $itemCodeをキーに商品情報を取得する。
+     * @param string $itemCode 商品コード
      * @return ItemsDto[]
      * @throws PDOException
      * @throws OriginalException(取得失敗時:code444)
      */
     public function findItemByItemCode($itemCode){
         try{
-            
             $dto = new ItemsDto();
             
             $sql = "SELECT * FROM items WHERE item_code = ?";
@@ -26,10 +26,11 @@ class ItemsDao extends \Models\Model {
             $stmt->bindvalue(1, $itemCode); 
             $stmt->execute();   
             $res = $stmt->fetch();
-            $dto = $this->setDto($res);
-            
-            if($dto){
-                throw new OriginalException('取得に失敗しました。',444);
+            if($res){
+                $dto = $this->setDto($res);
+                return $dto;
+            }else{
+                throw new OriginalException('取得に失敗しました。',444);    
             }
         }catch(\PDOException $e){
             throw $e;
@@ -62,6 +63,7 @@ class ItemsDao extends \Models\Model {
      * @return ItemsDto[]
      * @throws PDOException
      */
+    
     public function searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
         try{
             $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
