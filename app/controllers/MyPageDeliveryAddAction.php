@@ -1,6 +1,5 @@
 <?php
 namespace Controllers;
-
 use \Models\DeliveryDao;
 use \Models\CommonValidator;
 
@@ -22,7 +21,9 @@ class MyPageDeliveryAddAction {
         
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_GET, 'cmd');
+        
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = NULL;
         }
         
@@ -34,13 +35,12 @@ class MyPageDeliveryAddAction {
         }
 
         //order_delivery_list.phpからきた場合
-        if(isset($_POST['cmd'])&&$_POST['cmd']=="from_order"){
-            $_SESSION['from_order_flag']=$_POST['cmd'];   
+        if($cmd == "from_order"){
+            $_SESSION['from_order_flag'] = "is";   
         }
 
         //配送先の保存ボタンがおされたときの処理
-        if(isset($_POST['cmd'])&& $_POST['cmd']=='add'){
-            
+        if($cmd == 'add'){
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
@@ -100,9 +100,8 @@ class MyPageDeliveryAddAction {
             $this->telError = $validator->telValidation($key, $tel);
 
             if($validator->getResult()) {
-                /*$_SESSION['del_update']['input'] = TRUE;*/
                 //バリデ通過したら・・・
-                $_SESSION['add_data'] = TRUE; header('Location:/html/mypage/mypage_delivery_add_complete.php');
+                $_SESSION['add_data'] = "clear"; header('Location:/html/mypage/mypage_delivery_add_complete.php');
                 exit();
             }
         }

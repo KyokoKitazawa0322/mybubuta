@@ -12,7 +12,9 @@ class MyPageDeliveryAction{
         
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
@@ -27,10 +29,11 @@ class MyPageDeliveryAction{
         $customerDao = new CustomerDao();
         
         $deliveryId = filter_input(INPUT_POST, 'del_id');
+        
         /**--------------------------------------------------------
            削除ボタンがおされたときの処理
          ---------------------------------------------------------*/
-        if(isset($_POST['del_item'])){
+        if($cmd == "delete"){
             try{
                 $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
 
@@ -39,47 +42,51 @@ class MyPageDeliveryAction{
                 if(!$deliveryDto){
                     $customerDao->setDeliveryDefault($customerId);
                 }
+                
             } catch(\PDOException $e){
-                Config::outputLog($e);
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);
                 die('エラー:データベースの処理に失敗しました。');
+
             }catch(OriginalException $e){
-                Config::outputLog($e);
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
                 header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 die('エラー:'.$e->getMessage());
             }
         }
+        
         /**--------------------------------------------------------
            配送先設定ボタンがおされたときの処理
          ---------------------------------------------------------*/
-        if(isset($_POST['set']) && $deliveryId){
-            if($deliveryId=="def"){
-                //customers:del_flag=0(デェフォルト)
-                //delivery:del_flag=1に
+        if($cmd == "update" && $deliveryId){
+            if($deliveryId == "def"){
                 try{
                     $customerDao->setDeliveryDefault($customerId);
                     $deliveryDao->releaseDeliveryDefault($customerId);
+
                 } catch(\PDOException $e){
-                    Config::outputLog($e);
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
+
                 }catch(OriginalException $e){
-                    Config::outputLog($e);
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
                     die('エラー:'.$e->getMessage());
                 }
                 
         //配送先登録情報であれば値はdelivery_id
             }else{
-                //いつもの配送先に設定されている住所を解除
                 try{
                     $deliveryDao->releaseDeliveryDefault($customerId);
                     $customerDao->releaseDeliveryDefault($customerId);
                     $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
+                    
                 } catch(\PDOException $e){
                     Config::outputLog($e);
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
+            
                 }catch(OriginalException $e){
                     Config::outputLog($e->getMessage().$e->getTraceAsString());
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
@@ -91,14 +98,16 @@ class MyPageDeliveryAction{
         try{
             //会員登録情報の取得
             $this->customerDto = $customerDao->getCustomerById($customerId);
-            //配送先情報の取得（あれば表示）
+            //配送先情報の取得
             $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            
         } catch(\PDOException $e){
-            Config::outputLog($e);
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
+            
         }catch(OriginalException $e){
-            Config::outputLog($e);
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
             die('エラー:'.$e->getMessage());
         }

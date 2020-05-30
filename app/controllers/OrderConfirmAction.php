@@ -14,7 +14,7 @@ class OrderConfirmAction{
         //cart.php以外からの訪問はリダイレクトでcart.phpへ
         if(!isset($_SESSION["cart"])){
             header('Location:/html/cart.php');
-            exit;
+            exit();
         }
 
         //リロード対策
@@ -77,7 +77,7 @@ class OrderConfirmAction{
 
                     //前画面のデータをセッションに格納したのち、非ログイン状態の場合はフラグをたててログイン画面へ。
                      if(!isset($customerId)){
-                        $_SESSION['order_flag'] = 1;
+                        $_SESSION['order_flag'] = "is";
                         header('Location:/html/login.php');
                         exit();
                     }

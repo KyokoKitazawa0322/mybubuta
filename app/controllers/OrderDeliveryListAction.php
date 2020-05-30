@@ -21,23 +21,18 @@ class OrderDeliveryListAction{
             exit();
         }
         
-        /**-----------------------------------------------
-          登録情報を取得
-         ------------------------------------------------*/
+
+        //登録情報を取得
         $customerDto = $customerDao->getCustomerById($_SESSION['customer_id']);
         $this->customer = $customerDto;
         
-        /**------------------------------------------------
-           削除ボタンがおされたときの処理
-         -------------------------------------------------*/
 
+        //削除ボタンがおされたときの処理
         if(isset($_POST['delete'])){
             $deliveryDao->deleteDeliveryInfo($_SESSION['customer_id'], $_POST['del_id']);
         }
     
-        /**------------------------------------------------
-           配送先情報の取得
-         -------------------------------------------------*/
+        //配送先情報の取得
         $deliveryDto = $deliveryDao->getDeliveryInfo($_SESSION['customer_id']);
         $this->delivery = $deliveryDto;
     }

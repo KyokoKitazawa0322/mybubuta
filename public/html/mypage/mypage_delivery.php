@@ -135,16 +135,16 @@ function deleteAddr(addrSeq){
     </div>
     <form method="POST" id="addr-update" action="#">
         <input type="hidden" name="del_id" id="updId" value>
-        <input type="hidden" name="set" value="">
+        <input type="hidden" name="cmd" value="update">
         <input type="hidden" name="scroll_top" value="" class="st">
     </form>
     <form method="POST" id="exist_addr_update" action="mypage_delivery_entry.php">
-        <input type="hidden" name="del_update" value="">
         <input type="hidden" name="del_id" id="updId02" value>
+        <input type="hidden" name="cmd" value="del_update">
     </form>
     <form method="POST" id="exist-addr-delete" action="#">
         <input type="hidden" name="del_id" id="deleteId" value>
-        <input type="hidden" name="del_item" value="">
+        <input type="hidden" name="cmd" value="delete">
     </form>
 </div>
 </body>

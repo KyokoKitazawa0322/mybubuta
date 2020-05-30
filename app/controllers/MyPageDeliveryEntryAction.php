@@ -2,7 +2,6 @@
 namespace Controllers;
 
 use \Models\DeliveryDao;
-use \Models\CustomerDao;    
 use \Models\OriginalException;
 use \Config\Config;
 use \Models\CommonValidator;
@@ -41,19 +40,16 @@ class MyPageDeliveryEntryAction {
         }
         
         //前ページで配送先の編集ボタンがおされたときの処理(delivery_idをsessionに)
-        if(isset($_POST['del_update'])){
+        if($cmd == "del_update"){
             $_SESSION['del_update'] = NULL;
             $_SESSION['del_id'] = $delId;
         }
         
-         //注文ページで配送先の編集ボタンがおされたときの処理(delivery_idをsessionに)
-        if(isset($_POST['del_upd'])){
+        //注文ページで配送先の編集ボタンがおされたときの処理
+        if($cmd == "from_order"){
+            $_SESSION['from_order_flag'] = "is";  
             $_SESSION['del_update'] = NULL;
             $_SESSION['del_id'] = $delId;
-            
-            if($cmd == "from_order"){
-                $_SESSION['from_order_flag'] = $cmd;   
-            }
         }
         
         if(!isset($_SESSION['del_id'])){
@@ -63,20 +59,22 @@ class MyPageDeliveryEntryAction {
         $deliveryId = $_SESSION['del_id'];
     
         $deliveryDao = new DeliveryDao();
-        $customerDao = new CustomerDao();
         $validator = new CommonValidator();
         
         try{
             $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
+            
         } catch(\PDOException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
+            
         }catch(OriginalException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
             die('エラー:'.$e->getMessage());
         }
+        
         //配送先の保存ボタンがおされたときの処理
         if($cmd == 'register_del'){
 
@@ -137,7 +135,7 @@ class MyPageDeliveryEntryAction {
             $this->telError = $validator->telValidation($key, $tel);
 
             if($validator->getResult()) {
-                $_SESSION['del_update']['input'] = TRUE;
+                $_SESSION['update_data'] = "clear"; 
                 header('Location:/html/mypage/mypage_delivery_complete.php');
                 exit();
             }

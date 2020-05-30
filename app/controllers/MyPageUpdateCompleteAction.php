@@ -2,6 +2,8 @@
 namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+use \Models\OriginalException;
+use \Config\Config;
 use \Models\CommonValidator;
 
 class MyPageUpdateCompleteAction {
@@ -9,7 +11,9 @@ class MyPageUpdateCompleteAction {
     
     public function execute(){
         
-        if(isset($_POST['cmd']) && $_POST['cmd'] == 'do_logout' ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        
+        if($cmd == "do_logout"){
             $_SESSION['customer_id'] = null;
         }
         
@@ -20,7 +24,7 @@ class MyPageUpdateCompleteAction {
             $customerId = $_SESSION['customer_id'];   
         }
     
-        if(isset($_POST['cmd']) && $_POST['cmd'] == "do_register"){
+        if($cmd == "do_register"){
             $password = $_SESSION['update']['password'];
             $lastName = $_SESSION['update']['last_name'];
             $firstName = $_SESSION['update']['first_name'];
@@ -40,8 +44,16 @@ class MyPageUpdateCompleteAction {
                 $customerDao->updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail, $customerId);
                 
             } catch(\PDOException $e){
-                die('SQLエラー :'.$e->getMessage());
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
+                
+            }catch(OriginalException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                die('エラー:'.$e->getMessage());
             }
+            
             $_SESSION['update'] = NULL;
             $_SESSION['password_input'] = NULL;
         } 
@@ -49,7 +61,7 @@ class MyPageUpdateCompleteAction {
         if(isset($_SESSION['from_order_flag'])){
             header('Location:/html/order/order_delivery_list.php');
             $_SESSION['from_order_flag']=NULL;
-            exit;
+            exit();
         } 
     }
 }

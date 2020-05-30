@@ -13,16 +13,20 @@ class LoginAction{
         //セッションがあればマイページへリダイレクト
         if(isset($_SESSION['customer_id'])){
             header("Location:/html/mypage/mypage.php");
+            exit();
         }
+        
+        $cmd = filter_input(INPUT_POST, 'cmd');
 
         //ログイン認証
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_login" ){
+        if($cmd == "do_login"){
             $_SESSION['login_error'] = null;
-            $mail = $_POST['mail'];
-            $password = $_POST['password'];
+            $mail = filter_input(INPUT_POST, 'mail');
+            $password = filter_input(INPUT_POST, 'password');
             
             try{
                 $customer = $dao->getCustomerByMail($mail);
+                
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);
@@ -54,7 +58,7 @@ class LoginAction{
                     }
 
                     //②非ログイン状態でカートからレジに進むボタンをおした後ログイン
-                    elseif(isset($_SESSION['order_flag']) && $_SESSION['order_flag'] == "1"){
+                    elseif(isset($_SESSION['order_flag']) && $_SESSION['order_flag'] == "is"){
                         //購入確認画面へ移動
                         $_SESSION['order_flag'] = NULL;
                         header("Location:/html/order/order_confirm.php");
@@ -62,7 +66,7 @@ class LoginAction{
                     }
 
                     //③非ログイン状態でdetail.phpからお気に入りボタンをおした後ログイン
-                    elseif(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
+                    elseif(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "is"){
                        // お気に入り画面へもどす
                         header("Location:/html/mypage/mypage_favorite.php");
                         exit();

@@ -3,6 +3,8 @@ namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;
 use \Models\CommonValidator;
+use \Models\OriginalException;
+use \Config\Config;
 
 class MyPageUpdateAction {
 
@@ -40,7 +42,7 @@ class MyPageUpdateAction {
       order_delivery_list.phpからきた場合
      ---------------------------------------------------------*/
         if(isset($_POST['cmd']) && $_POST['cmd'] == "from_order"){
-            $_SESSION['from_order_flag']= $_POST['cmd'];   
+            $_SESSION['from_order_flag']= "is";   
         }
 
         $customerDao = new CustomerDao();
@@ -142,7 +144,7 @@ class MyPageUpdateAction {
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
             if($validator->getResult()) {
-                $_SESSION['update']['input'] = TRUE;
+                $_SESSION['update']['input'] = "clear";
                 header('Location:/html/mypage/mypage_update_confirm.php');
                 exit();
             }

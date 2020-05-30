@@ -277,7 +277,7 @@ class CustomerDao extends \Models\Model{
         $hash_pass = password_hash($password, PASSWORD_DEFAULT);
         
         try{
-            $sql ="UPDATE customers SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, adPDO::PARAM_STR)dress_01=?, address_02=?, address_03=?, address_04=?, address_05=?, address_06=?, tel=?, mail=?, hash_password=?, customer_updated_date=now() where customer_id=?";
+            $sql ="UPDATE customers SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, address_01=?, address_02=?, address_03=?, address_04=?, address_05=?, address_06=?, tel=?, mail=?, hash_password=?, customer_updated_date=now() where customer_id=?";
 
             $stmt = $this->pdo->prepare($sql); 
 

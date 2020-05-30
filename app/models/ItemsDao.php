@@ -67,7 +67,7 @@ class ItemsDao extends \Models\Model {
     public function searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
         try{
             $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
-            if(!empty($categories)){
+            if($categories){
                 $category = "";
                 foreach($categories as $key){
                     $category = $category.':'.$key.',';

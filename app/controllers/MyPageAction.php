@@ -1,5 +1,6 @@
 <?php
 namespace Controllers;
+
 class MyPageAction {
     public function execute(){
         
@@ -13,7 +14,6 @@ class MyPageAction {
             header("Location:/html/login.php");   
             exit();
         }   
-        
     }
 }
 ?>

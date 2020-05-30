@@ -49,7 +49,7 @@ class ItemListAction {
             }
         //カテゴリのGET値もセッション値もない場合
         }else{
-            $categories = "";   
+            $categories = false;   
         }
 
         if($keyWord){

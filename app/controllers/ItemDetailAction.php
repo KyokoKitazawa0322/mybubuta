@@ -16,16 +16,13 @@ class ItemDetailAction {
         
         try{
             $item = $dao->findItemByItemCode($itemCode);
-            if($item){
-                $this->item = $item;
-            }else {
-                header("Location:item_list.php");  
-                exit();
-            }
+            $this->item = $item;
+            
         } catch(\PDOException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die('エラー:データベースの処理に失敗しました。');
+            
         }catch(OriginalException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
             header('Content-Type: text/plain; charset=UTF-8', true, 400);
