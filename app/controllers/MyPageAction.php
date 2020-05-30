@@ -3,7 +3,9 @@ namespace Controllers;
 class MyPageAction {
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         

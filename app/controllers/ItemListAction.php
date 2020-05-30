@@ -12,14 +12,26 @@ class ItemListAction {
         
         $dao = new itemsDao();
         
+        $cmd = filter_input(INPUT_GET, 'cmd');
+        $keyWord = filter_input(INPUT_GET, 'keyword');
+        $minPrice = filter_input(INPUT_GET, 'min_price');
+        $maxPrice = filter_input(INPUT_GET, 'max_price');
+        $sortKey = filter_input(INPUT_GET, 'sortkey');
+
         //検索条件をリセット
-        if(isset($_GET['cmd'])){
-            if($_GET['cmd']=="do_search" || $_GET['cmd']=="item_list") {
-                $_SESSION['search'] = array();
-            }
+        if($cmd == "do_search" || $cmd == "item_list") {
+            $_SESSION['search'] = array();
         }
 
-        if(isset($_GET['coat']) || isset($_GET['dress']) || isset($_GET['skirt']) || isset($_GET['tops']) || isset($_GET['pants']) || isset($_GET['bag'])) {
+        //カテゴリのGET値があるか確認
+        $isCategory  = false;
+        foreach(config::CATEGORY as $key=>$value){
+            if(isset($_GET[$key])){
+                $isCategory = true;
+            }
+        }
+        //カテゴリのGET値が1つ以上ある場合
+        if($isCategory){
             $categories = [];
             foreach(Config::CATEGORY as $key=>$value){ 
                 if(isset($_GET[$key])){
@@ -27,6 +39,7 @@ class ItemListAction {
                     $_SESSION['search']['category'][$key] = $value;
                 } 
             }
+        //カテゴリのGET値はないがセッション値がある場合
         }elseif(isset($_SESSION['search']['category'])){
             $categories = [];
             foreach(Config::CATEGORY as $key=>$value){
@@ -34,40 +47,30 @@ class ItemListAction {
                     $categories[] = $key;
                 }
             }
+        //カテゴリのGET値もセッション値もない場合
         }else{
             $categories = "";   
         }
 
-        if(!empty($_GET['keyword'])){
-            $keyWord = $_GET['keyword'];
+        if($keyWord){
             $_SESSION['search']['keyword'] = $keyWord;
         }elseif(isset($_SESSION['search']['keyword'])){
             $keyWord = $_SESSION['search']['keyword'];
-        }else{
-            $keyWord = "";   
         }
         
-        if(isset($_GET['min_price'])){
-            $minPrice = $_GET['min_price'];
+        if($minPrice){
             $_SESSION['search']['min_price'] = $minPrice;
         }elseif(isset($_SESSION['search']['min_price'])){   
             $minPrice = $_SESSION['search']['min_price'];
-        }else{
-            $minPrice = "";   
         }
         
-        if(isset($_GET['max_price'])){
-            $maxPrice = $_GET['max_price'];  
+        if($maxPrice){
             $_SESSION['search']['max_price'] = $maxPrice;
         }elseif(isset($_SESSION['search']['max_price'])){   
             $maxPrice = $_SESSION['search']['max_price'];
-        }else{
-            $maxPrice = "";   
         }
         
-        if(isset($_GET['sortkey'])){
-            $sortKey = $_GET['sortkey'];
-        }else{
+        if(!$sortKey){
             $sortKey = "03";//"ORDER BY item_insert_date asc"
         }
 

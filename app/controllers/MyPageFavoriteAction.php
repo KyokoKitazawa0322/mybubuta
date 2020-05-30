@@ -9,19 +9,18 @@ class MyPageFavoriteAction{
         
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        $itemCode = filter_input(INPUT_GET, 'item_code');
+        
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
         $dao = new MyPageFavoriteDao();
         $customerId = $_SESSION['customer_id'];
-        
-        if(isset($_GET['item_code'])){
-            $itemCode = $_GET['item_code'];   
-        }
 
         //詳細画面で「お気に入り保存」ボタンが押された時の処理
-        if(isset($_GET["cmd"]) && $_GET["cmd"] == "add_favorite" ){
+        if($cmd == "add_favorite" ){
             //非ログイン状態の場合はフラグをたててログイン画面へ
             if(!isset($customerId)){    
                 $_SESSION['fav_flug']=1;
@@ -31,10 +30,12 @@ class MyPageFavoriteAction{
             }else{
                 try{
                     $dao->insertIntoFavorite($itemCode, $customerId);
+                    
                 } catch(\PDOException $e){
                     Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                     header('Content-Type: text/plain; charset=UTF-8', true, 500);
                     die('エラー:データベースの処理に失敗しました。');
+                    
                 }catch(OriginalException $e){
                     Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
                     header('Content-Type: text/plain; charset=UTF-8', true, 400);
@@ -52,12 +53,15 @@ class MyPageFavoriteAction{
         //詳細画面で「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
         if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
             $addItemCode = $_SESSION['add_item_code'];
+            
             try{
                 $dao->insertIntoFavorite($addItemCode, $customerId);
+                
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);
                 die('エラー:データベースの処理に失敗しました。');
+                
             }catch(OriginalException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
                 header('Content-Type: text/plain; charset=UTF-8', true, 400);
@@ -68,7 +72,7 @@ class MyPageFavoriteAction{
         }
 
         //削除」ボタンが押された時の処理
-        if(isset($_GET["cmd"]) && $_GET["cmd"] == "del"){
+        if($cmd == "del"){            
             try{
                 $dao->deleteFavorite($itemCode, $customerId);
             }catch(\PDOEexception $e){
@@ -79,6 +83,7 @@ class MyPageFavoriteAction{
         //お気に入り商品一覧表示
         try{
             $this->favoriteDto = $dao->getFavoriteAll($customerId);
+            
         } catch(\PDOException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);

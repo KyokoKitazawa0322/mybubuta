@@ -75,10 +75,10 @@ class ItemsDao extends \Models\Model {
                 $category = preg_replace("/,$/", "", $category);
                 $sql = $sql."AND item_category IN ($category) ";
             }
-            if(!empty($keyWord)){
+            if($keyWord){
                 $sql = $sql."AND item_name LIKE :keyword ";
             }        
-            if(!empty($minPrice)){
+            if($minPrice){
                 $sql = $sql."AND item_price+tax >= :minprice ";
             }
             if(!empty($maxPrice)){
@@ -100,10 +100,10 @@ class ItemsDao extends \Models\Model {
                     //IN (:skirt, :tops, :dress)-> 「''」がはいるとエスケープされるためバラバラに定義
                 }
             }
-            if(!empty($keyWord)){
+            if($keyWord){
                 $stmt->bindvalue(":keyword", '%'.$keyWord.'%', \PDO::PARAM_STR);
             }
-            if(!empty($minPrice)){
+            if($minPrice){
                 $stmt->bindvalue(":minprice", $minPrice, \PDO::PARAM_INT);
             }
             if(!empty($maxPrice)){

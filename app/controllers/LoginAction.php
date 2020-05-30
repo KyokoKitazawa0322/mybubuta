@@ -47,7 +47,7 @@ class LoginAction{
                     setcookie('password',$password,time()+60*60*24*7);
 
                     //①非ログイン状態でカートからお気に入りに移動ボタンをおした後ログイン
-                    if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == "1"){
+                    if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == "is"){
                         //カート画面へもどす
                         header("Location:/html/cart.php");
                         exit();

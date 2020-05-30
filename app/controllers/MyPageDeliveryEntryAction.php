@@ -26,7 +26,10 @@ class MyPageDeliveryEntryAction {
         
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        $delId = filter_input(INPUT_GET, 'del_id');
+        
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
@@ -40,16 +43,16 @@ class MyPageDeliveryEntryAction {
         //前ページで配送先の編集ボタンがおされたときの処理(delivery_idをsessionに)
         if(isset($_POST['del_update'])){
             $_SESSION['del_update'] = NULL;
-            $_SESSION['del_id'] = $_POST['del_id'];
+            $_SESSION['del_id'] = $delId;
         }
         
          //注文ページで配送先の編集ボタンがおされたときの処理(delivery_idをsessionに)
         if(isset($_POST['del_upd'])){
             $_SESSION['del_update'] = NULL;
-            $_SESSION['del_id'] = $_POST['del_id'];
+            $_SESSION['del_id'] = $delId;
             
-            if(isset($_POST['cmd'])&&$_POST['cmd']=="from_order"){
-                $_SESSION['from_order_flag'] = $_POST['cmd'];   
+            if($cmd == "from_order"){
+                $_SESSION['from_order_flag'] = $cmd;   
             }
         }
         
@@ -75,7 +78,7 @@ class MyPageDeliveryEntryAction {
             die('エラー:'.$e->getMessage());
         }
         //配送先の保存ボタンがおされたときの処理
-        if(isset($_POST['cmd'])&& $_POST['cmd']=='register_del'){
+        if($cmd == 'register_del'){
 
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');

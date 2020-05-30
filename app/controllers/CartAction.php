@@ -13,20 +13,22 @@ class CartAction{
         if(!isset($_SESSION['cart'])){
             $_SESSION['cart'] = array();
         }
-//        if(isset($_POST['item_code'])){
-//            $itemCode = $_POST['item_code'];
-//        }
-        $itemCode = filter_input(INPUT_POST, 'item_code');
-        
+            
+        $itemCodeByPost = filter_input(INPUT_POST, 'item_code');
+        $itemCodeByGet = filter_input(INPUT_GET, 'item_code');
+        $itemCount = filter_input(INPUT_POST, 'item_count', FILTER_VALIDATE_INT);
+        $cmdPost = filter_input(INPUT_POST, 'cmd');
+        $cmdGet = filter_input(INPUT_GET, 'cmd');
+
+    
         if(isset($_SESSION['customer_id'])){
             $customerId = $_SESSION['customer_id'];   
         }
         
         //「削除」ボタンが押された時の処理
-        if(isset($_GET['cmd']) && $_GET['cmd'] == "del"){
-            $deleteItemcode = $_GET['item_code'];
+        if($cmdGet == "del"){
             for($i=0; $i<count($_SESSION['cart']); $i++){
-                if($_SESSION['cart'][$i]['item_code'] == $deleteItemcode){
+                if($_SESSION['cart'][$i]['item_code'] == $itemCodeByGet){
                     unset($_SESSION['cart'][$i]);
                 }
             }
@@ -34,21 +36,21 @@ class CartAction{
         }
 
         //favorite.phpからカートにいれるボタンがおされたときの処理
-        if(isset($_POST['cmd']) && $_POST['cmd'] == "add_cart_fromFav"){
-            $is_already_exists  = 0;
+        if($cmdPost == "add_cart_fromFav"){
+            $is_already_exists  = false;
             for($i=0; $i<count($_SESSION['cart']); $i++){
-                if( $_SESSION['cart'][$i]['item_code'] == $itemCode){
+                if( $_SESSION['cart'][$i]['item_code'] == $itemCodeByPost){
                     // 追加する商品がカートに既に存在している場合は数量を合算。
                     $_SESSION['cart'][$i]['item_count'] += 1;
-                    $is_already_exists = 1;
+                    $is_already_exists = true;
                 }
             }
 
             //追加する商品がカートに存在しない場合、カートに新規登録。
-            if( $is_already_exists == 0 ){
+            if(!$is_already_exists){
                 $itemsDao = new ItemsDao();
                 try{
-                    $dto = $itemsDao->findItemByItemCode($itemCode);
+                    $dto = $itemsDao->findItemByItemCode($itemCodeByPost);
                     
                     $item['item_code'] = $dto->getItemCode();
                     $item['item_image'] = $dto->getItemImage();
@@ -74,19 +76,19 @@ class CartAction{
         }
 
         //お気に入りに移動ボタンがおされたとき(ログイン状態/非ログイン状態)
-        if(isset($_POST['cmd']) && $_POST['cmd'] == "move_fav" ){
+        if($cmdPost == "move_fav" ){
             $favoriteDao = new MyPageFavoriteDao();
             if(isset($customerId)){
                 //カートから削除
                  for($i=0; $i<count($_SESSION['cart']); $i++ ){
-                    if( $_SESSION['cart'][$i]['item_code'] == $itemCode){
+                    if( $_SESSION['cart'][$i]['item_code'] == $itemCodeByPost){
                         unset($_SESSION['cart'][$i]);
                     }
                 }
                 $_SESSION['cart'] = array_merge($_SESSION['cart']); 
             
                 try{
-                    $favoriteDao->insertIntoFavorite($itemCode, $customerId);
+                    $favoriteDao->insertIntoFavorite($itemCodeByPost, $customerId);
                     
                 } catch(\PDOException $e){
                     Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
@@ -100,15 +102,15 @@ class CartAction{
                 }
             }else{
                 //ログイン状態がなければlogin.phpへ
-                $_SESSION['cart_flag'] = 1;
-                $_SESSION['move_fav_item_code'] = $itemCode;
+                $_SESSION['cart_flag'] = "is";
+                $_SESSION['move_fav_item_code'] = $itemCodeByPost;
                 header('Location:/html/login.php');
                 exit();
             }
         }
 
         //非ログイン状態でお気に入りに移動ボタン->ログイン->リダイレクトでもどったときの処理 
-        if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == 1){
+        if(isset($_SESSION['cart_flag']) && $_SESSION['cart_flag'] == "is"){
         
             if(isset($customerId)){    
                 
@@ -145,27 +147,26 @@ class CartAction{
         }
 
          //リクエスト cmd の中身が、「add_cart」であった場合の処理。
-         if(isset($_POST['cmd']) && $_POST['cmd'] == "add_cart"){
-            
-             $itemCount = $_POST['item_count'];
-            $is_already_exists  = 0;
+         if($cmdPost == "add_cart"){
+
+            $is_already_exists  = false;
              
             for( $i=0; $i<count($_SESSION['cart']); $i++){
-                if( $_SESSION['cart'][$i]['item_code'] == $itemCode){
+                if( $_SESSION['cart'][$i]['item_code'] == $itemCodeByPost){
                     // 追加する商品がカートに既に存在している場合は数量を合算。
                     $_SESSION['cart'][$i]['item_count'] = $_SESSION['cart'][$i]['item_count'] + $itemCount;
-                    $is_already_exists = 1;
+                    $is_already_exists = true;
                 }
             }
 
             // 追加する商品がカートに存在しない場合、カートに新規登録。
-            if($is_already_exists == 0 ){ 
+            if(!$is_already_exists){ 
                 $itemsDao = new ItemsDao();
                 try{
-                    $dto = $itemsDao->findItemByItemCode($itemCode);
+                    $dto = $itemsDao->findItemByItemCode($itemCodeByPost);
 
                     $item['item_code'] = $dto->getItemCode();
-                    $item['item_count'] = $_POST['item_count'];
+                    $item['item_count'] = $itemCount;
                     $item['item_image'] = $dto->getItemImage();
                     $item['item_name'] = $dto->getItemName();
                     $item['item_price'] = $dto->getItemPrice();

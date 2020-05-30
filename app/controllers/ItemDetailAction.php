@@ -12,7 +12,7 @@ class ItemDetailAction {
     public function execute() {
         
         $dao = new ItemsDao();
-        $itemCode = $_GET['item_code'];
+        $itemCode = filter_input(INPUT_GET, 'item_code');
         
         try{
             $item = $dao->findItemByItemCode($itemCode);
