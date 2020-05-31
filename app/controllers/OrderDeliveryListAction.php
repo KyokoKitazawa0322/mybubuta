@@ -8,49 +8,55 @@ use \Models\DeliveryDto;
 
 class OrderDeliveryListAction{
 
-    private $customer;
-    private $delivery;
+    private $customerDto;
+    private $deliveryDto;
     
     public function execute(){
+
+        if(!isset($_SESSION["customer_id"])){
+            header("Location:/html/login.php");   
+            exit();
+        }else{
+            $customerId = $_SESSION['customer_id'];   
+        }
+        
+        $delId = filter_input(INPUT_POST, 'del_id');
+        $cmd = filter_input(INPUT_POST, 'cmd');
         
         $customerDao = new CustomerDao();
         $deliveryDao = new DeliveryDao();
-
-         if(!isset($_SESSION['customer_id'])){
-            header('Location:/html/login.php');
-            exit();
-        }
         
-
         //登録情報を取得
-        $customerDto = $customerDao->getCustomerById($_SESSION['customer_id']);
-        $this->customer = $customerDto;
+        $customerDto = $customerDao->getCustomerById($customerId);
+        $this->customerDto = $customerDto;
         
-
         //削除ボタンがおされたときの処理
-        if(isset($_POST['delete'])){
-            $deliveryDao->deleteDeliveryInfo($_SESSION['customer_id'], $_POST['del_id']);
+        if($cmd == "delete"){
+            $deliveryDao->deleteDeliveryInfo($customerId, $delId);
         }
     
         //配送先情報の取得
-        $deliveryDto = $deliveryDao->getDeliveryInfo($_SESSION['customer_id']);
-        $this->delivery = $deliveryDto;
+        $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+        $this->deliveryDto = $deliveryDto;
     }
 
     public function getCustomer(){
-        return $this->customer;
+        return $this->customerDto;
     }
     
     public function getDelivery(){
-        return $this->delivery;   
+        return $this->deliveryDto;   
     }
     
+    //0531
     //表示画面で検証しtrueであればchecked="checked"を出力
     public function checkCustomer($customer){
+        //order_confirm.phpで選択された場合
         if(isset($_SESSION['def_addr'])){
-            if($_SESSION['def_addr']=="1"){
+            if($_SESSION['def_addr'] == "customer"){
                 return true;
             }
+        //order_confirm.phpを未訪問状態で、かつcustomerテーブルの住所がいつもの配送先に設定されている場
         }elseif($customer->getDelFlag() == 0){
             return true;
         }else{

@@ -26,7 +26,7 @@ class MyPageDeliveryEntryAction {
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
-        $delId = filter_input(INPUT_GET, 'del_id');
+        $delId = filter_input(INPUT_POST, 'del_id');
         
         if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;

@@ -73,18 +73,18 @@ $(function() {
             var totalPayment = document.getElementById('total_payment').value; 
             var difference = postagefreeprice - total;
             message.style.display = 'block';
-            message.innerHTML = "あと"+difference+"円で送料無料";
+            message.innerHTML = "あと"+difference+"円のご購入で送料無料";
         }
 
         var taxDis = '\xA5' + separate(totalTax);
-        var taxIncludeTotalDis ='\xA5'+ separate(total); 
+        var taxInludeTotalDis ='\xA5'+ separate(total); 
         var total_paymentAll = '\xA5'+ separate(total+postage);
         //POST送信用
-        $(".total_amount").val(totalAmount);
-        $(".total_tax").val(totalTax);
+/*      $(".total_tax").val(totalTax);
         $(".postage").val(postage);
-        $(".total_payment").val(total);    
+        $(".total_payment").val(total);    */
         //表示用
+        $(".total_amount").val(totalAmount);
         $(".taxDis").val(taxDis);
         $(".total_paymentDis").val(taxIncludeTotalDis);
         $(".postageDis").val(postageDis);
@@ -218,9 +218,6 @@ window.onload = function(){
                             </div>
                             <br/>
                             <div class="cart_button_area">
-                                <input type="hidden" id="total_payment" name="total_payment" class="total_payment" value="<?= $total_price?>">
-                                <input type="hidden" name="postage" class="postage" value="<?php if($total_price <= Config::POSTAGEFREEPRICE){echo Config::POSTAGE;}else{echo 0;}?>">
-                                <input type="hidden" name="tax" class="total_tax" value="<?= $total_tax;?>">
                                 <input type="submit" class="btn_cmn_full btn_design_01" value="レジに進む" />
                                 <input type="hidden" name="cmd" value="order_confirm">
                                 <div class="back_button">

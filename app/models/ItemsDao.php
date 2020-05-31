@@ -13,7 +13,7 @@ class ItemsDao extends \Models\Model {
      * 商品詳細を取得
      * $itemCodeをキーに商品情報を取得する。
      * @param string $itemCode 商品コード
-     * @return ItemsDto[]
+     * @return ItemsDto
      * @throws PDOException
      * @throws OriginalException(取得失敗時:code444)
      */
@@ -157,7 +157,7 @@ class ItemsDao extends \Models\Model {
             if($items){
                 return $items;
             }else{
-                    throw new OriginalException('取得に失敗しました。',444);
+                throw new OriginalException('取得に失敗しました。',444);
             }
         }catch(\PDOException $e){
             throw $e;

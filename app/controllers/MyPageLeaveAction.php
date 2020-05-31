@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
 use \Models\CustomerDao;
+use \Models\OriginalException;
+use \Config\Config;
 
 class MyPageLeaveAction {
+    
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+    
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
@@ -17,19 +22,47 @@ class MyPageLeaveAction {
         }
         
         //削除ボタンがおされたときの処理
-        if(isset($_POST['cmd'])&&$_POST['cmd']=="leave"){
+        if($cmd == "leave"){
+            
+            $memPwd = filter_input(INPUT_POST, 'memPwd');
             $customerDao = new CustomerDao();
-            $customerDto = $customerDao->getCustomerById($customerId);
-            if($customerDto){ 
-                if(!password_verify($_POST['memPwd'], $customerDto->getHashPassword())){
-                    echo 'パスワードが正しくありません。';
-                }else{
+            
+            try{
+                $customerDto = $customerDao->getCustomerById($customerId);
+            
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
+
+            }catch(OriginalException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                die('エラー:'.$e->getMessage());
+            }
+            
+            $hashPassword = $customerDto->getHashPassword();
+            
+            if(!password_verify($memPwd, $hashPassword)){
+                echo 'パスワードが正しくありません。';
+            }else{
+                try{
                     $customerDao->deleteCustomerInfo($customerId);
-                    unset($_SESSION['customer_id']);
-                    unset($_COOKIE['password']);
-                    unset($_COOKIE['mail']);
+                    $_SESSION['customer_id'] = NULL;
+                    $_COOKIE['password'] = NULL;
+                    $_COOKIE['mail'] = NULL;
                     header('Location:/html/mypage/leave_complete.php');
                     exit();
+                    
+                } catch(\PDOException $e){
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    die('エラー:データベースの処理に失敗しました。');
+
+                }catch(OriginalException $e){
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                    die('エラー:'.$e->getMessage());
                 }
             }
         }

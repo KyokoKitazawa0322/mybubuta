@@ -14,7 +14,7 @@ class CustomerDao extends \Models\Model{
      * $mailをキーにカスタマー情報を取得する。
      * なければfalseを返す。
      * @param string $mail 入力されたユーザーのメールアドレス
-     * @return CustomerDto[]
+     * @return CustomerDto
      * @throws PDOException
      */
     public function getCustomerByMail($mail){
@@ -42,7 +42,7 @@ class CustomerDao extends \Models\Model{
      * $mailをキーにカスタマー情報(メールアドレス)を取得する。
      * なければfalseを返す。
      * @param string $mail　入力されたユーザーのメールアドレス
-     * @return CustomerDto[]
+     * @return CustomerDto
      * @throws PDOException 
      */
     public function checkMailExists($mail){
@@ -66,10 +66,9 @@ class CustomerDao extends \Models\Model{
     }
     
     /**
-     * customerDtoにSQL取得値をセット
-     * 取得出来ない場合はfalseを返す。
+     * CustomerDtoにSQL取得値をセット
      * @param Array $res　SQL取得結果
-     * @return CustomerDto[]
+     * @return CustomerDto
      * 例外処理は呼び出し元のメソッドで実施
      */
     public function setDto($res){
@@ -230,7 +229,7 @@ class CustomerDao extends \Models\Model{
      * 会員情報取得
      * $cutomerIdをキーにカスタマー情報を取得する。
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @return CustomerDto[]
+     * @return CustomerDto
      * @throws PDOException 
      * @throws OriginalException(取得失敗時:code111) 
      */

@@ -2,7 +2,7 @@
 <?php
 require_once (__DIR__ ."/../../../vendor/autoload.php");
 
-/*session_cache_limiter('none');*/
+session_cache_limiter('none');
 session_start();
 
 $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
@@ -139,7 +139,7 @@ function deleteAddr(addrSeq){
     </form>
     <form method="POST" id="exist-addr-delete" action="#">
         <input type="hidden" name="del_id" id="deleteId" value>
-        <input type="hidden" name="delete" value="">
+        <input type="hidden" name="cmd" value="delete">
     </form>
 </div>
 </body>

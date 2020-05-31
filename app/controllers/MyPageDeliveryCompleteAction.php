@@ -23,7 +23,7 @@ class MyPageDeliveryCompleteAction {
         }        
 
         //配送先保存ボタンが押された時の処理
-        if(isset($_SESSION['update_date']) && $_SESSION['update_date'] == "clear"){ 
+        if(isset($_SESSION['update_data']) && $_SESSION['update_data'] == "clear"){ 
             
             $lastName = $_SESSION['del_update']['last_name'];
             $firstName = $_SESSION['del_update']['first_name'];

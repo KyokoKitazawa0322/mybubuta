@@ -40,7 +40,7 @@ $('form#addr-update').submit(function(){
 window.onload = function(){
 $(window).scrollTop(<?php echo @$_REQUEST['scroll_top']; ?>);
 }
-    	// 住所登録編集
+    	//住所登録編集
 function updAddr(addrSeq){
 	var seq = addrSeq.getAttribute("data-value");
 	document.getElementById("updId02").value = seq;

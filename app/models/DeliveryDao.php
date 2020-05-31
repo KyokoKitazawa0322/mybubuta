@@ -9,6 +9,13 @@ class DeliveryDao extends \Models\Model{
         parent::__construct();
     }
     
+    
+    /**
+     * DeliveryDtoにSQL取得値をセット
+     * @param Array $res　SQL取得結果
+     * @return DeliveryDto
+     * 例外処理は呼び出し元のメソッドで実施
+     */
     public function setDto($res){
         
         $dto = new DeliveryDto();
@@ -239,7 +246,7 @@ class DeliveryDao extends \Models\Model{
      *　なければfalseを返す
      * $customerIdとdel_flag(=0)をキーに配送先住所情報を取得する。
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @return DeliveryDto[]
+     * @return DeliveryDto
      * @throws PDOException 
      */
     public function getDefDeliveryInfo($customerId){
@@ -267,7 +274,7 @@ class DeliveryDao extends \Models\Model{
      * $customerIdと$deliveryIdをキーに配送先住所情報を取得する。
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @param int $deliveryId　登録時に自動生成される配送先住所ID
-     * @return DeliveryDto[]
+     * @return DeliveryDto
      * @throws PDOException 
      * @throws OriginalException(取得失敗時:code100) 
      */

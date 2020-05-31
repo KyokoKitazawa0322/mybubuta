@@ -2,6 +2,8 @@
 namespace Controllers;
 use \Models\MyPageFavoriteDao;
 use \Models\ItemsDto;
+use \Models\OriginalException;
+use \Config\Config;
 
 class MyPageFavoriteAction{
     
@@ -23,7 +25,7 @@ class MyPageFavoriteAction{
         if($cmd == "add_favorite" ){
             //非ログイン状態の場合はフラグをたててログイン画面へ
             if(!isset($customerId)){    
-                $_SESSION['fav_flug']=1;
+                $_SESSION['fav_flug'] = "is";
                 $_SESSION['add_item_code'] = $itemCode;
                 header('Location:/html/login.php');
                 exit();
@@ -51,7 +53,7 @@ class MyPageFavoriteAction{
          }
 
         //詳細画面で「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
-        if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "1"){
+        if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "is"){
             $addItemCode = $_SESSION['add_item_code'];
             
             try{

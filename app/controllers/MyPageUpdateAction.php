@@ -27,7 +27,9 @@ class MyPageUpdateAction {
     
     public function execute(){
         
-        if(isset($_POST["cmd"]) && $_POST["cmd"] == "do_logout" ){
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        
+        if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
@@ -38,25 +40,32 @@ class MyPageUpdateAction {
             $customerId = $_SESSION['customer_id'];   
         }
         
-    /**--------------------------------------------------------
-      order_delivery_list.phpからきた場合
-     ---------------------------------------------------------*/
-        if(isset($_POST['cmd']) && $_POST['cmd'] == "from_order"){
+        
+        //order_delivery_list.phpからきた場合
+        if($cmd == "from_order"){
             $_SESSION['from_order_flag']= "is";   
         }
 
         $customerDao = new CustomerDao();
-        $validator = new CommonValidator();
         
         try{
             $this->customerDto = $customerDao->getCustomerById($customerId);
-        }catch(\PDOException $e){
-            die('SQLエラー :'.$e->getMessage());
+        } catch(\PDOException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+            header('Content-Type: text/plain; charset=UTF-8', true, 500);
+            die('エラー:データベースの処理に失敗しました。');
+
+        }catch(OriginalException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+            header('Content-Type: text/plain; charset=UTF-8', true, 400);
+            die('エラー:'.$e->getMessage());
         }
-    /**--------------------------------------------------------
-     * sessionに格納しバリデーションチェック
-     ---------------------------------------------------------*/
+
+        
         if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
+            
+            $validator = new CommonValidator();
+            
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
@@ -69,14 +78,15 @@ class MyPageUpdateAction {
             $address06 = filter_input(INPUT_POST, 'address06');
             $tel = filter_input(INPUT_POST, 'tel');
             $mail = filter_input(INPUT_POST, 'mail');
+            $password = filter_input(INPUT_POST, 'password');
+            $passwordConfirm = filter_input(INPUT_POST, 'password_confirm');
 
-            if(empty($_POST['password']) && empty($_POST['password_confirm'])){
+            //パスワード、パスワード確認ともに入力がなければログイン時にセットしたクッキー値を格納しバリデーションを通す。(変更なしとみなす)
+            if(!$password && !$passwordConfirm){
                 $password = $_COOKIE['password'];
                 $passwordConfirm = $_COOKIE['password'];
             }else{
-                $password = $_POST['password'];   
-                $passwordConfirm = $_POST['password_confirm'];
-                $_SESSION['password_input'] = TRUE;
+                $_SESSION['password_input'] = "is";
             }
 
             $_SESSION['update'] = array(
@@ -127,10 +137,14 @@ class MyPageUpdateAction {
             $this->mailError = $validator->mailValidation($key, $mail);
             
             if(!$this->mailError){
+                $ExistingMail = $this->customerDto->getMail();
                 try{
-                    $this->mailError = $validator->checkMail($mail, $this->customerDto->getMail());
-                }catch(\PDOException $e){
-                    die('SQLエラー :'.$e->getMessage());
+                    $this->mailError = $validator->checkMail($mail, $ExistingMail);
+                    
+                } catch(\PDOException $e){
+                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                    die('エラー:データベースの処理に失敗しました。');
                 }
             }
 
@@ -144,7 +158,7 @@ class MyPageUpdateAction {
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
             if($validator->getResult()) {
-                $_SESSION['update']['input'] = "clear";
+                $_SESSION['update_data'] = "clear";
                 header('Location:/html/mypage/mypage_update_confirm.php');
                 exit();
             }
