@@ -8,14 +8,8 @@ use \Models\OriginalException;
 use \Config\Config;
 
 class OrderConfirmAction{
-        
-    public $cmd;
     
     public function execute(){        
-
-        //リロード対策
-        $_SESSION['cmd'] = "order_complete";
-        $this->cmd = $_SESSION['cmd'];
 
         $cmd = filter_input(INPUT_POST, 'cmd');
         
@@ -29,8 +23,7 @@ class OrderConfirmAction{
         /**-------------------------------------------------------
            前ページ情報をセッションへ格納
          ---------------------------------------------------------*/
-        if($cmd == "order_confirm"){
-
+        if($cmd == "order_confirm" && isset($_SESSION['cart'])){
             $var = 1;
             $totalPrice = 0; 
             $totalPayment = 0;
@@ -44,7 +37,6 @@ class OrderConfirmAction{
                 $totalTax += $_SESSION["cart"][$i]['tax'] * $_SESSION["cart"][$i]['item_count'];
                 $var++;
             }
-            var_dump($_SESSION['cart']);
             if($totalPayment >= Config::POSTAGEFREEPRICE){
                 $postage = 0;
             }else{
@@ -68,7 +60,6 @@ class OrderConfirmAction{
             $customerId = $_SESSION['customer_id'];   
         }
         
-        //cart.php以外からの訪問はリダイレクトでcart.phpへ
         if(!isset($_SESSION["order"])){
             header('Location:/html/cart.php');
             exit();

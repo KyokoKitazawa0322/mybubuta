@@ -140,7 +140,7 @@ $myPageDeliveryAdd->execute();
                         </div>
                     </div>
                     <div class="register_button_wrapper">
-                        <input class="btn_cmn_l btn_design_01" type="submit" value="配送先を保存する" name="cmd">
+                        <input class="btn_cmn_l btn_design_01" type="submit" value="配送先を保存する">
                         <input type="hidden" name="cmd" value="add">
                     </div> 
                 </form>

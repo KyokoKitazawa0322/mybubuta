@@ -31,7 +31,7 @@ $orderConfirm->execute();
                 </div>
                 <div class="main_contents_inner">
                     <div class="cart_item_box"> 
-                        <?php if(isset($_SESSION['isPay'])): ?>
+                        <?php if(isset($_SESSION['isPay']) && $_SESSION['isPay'] == "none"): ?>
                             <h4 style="color:red;">決済方法が未選択です。</h4>  
                         <?php endif;?>
                         <h3 class="ttl_cmn">配送先住所</h3>
@@ -135,8 +135,7 @@ $orderConfirm->execute();
                      <div class="cart_button_area">
                         <form action="order_complete.php" method="POST">
                             <input type="submit" class="btn_cmn_l btn_design_01" value="注文を確定する"/>
-<!--                            <input type="hidden" name="cmd" value="order_comp">-->
-                            <input type="hidden" name="cmd" value="<?=$orderConfirm->cmd; ?>"/>
+                            <input type="hidden" name="cmd" value="order_complete"/>
                         </form>
                     </div>
                 </div>

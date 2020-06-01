@@ -7,13 +7,10 @@ class RegisterCompleteAction{
           
     public function execute(){
         
-        if (isset($_POST['reload']) && $_SESSION['reload'] == $_POST['reload']) {
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        
+        if($cmd == "complete" && isset($_SESSION['register'])){
             
-            $_SESSION['reload'] = "";    
-
-                
-            $customerDao = new CustomerDao();
-
             $lastName = $_SESSION['register']['last_name'];
             $firstName = $_SESSION['register']['first_name'];
             $rubyLastName = $_SESSION['register']['ruby_last_name'];
@@ -28,6 +25,8 @@ class RegisterCompleteAction{
             $mail = $_SESSION['register']['mail'];
             $password = $_SESSION['register']['password'];
             
+            $customerDao = new CustomerDao();
+            
             try{
                 $customerDao->insertCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail);
             }catch(\PDOException $e){
@@ -41,7 +40,7 @@ class RegisterCompleteAction{
             }
             
             $_SESSION['customer_id'] = $customerDto->getCustomerId();
-            $_SESSION['register'] = NULL; 
+            unset($_SESSION['register']); 
         }else{
             header('Location:/html/item_list.php');
             exit();

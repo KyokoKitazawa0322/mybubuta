@@ -18,20 +18,16 @@ class OrderCompleteAction{
          }
 
         $cmd = filter_input(INPUT_POST, 'cmd');
+        
+        if($cmd == "order_complete" && isset($_SESSION['order'])){
        
-        //リロード防止
-        if($_SESSION['cmd'] == $cmd) {
-            //一致するならセッションデータ削除
-            $_SESSION['cmd'] = "";    
-            //以下、一致したとき（初回訪問）の処理
-            
+            //決済方法が選択されてなければリダイレクト
             if(!isset($_SESSION['order']['payment'])){
                 header('Location:/html/order/order_confirm.php');
                 $_SESSION['isPay'] = "none";
                 exit();
             }
-
-
+            
             $customerId = $_SESSION['customer_id'];
             $totalPayment = $_SESSION['order']['total_payment'];
             $totalAmount = $_SESSION['order']['total_amount'];
@@ -64,12 +60,12 @@ class OrderCompleteAction{
                     $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax);
                 }
 
-                $_SESSION['cart'] = NULL;
-                $_SESSION['order'] = NULL;
-                $_SESSION['delivery'] = NULL;
-                $_SESSION['def_addr'] = NULL;
-                $_SESSION['isPay'] = NULL;
-                $_SESSION['payType'] = NULL;
+                unset($_SESSION['cart']);
+                unset($_SESSION['order']);
+                unset($_SESSION['delivery']);
+                unset($_SESSION['def_addr']);
+                unset($_SESSION['isPay']);
+                unset($_SESSION['payType']);
 
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;

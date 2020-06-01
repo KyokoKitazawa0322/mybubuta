@@ -116,13 +116,13 @@ $registerConfirm->execute();
                         </div>
                         <div class="confirm_button_wrapper">
                             <div class="confirm_button_inner">
-                                <input class="btn_cmn_mid btn_design_03" name="cmd" type="button" onClick="location.href='/html/register/register.php'" value="前の画面に戻る"/>
+                                <input class="btn_cmn_mid btn_design_03" type="button" onClick="location.href='/html/register/register.php'" value="前の画面に戻る"/>
                             </div>
                             <form action="register_complete.php" method="POST">
                                 <div class="confirm_button_inner">
-                                    <input class="register_button btn_design_01" name="cmd" type="submit" value="この内容で登録する"/>
+                                    <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
                                 </div>
-                                <input type="hidden" name="reload" value="<?= $registerConfirm->getReloadOff();?>" />
+                                <input type="hidden" name="cmd" value="complete"/>
                             </form>
                         </div>  
                     </div>
