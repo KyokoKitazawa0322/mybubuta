@@ -39,7 +39,7 @@ $(function() {
             var item_select = $(".buy_itemu_menu").eq(i).next(".select_wrap").children("select").find("option:selected").data("num");
             //商品毎合計金額
             var item_total = '\xA5'+ separate(item_price * item_select) + "(税込)"; 
-            $(".item_price").eq(i).val(item_total);
+            $(".item_price").eq(i).html(item_total);
             //全商品分加算(合計金額/消費税額/商品点数) 
             price.push(item_price * item_select);
             amount.push(item_select);
@@ -74,16 +74,17 @@ $(function() {
             message.style.display = 'block';
             message.innerHTML = "あと"+difference+"円のご購入で送料無料";
         }
-
-        var taxDis = '\xA5' + separate(totalTax);
+        
+        var totalAmountDis = totalAmount+"点";
+        var totalTaxDis = '\xA5' + separate(totalTax);
         var taxIncludeTotalDis ='\xA5'+ separate(totalPrice); 
-        var total_paymentAll = '\xA5'+ separate(totalPrice + postage);
+        var totalPayment = '\xA5'+ separate(totalPrice + postage);
 
-        $(".total_amount").val(totalAmount);
-        $(".taxDis").val(taxDis);
-        $(".total_paymentDis").val(taxIncludeTotalDis);
-        $(".postageDis").val(postageDis);
-        $(".total_price").val(total_paymentAll);
+        $(".total_amount").html(totalAmountDis);
+        $(".total_tax").html(totalTaxDis);
+        $(".total_payment").html(taxIncludeTotalDis);
+        $(".postage").html(postageDis);
+        $(".total_price").html(totalPayment);
 
     }); 
 });     
@@ -130,7 +131,6 @@ function separate(num){
                             <?php 
                                 $var++;
                                 $item_total_price = $cart['item_price_with_tax']*$cart['item_count'];
-                                //全商品分加算(合計金額/消費税額/商品点数)
                                 $total_price += $cart['item_price_with_tax']*$cart['item_count'];
                                 $total_tax += $cart['tax']*$cart['item_count'];
                                 $total_amount += $cart['item_count']; 
@@ -161,9 +161,7 @@ function separate(num){
                                     <span>個</span>
                                     <dl class="mod_order_info mod_order_total">
                                         <dt>小計:</dt>
-                                        <dd>
-                                            <input type="text" class="item_price" value="&yen;<?= number_format($item_total_price)?>(税込)" readonly><span></span>
-                                        </dd>
+                                        <dd class="item_price">&yen;<?= number_format($item_total_price)?>(税込)</dd>
                                     </dl>
                                     <div class="cart_btn_wrap">
                                         <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?= $cart["item_code"]; ?>">あとで買う<br/>
@@ -184,18 +182,18 @@ function separate(num){
                                 <div class="payment_details">
                                     <dl class="mod_payment mod_payment_details">
                                         <dt>商品点数</dt>
-                                        <dd><input name="total_amount" class="total_amount" type="text" value="<?= $total_amount?>" readonly>点</dd>
+                                        <dd class="total_amount"><?= $total_amount?>点</dd>
                                         <dt>商品代金合計<span>(税込)</span></dt>
-                                        <dd><input class="total_paymentDis" type="text" value="&yen;<?= number_format($total_price)?>" readonly></dd>
+                                        <dd class="total_payment">&yen;<?= number_format($total_price)?></dd>
                                         <dt>送料</dt>
-                                        <dd><input class="postageDis" type="text" value="&yen;<?php if($total_price <= Config::POSTAGEFREEPRICE){echo Config::POSTAGE;}else{echo 0;}?>" readonly></dd>
+                                        <dd class="postage">&yen;<?php if($total_price <= Config::POSTAGEFREEPRICE){echo Config::POSTAGE;}else{echo 0;}?></dd>
                                         <dt>内消費税</dt>
-                                        <dd><input type="text" class="taxDis" value="&yen;<?= number_format($total_tax);?>" readonly></dd>
+                                        <dd class="total_tax">&yen;<?= number_format($total_tax);?></dd>
                                     </dl>
                                     <div class="payment_total">
                                         <dl class="mod_payment mod_payment_total">
                                             <dt>ご注文合計</dt>
-                                            <dd><input class="total_price" type="text" value="&yen;<?php if($total_price <= Config::POSTAGEFREEPRICE){echo number_format($total_price + Config::POSTAGE);}else{echo number_format($total_price);}?>" readonly></dd>
+                                            <dd class="total_price">&yen;<?php if($total_price <= Config::POSTAGEFREEPRICE){echo number_format($total_price + Config::POSTAGE);}else{echo number_format($total_price);}?></dd>
                                         </dl>
                                     </div>
                                 </div>              
