@@ -40,11 +40,11 @@ class OrderConfirmAction{
             for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
                 $_SESSION["cart"][$i]['item_count'] = $_POST["cart{$var}"];
                 $totalAmount += $_SESSION["cart"][$i]['item_count']; 
-                $totalPayment = $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
+                $totalPayment += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
                 $totalTax += $_SESSION["cart"][$i]['tax'] * $_SESSION["cart"][$i]['item_count'];
                 $var++;
             }
-            
+            var_dump($_SESSION['cart']);
             if($totalPayment >= Config::POSTAGEFREEPRICE){
                 $postage = 0;
             }else{
