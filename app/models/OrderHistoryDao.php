@@ -65,7 +65,7 @@ class OrderHistoryDao extends \Models\Model{
             $stmt->bindvalue(8, $address, \PDO::PARAM_STR);
             $stmt->bindvalue(9, $post, \PDO::PARAM_STR);
             $stmt->bindvalue(10,$tel, \PDO::PARAM_STR);
-            $result = $stmt->execute();
+            $stmt->execute();
             
             $count = $stmt->rowCount();
             if($count<1){

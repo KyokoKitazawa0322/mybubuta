@@ -136,7 +136,7 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(12, $mail, \PDO::PARAM_STR);
             $stmt->bindvalue(13, $hash_pass);
             $stmt->bindvalue(14, $delFlag);
-            $res = $stmt->execute();
+            $stmt->execute();
             
             $count = $stmt->rowCount();
             if($count<1){
@@ -192,7 +192,7 @@ class CustomerDao extends \Models\Model{
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->bindvalue(1, $delFlag, \PDO::PARAM_INT);
                 $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-                $res = $stmt->execute();  
+                $stmt->execute();  
                 $count = $stmt->rowCount();
                 if($count<1){
                     throw new OriginalException('更新に失敗しました。',222);
@@ -215,7 +215,7 @@ class CustomerDao extends \Models\Model{
             $sql = "DELETE from customers where customer_id = ?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
-            $res = $stmt->execute();
+            $stmt->execute();
             $count = $stmt->rowCount();
             if($count<1){
                 throw new OriginalException('削除に失敗しました。',333);
@@ -294,7 +294,7 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(12, $mail, \PDO::PARAM_STR);
             $stmt->bindvalue(13, $hash_pass);
             $stmt->bindvalue(14, $customerId);
-            $res = $stmt->execute();
+            $stmt->execute();
             $count = $stmt->rowCount();
             if($count<1){
                 throw new OriginalException('更新に失敗しました。',222);

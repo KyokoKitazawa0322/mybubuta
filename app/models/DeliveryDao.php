@@ -73,7 +73,7 @@ class DeliveryDao extends \Models\Model{
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
             $stmt->bindvalue(12, $customerId);
             $stmt->bindvalue(13, "1");
-            $result = $stmt->execute();
+            $stmt->execute();
             
             $count = $stmt->rowCount();
             if($count<1){
@@ -121,7 +121,7 @@ class DeliveryDao extends \Models\Model{
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
             $stmt->bindvalue(12, $customerId, \PDO::PARAM_INT);
             $stmt->bindvalue(13, $deliveryId, \PDO::PARAM_INT);
-            $result = $stmt->execute();
+            $stmt->execute();
             
             $count = $stmt->rowCount();
             if($count<1){
