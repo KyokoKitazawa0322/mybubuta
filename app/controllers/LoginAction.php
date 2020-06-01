@@ -44,7 +44,7 @@ class LoginAction{
                 }else{
                     //③ログイン成功した際の処理    
                     session_regenerate_id(true);
-                    inset($_SESSION['login_error']);
+                    unset($_SESSION['login_error']);
                     $_SESSION['customer_id'] = $customer->getCustomerId();
                     setcookie('mail','',time()-3600,'/');
                     setcookie('password','',time()-3600,'/');

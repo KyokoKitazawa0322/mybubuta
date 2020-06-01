@@ -2,6 +2,7 @@
 namespace Controllers;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\OriginalException;
 use \Config\Config;
 
 class ItemListAction {
@@ -71,16 +72,22 @@ class ItemListAction {
         }
         
         if(!$sortKey){
-            $sortKey = "03";//"ORDER BY item_insert_date asc"
+            $sortKey = "04";//"ORDER BY item_insert_date asc"
         }
 
         try{
             $this->items = $dao->searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
             $this->topItems = $dao->selectItemsRank();
+       
         } catch(\PDOException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');  
+            die('エラー:データベースの処理に失敗しました。');
+
+        }catch(OriginalException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+            header('Content-Type: text/plain; charset=UTF-8', true, 400);
+            die('エラー:'.$e->getMessage());
         }
     }
     

@@ -5,6 +5,8 @@ use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
 use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
+use \Models\itemsDao;
+use \Models\itemsDto;
 use \Models\OriginalException;
 use \Config\Config;
 
@@ -42,7 +44,8 @@ class OrderCompleteAction{
 
             $orderHistoryDao = new OrderHistoryDao();
             $orderDetailDao = new OrderDetailDao();
-
+            $itemsDao = new ItemsDao();
+                
             try{
                 $orderHistoryDao->insertOrderHistory($customerId, $totalPayment, $totalAmount, $tax, $postage, $payment, $name, $address, $post, $tel);
 
@@ -58,6 +61,7 @@ class OrderCompleteAction{
                     $itemPrice = $item['item_price'];
                     $itemTax = $item['tax'];
                     $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax);
+                    $itemsDao->insertItemSales($itemCount, $itemCode);
                 }
                 unset($_SESSION['cart']);
                 unset($_SESSION['order']);

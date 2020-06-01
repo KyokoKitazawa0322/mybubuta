@@ -38,7 +38,8 @@ CREATE TABLE items (
 	item_detail    varchar(255),          -- 詳細説明
     item_stock     int(11),               -- 在庫
 	item_del_flag  int(1),                -- 削除フラグ
-	item_insert_date datetime             -- 登録日
+	item_insert_date datetime             -- 登録日,
+    item_sales     int(11)                -- 売上個数
 );
 
 
@@ -76,8 +77,8 @@ CREATE TABLE order_detail (
 drop table if exists favorite;
 CREATE TABLE favorite (
     favorite_id    int not null auto_increment primary key, 
-	item_code      varchar(6),  -- 商品コード
-	customer_id    int
+	item_code      varchar(6) not null,  -- 商品コード
+	customer_id    int not null
 );
 
 drop table if exists delivery;

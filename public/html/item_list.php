@@ -66,7 +66,8 @@ $(function() {
                                 <select name="sortkey" class="sortkey" onchange="submit(this.form)">
                                     <option value="01" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="01"){echo "selected";} ?>>価格の安い順</option>
                                     <option value="02" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="02"){echo "selected";} ?>>価格の高い順</option>
-                                    <option value="03" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="03" || !isset($_GET['sortkey'])){echo "selected";}?>>新着順</option>
+                                    <option value="03" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="03" || !isset($_GET['sortkey'])){echo "selected";}?>>人気順</option>
+                                    <option value="04" <?php if(isset($_GET['sortkey']) && $_GET['sortkey']=="04" || !isset($_GET['sortkey'])){echo "selected";}?>>新着順</option>
                                 </select>
                             </div>
                         </form>
