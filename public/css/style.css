@@ -1422,13 +1422,6 @@ body {
     font-size: 1.2rem;   
 }
 
-.mod_payment_details input{
-    line-height: 36px;
-    height: 36px;
-    text-align: right;
-    font-size: 1.8rem;
-}
-
 .mod_payment {
     overflow: hidden;   
 }
@@ -1438,30 +1431,6 @@ body {
     margin-top: 10px;
     padding: 15px 0 8px;
     border-top: 1px solid #000;
-}
-
-.mod_payment_total input{
-    height: 24px;
-    text-align: right;
-    font-size: 2.4rem;
-}
-
-.mod_order_info input {
-    border: none;
-    background-color: transparent;
-    float: left;
-    width: 140px;
-    height: 28px;
-    font-size: 1.8rem;
-    color: #555;
-}
-
-.payment_box input{
-    border: none;   
-    background-color: #F7F7F7;
-    width: 100px;
-    float: left;
-    color: #555;
 }
 
 .cart_button_area {
