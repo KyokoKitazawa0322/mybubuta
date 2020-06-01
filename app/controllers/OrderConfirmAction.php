@@ -9,13 +9,13 @@ use \Config\Config;
 
 class OrderConfirmAction{
         
-    public $reload_off;
+    public $cmd;
     
     public function execute(){        
 
         //リロード対策
-        $_SESSION['reload'] = "first";
-        $this->reload_off = $_SESSION['reload'];
+        $_SESSION['cmd'] = "order_complete";
+        $this->cmd = $_SESSION['cmd'];
 
         $cmd = filter_input(INPUT_POST, 'cmd');
         
@@ -33,14 +33,15 @@ class OrderConfirmAction{
 
             $var = 1;
             $totalPrice = 0; 
-            $totalPayment = 0; 
+            $totalPayment = 0;
+            $totalAmount = 0;
             $totalTax = 0;
             
             for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
                 $_SESSION["cart"][$i]['item_count'] = $_POST["cart{$var}"];
                 $totalAmount += $_SESSION["cart"][$i]['item_count']; 
-                $totalPayment = $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count']
-                $totalTax += $_SESSION["cart"][$i]['tax'] * $_SESSION["cart"][$i]['item_count']
+                $totalPayment = $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
+                $totalTax += $_SESSION["cart"][$i]['tax'] * $_SESSION["cart"][$i]['item_count'];
                 $var++;
             }
             
@@ -53,8 +54,8 @@ class OrderConfirmAction{
             $_SESSION['order'] = array(
                 'total_amount' => $totalAmount,  
                 'total_payment' => $totalPayment,
-                'tax' => $tax
-                'postage' => $postage,
+                'tax' => $totalTax,
+                'postage' => $postage
             );
         }
         

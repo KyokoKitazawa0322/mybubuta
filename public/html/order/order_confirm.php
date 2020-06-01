@@ -135,8 +135,8 @@ $orderConfirm->execute();
                      <div class="cart_button_area">
                         <form action="order_complete.php" method="POST">
                             <input type="submit" class="btn_cmn_l btn_design_01" value="注文を確定する"/>
-                            <input type="hidden" name="cmd" value="order_comp">
-                            <input type="hidden" name="reload" value="<?=$orderConfirm->reload_off; ?>"/>
+<!--                            <input type="hidden" name="cmd" value="order_comp">-->
+                            <input type="hidden" name="cmd" value="<?=$orderConfirm->cmd; ?>"/>
                         </form>
                     </div>
                 </div>

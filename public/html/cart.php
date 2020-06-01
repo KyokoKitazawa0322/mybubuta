@@ -1,7 +1,7 @@
 <?php
 require_once (__DIR__ ."/../../vendor/autoload.php");
 
-/*session_cache_limiter('none');*/
+session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
@@ -47,9 +47,9 @@ $(function() {
         } 
         
         //合計金額
-        var total = 0;
+        var totalPrice = 0;
         for(var i = 0; i < price.length; i++){
-            total += price[i];
+            totalPrice += price[i];
         }
         //合計点数
         var totalAmount = 0;
@@ -61,29 +61,24 @@ $(function() {
         for(var i = 0; i < tax.length; i++){
             totalTax += tax[i];
         }
-        var postagefreeprice = <?= Config::POSTAGEFREEPRICE?>;
+        var postageFreePrice = <?= Config::POSTAGEFREEPRICE?>;
         var message = document.getElementById("postage_message");
-        if(total >= postagefreeprice){
+        if(totalPrice >= postageFreePrice){
             var postage = 0;
             var postageDis = '\xA5' + 0;
             message.style.display = 'none';
         }else{
             var postage = <?= Config::POSTAGE?>;
             var postageDis = '\xA5' + <?= Config::POSTAGE?>;
-            var totalPayment = document.getElementById('total_payment').value; 
-            var difference = postagefreeprice - total;
+            var difference = postageFreePrice - totalPrice;
             message.style.display = 'block';
             message.innerHTML = "あと"+difference+"円のご購入で送料無料";
         }
 
         var taxDis = '\xA5' + separate(totalTax);
-        var taxInludeTotalDis ='\xA5'+ separate(total); 
-        var total_paymentAll = '\xA5'+ separate(total+postage);
-        //POST送信用
-/*      $(".total_tax").val(totalTax);
-        $(".postage").val(postage);
-        $(".total_payment").val(total);    */
-        //表示用
+        var taxIncludeTotalDis ='\xA5'+ separate(totalPrice); 
+        var total_paymentAll = '\xA5'+ separate(totalPrice + postage);
+
         $(".total_amount").val(totalAmount);
         $(".taxDis").val(taxDis);
         $(".total_paymentDis").val(taxIncludeTotalDis);
@@ -101,18 +96,6 @@ function separate(num){
         return separate(num.substring(0,len-3))+','+num.substring(len-3);
     } else {
         return num;
-    }
-}
-    
-window.onload = function(){
-    var postagefreeprice = <?= Config::POSTAGEFREEPRICE?>;
-    var totalPayment = document.getElementById('total_payment').value; 
-    var difference = postagefreeprice - totalPayment;
-    if(totalPayment >= postagefreeprice){  
-        document.getElementById('postage_message').style.display = 'none';
-    }else{
-        var message = document.getElementById("postage_message");
-        message.innerHTML = "あと"+difference+"円で送料無料";
     }
 }
 // --> 
@@ -196,6 +179,7 @@ window.onload = function(){
                         <div class="box-shipping-sub">
                             <div class="payment_box">
                                 <p id="postage_message">
+                                   <?php if($total_price <= Config::POSTAGEFREEPRICE){echo "あと".(Config::POSTAGEFREEPRICE - $total_price)."円のご購入で送料無料";}?>
                                 </p>
                                 <div class="payment_details">
                                     <dl class="mod_payment mod_payment_details">
