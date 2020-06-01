@@ -59,14 +59,15 @@ class OrderCompleteAction{
                     $itemTax = $item['tax'];
                     $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax);
                 }
-
                 unset($_SESSION['cart']);
                 unset($_SESSION['order']);
                 unset($_SESSION['delivery']);
                 unset($_SESSION['def_addr']);
                 unset($_SESSION['isPay']);
                 unset($_SESSION['payType']);
-
+                unset($_SESSION['pay_error']);
+                unset($_SESSION['cmd']);
+    
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);

@@ -44,6 +44,7 @@ class LoginAction{
                 }else{
                     //③ログイン成功した際の処理    
                     session_regenerate_id(true);
+                    inset($_SESSION['login_error']);
                     $_SESSION['customer_id'] = $customer->getCustomerId();
                     setcookie('mail','',time()-3600,'/');
                     setcookie('password','',time()-3600,'/');
@@ -60,7 +61,7 @@ class LoginAction{
                     //②非ログイン状態でカートからレジに進むボタンをおした後ログイン
                     elseif(isset($_SESSION['order_flag']) && $_SESSION['order_flag'] == "is"){
                         //購入確認画面へ移動
-                        $_SESSION['order_flag'] = NULL;
+                        unset($_SESSION['order_flag']);
                         header("Location:/html/order/order_confirm.php");
                         exit();
                     }

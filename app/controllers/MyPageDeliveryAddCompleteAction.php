@@ -59,7 +59,7 @@ class MyPageDeliveryAddCompleteAction {
             //order_delivery_listからきた場合
             if(isset($_SESSION['from_order_flag'])){
                 header('Location:/html/order/order_delivery_list.php');
-                $_SESSION['from_order_flag']=NULL;
+                unset($_SESSION['from_order_flag']);
                 exit();
             }
         }
