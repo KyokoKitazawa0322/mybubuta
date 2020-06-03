@@ -24,8 +24,14 @@ class Config{
         error_log($message);
     }
 
-    function h($s){
+    public static function h($s){
       return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+    }
+    
+    public static function getDateTime(){
+        date_default_timezone_set('Asia/Tokyo');
+        $dateTime = date("Y/m/d H:i:s");
+        return $dateTime;
     }
 }
 ?>
