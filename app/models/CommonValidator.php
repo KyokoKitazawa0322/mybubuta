@@ -40,7 +40,7 @@ class CommonValidator {
         $stmt->bindvalue(1, $mail);
         $stmt->execute();
         if($result = $stmt->fetch()){
-            if($result['customer_id'] !== $customerId){
+            if($result['customer_id'] != $customerId){
                 $error = "既に使用されているメールアドレスです。";
             }
         }
@@ -93,7 +93,7 @@ class CommonValidator {
         $error = false;
         $customerDao = new \Models\CustomerDao();
         $customerDto = $customerDao->checkMailExists($mail);
-        if($customerDto && $customerDto->getMail() !== $customerMail){
+        if($customerDto && $customerDto->getMail() != $customerMail){
             $error =  "既に使用されているメールアドレスです。";
             $this->result = false;     
         }
@@ -157,7 +157,7 @@ class CommonValidator {
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = false;
-        }elseif($value !== $confirm){
+        }elseif($value != $confirm){
             $error = $key.'が一致しません。';
             $this->result = false;
         }

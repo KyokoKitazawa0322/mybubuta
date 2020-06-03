@@ -2,6 +2,7 @@
 namespace Models;
 use \Models\OrderHistoryDto;
 use \Models\OriginalException;
+use \Config\Config;
     
 class OrderHistoryDao extends \Models\Model{
     
@@ -20,11 +21,11 @@ class OrderHistoryDao extends \Models\Model{
         $dto = new OrderHistoryDto();
         
         $dto->setOrderId($res['order_id']);
-        $dto->setTotalPayment($res['total_payment']);
         $dto->setTotalAmount($res['total_amount']);
+        $dto->setTotalQuantity($res['total_quantity']);
         $dto->setTax($res['tax']); 
         $dto->setPostage($res['postage']); 
-        $dto->setPayment($res['payment']); 
+        $dto->setPaymentTerm($res['payment_term']); 
         $dto->setDeliveryName($res['delivery_name']); 
         $dto->setDeliveryPost($res['delivery_post']); 
         $dto->setDeliveryAddr($res['delivery_addr']); 
@@ -37,11 +38,11 @@ class OrderHistoryDao extends \Models\Model{
     /**
      * 購入履歴の登録
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @param string $totalPayment　合計金額
-     * @param string $totalAmount　合計点数
+     * @param string $totalAmount　合計金額
+     * @param string $totalQuantity　合計点数
      * @param string $tax　消費税額
      * @param string $postage　送料(自動計算)
-     * @param string payment　支払い方法(選択)
+     * @param string paymentTerm　支払い方法(選択)
      * @param string $delivery_name　入力されたユーザーの名前
      * @param string $address　ユーザーの住所(郵便番号以外)
      * @param string $post　ユーザの郵便番号
@@ -49,22 +50,26 @@ class OrderHistoryDao extends \Models\Model{
      * @throws PDOException 
      * @throws OriginalException(登録失敗時:code444)
      */
-    public function insertOrderHistory($customerId, $totalPayment, $totalAmount, $tax, $postage, $payment, $name, $address, $post, $tel){
+    public function insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel){
+        
+        $dateTime = Config::getDateTime();
         
         try{
-            $sql ="insert into order_history(customer_id, total_payment, total_amount, tax, postage, payment, delivery_name, delivery_addr, delivery_post, delivery_tel, purchase_date)values(?,?,?,?,?,?,?,?,?,?,now())";
+            $sql ="insert into order_history(customer_id, total_amount, total_quantity, tax, postage, payment_term, delivery_name, delivery_addr, delivery_post, delivery_tel, purchase_date)values(?,?,?,?,?,?,?,?,?,?,?)";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
-            $stmt->bindvalue(2, $totalPayment, \PDO::PARAM_INT);
-            $stmt->bindvalue(3, $totalAmount, \PDO::PARAM_INT);
+            $stmt->bindvalue(2, $totalAmount, \PDO::PARAM_INT);
+            $stmt->bindvalue(3, $totalQuantity, \PDO::PARAM_INT);
             $stmt->bindvalue(4, $tax, \PDO::PARAM_INT);
             $stmt->bindvalue(5, $postage, \PDO::PARAM_INT);
-            $stmt->bindvalue(6, $payment, \PDO::PARAM_STR);
+            $stmt->bindvalue(6, $paymentTerm, \PDO::PARAM_STR);
             $stmt->bindvalue(7, $name, \PDO::PARAM_STR);
             $stmt->bindvalue(8, $address, \PDO::PARAM_STR);
             $stmt->bindvalue(9, $post, \PDO::PARAM_STR);
-            $stmt->bindvalue(10,$tel, \PDO::PARAM_STR);
+            $stmt->bindvalue(10, $tel, \PDO::PARAM_STR);
+            $stmt->bindvalue(11, $dateTime, \PDO::PARAM_STR);
+                
             $stmt->execute();
             
             $count = $stmt->rowCount();
@@ -87,7 +92,7 @@ class OrderHistoryDao extends \Models\Model{
     public function  getAllOrderHistory($customerId){
             
         try{
-            $sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_payment, payment FROM order_history where customer_id = ? order by purchase_date DESC";
+            $sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_amount, payment_term FROM order_history where customer_id = ? order by purchase_date DESC";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
@@ -98,8 +103,8 @@ class OrderHistoryDao extends \Models\Model{
                 foreach($res as $row){
                     $dto = new OrderHistoryDto();
                     $dto->setOrderId($row['order_id']);
-                    $dto->setTotalPayment($row['total_payment']);
-                    $dto->setPayment($row['payment']); 
+                    $dto->setTotalAmount($row['total_amount']);
+                    $dto->setPaymentTerm($row['payment_term']); 
                     $dto->setPurchaseDate($row['date']); 
                     $orders[] = $dto;
                 }

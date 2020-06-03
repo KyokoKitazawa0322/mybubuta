@@ -21,7 +21,10 @@ class MyPageLeaveAction {
             $customerId = $_SESSION['customer_id'];   
         }
         
-        //削除ボタンがおされたときの処理
+        /*====================================================================
+         削除ボタンがおされたときの処理
+        =====================================================================*/
+ 
         if($cmd == "leave"){
             
             $memPwd = filter_input(INPUT_POST, 'memPwd');
@@ -29,7 +32,19 @@ class MyPageLeaveAction {
             
             try{
                 $customerDto = $customerDao->getCustomerById($customerId);
-            
+                $hashPassword = $customerDto->getHashPassword();
+                
+                if(!password_verify($memPwd, $hashPassword)){
+                    echo 'パスワードが正しくありません。';
+                }else{
+                    $customerDao->deleteCustomerInfo($customerId);
+                    unset($_SESSION['customer_id']);
+                    unset($_COOKIE['password']);
+                    unset($_COOKIE['mail']);
+                    header('Location:/html/mypage/leave_complete.php');
+                    exit();
+                }
+
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
                 header('Content-Type: text/plain; charset=UTF-8', true, 500);
@@ -40,31 +55,7 @@ class MyPageLeaveAction {
                 header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 die('エラー:'.$e->getMessage());
             }
-            
-            $hashPassword = $customerDto->getHashPassword();
-            
-            if(!password_verify($memPwd, $hashPassword)){
-                echo 'パスワードが正しくありません。';
-            }else{
-                try{
-                    $customerDao->deleteCustomerInfo($customerId);
-                    $_SESSION['customer_id'] = NULL;
-                    $_COOKIE['password'] = NULL;
-                    $_COOKIE['mail'] = NULL;
-                    header('Location:/html/mypage/leave_complete.php');
-                    exit();
-                    
-                } catch(\PDOException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
-
-                }catch(OriginalException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                    die('エラー:'.$e->getMessage());
-                }
-            }
+        
         }
     }
 }

@@ -37,9 +37,9 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                                 <dt>ご注文番号 :</dt>
                                 <dd><?= $order->getOrderId();?></dd>
                                 <dt>ご注文金額 :</dt>
-                                <dd>&yen;<?= number_format($order->getTotalPayment())?></dd>
+                                <dd>&yen;<?= number_format($order->getTotalAmount())?></dd>
                                 <dt>決済方法 :</dt>
-                                <dd><?= $order->getPayment();?></dd>
+                                <dd><?= $order->getPaymentTerm();?></dd>
                             </dl>
                         </div>
                         <div class="order_detail_box">
@@ -71,16 +71,16 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                                                     &yen;<?= number_format($detail->getitemPriceWithTax());?>(税込)
                                                 </dd>
                                             </dl>
-                                            <dl class="buy_item_amount mod_order_info">
+                                            <dl class="buy_item_quantity mod_order_info">
                                                 <dt>数量:</dt>
                                                 <dd>
-                                                    <?= $detail->getItemCount(); ?>個
+                                                    <?= $detail->getItemQuantity(); ?>個
                                                 </dd>
                                             </dl>
                                             <dl class="mod_order_info mod_order_total">
                                                 <dt>小計:</dt>
                                                 <dd>
-                                                    &yen;<?= number_format($detail->getTotalPrice());?>(税込)
+                                                    &yen;<?= number_format($detail->getTotalAmount());?>(税込)
                                                 </dd>
                                             </dl>
                                         </div>
@@ -94,9 +94,9 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                             <div class="payment_details">
                                 <dl class="mod_payment mod_payment_details">
                                     <dt>商品点数</dt>
-                                    <dd><?= $order->getTotalAmount();?>点</dd>
+                                    <dd><?= $order->getTotalQuantity();?>点</dd>
                                     <dt>商品代金合計(税込)</dt>
-                                    <dd>&yen;<?= number_format($order->getTotalPayment());?></dd>
+                                    <dd>&yen;<?= number_format($order->getTotalAmount());?></dd>
                                     <dt>送料</dt>
                                     <dd>&yen;<?= $order->getPostage();?></dd>
                                     <dt>内消費税</dt>
@@ -105,7 +105,7 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                                 <div class="payment_total">
                                     <dl class="mod_payment mod_payment_total">
                                         <dt>ご注文合計</dt>
-                                        <dd>&yen;<?= number_format($order->getTotalPayment() + $order->getPostage());?></dd>
+                                        <dd>&yen;<?= number_format($order->getTotalAmount() + $order->getPostage());?></dd>
                                     </dl>
                                 </div>
                             </div>

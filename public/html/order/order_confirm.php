@@ -77,7 +77,7 @@ $orderConfirm->execute();
                         <div class="shipping_box_wrap">                        
                         <?php
                             foreach($_SESSION["cart"] as $cart) {
-                            $item_total_price = $cart['item_price_with_tax'] * $cart['item_count'];
+                            $item_total_price = $cart['item_price_with_tax'] * $cart['item_quantity'];
                         ?>
                             <div class="cart_item">
                                 <div class="cart_item_img">
@@ -93,10 +93,10 @@ $orderConfirm->execute();
                                             &yen;<?= number_format($cart["item_price_with_tax"]); ?>(税込)
                                         </dd>
                                     </dl>
-                                    <dl class="buy_item_amount mod_order_info">
+                                    <dl class="buy_item_quantity mod_order_info">
                                         <dt>数量:</dt>
                                         <dd>
-                                            <?= $cart['item_count']; ?>個
+                                            <?= $cart['item_quantity']; ?>個
                                         </dd>
                                     </dl>
                                     <dl class="mod_order_info mod_order_total">
@@ -115,9 +115,9 @@ $orderConfirm->execute();
                             <div class="payment_details">
                                 <dl class="mod_payment mod_payment_details">
                                     <dt>商品点数</dt>
-                                    <dd><?= $_SESSION['order']['total_amount']; ?>点</dd>
+                                    <dd><?= $_SESSION['order']['total_quantity']; ?>点</dd>
                                     <dt>商品代金合計(税込)</dt>
-                                    <dd>&yen;<?= number_format($_SESSION['order']['total_payment']);?></dd>
+                                    <dd>&yen;<?= number_format($_SESSION['order']['total_amount']);?></dd>
                                     <dt>送料</dt>
                                     <dd>&yen;<?= $_SESSION['order']['postage'];?></dd>
                                     <dt>内消費税</dt>
@@ -126,7 +126,7 @@ $orderConfirm->execute();
                                 <div class="payment_total">
                                     <dl class="mod_payment mod_payment_total">
                                         <dt>ご注文合計</dt>
-                                        <dd>&yen;<?= number_format($_SESSION['order']['total_payment']+$_SESSION['order']['postage']);?></dd>
+                                        <dd>&yen;<?= number_format($_SESSION['order']['total_amount']+$_SESSION['order']['postage']);?></dd>
                                     </dl>
                                 </div>
                             </div>

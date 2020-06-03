@@ -7,7 +7,7 @@ class MyPageAction {
         $cmd = filter_input(INPUT_POST, 'cmd');
 
         if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = null;
+            unset($_SESSION['customer_id']);
         }
         
         if(!isset($_SESSION["customer_id"])){

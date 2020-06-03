@@ -76,26 +76,26 @@ $register->execute();
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号*</p>
                                 <div class="addr01_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getAddress01Error()){echo "error_box";}?>" type="tel" name="address01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['address01']);}?>">
+                                    <input class="form_input_item <?php if($register->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['zip_code_01']);}?>">
                                 </div>
                                 <span class="txt_dash">―</span>
                                 <div class="addr01_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getAddress02Error()){echo "error_box";}?>" type="tel" name="address02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['address02']);}?>">
+                                    <input class="form_input_item <?php if($register->getZipCode02Error()){echo "error_box";}?>" type="tel" name="zip_code_02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['zip_code_02']);}?>">
                                 </div>
-                                <?php if($register->getAddress01Error()):?>
-                                    <p class="error_txt memo zip_memo"><?= $register->getaddress01Error(); ?></p>
+                                <?php if($register->getZipCode01Error()):?>
+                                    <p class="error_txt memo zip_memo"><?= $register->getZipCode01Error(); ?></p>
                                 <?php endif; ?>
-                                <?php if($register->getAddress02Error()):?>
-                                    <p class="error_txt memo"><?= $register->getaddress02Error(); ?></p>
+                                <?php if($register->getZipCode02Error()):?>
+                                    <p class="error_txt memo"><?= $register->getZipCode02Error(); ?></p>
                                 <?php endif; ?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県*</p>
                                 <div class="add_list_wrapper">
-                                    <select class="add_list <?php if($register->getAddress03Error()){echo "error_box";}?>" id="add03" name="address03">
+                                    <select class="add_list <?php if($register->getPrefectureError()){echo "error_box";}?>" id="add03" name="prefecture">
                                         <option value="">都道府県を選択して下さい</option>
                                         <?php foreach(Config::PREFECTURES as $kenmei):?>
-                                            <?php if(isset($_SESSION['register']) && $_SESSION['register']['address03'] == $kenmei):?>
+                                            <?php if(isset($_SESSION['register']) && $_SESSION['register']['prefecture'] == $kenmei):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                             <?php else:?>
                                             <option  value="<?=$kenmei?>"><?=$kenmei?></option>
@@ -103,30 +103,30 @@ $register->execute();
                                         <?php endforeach;?>
                                     </select>
                                 </div>		
-                            <?php if($register->getAddress03Error()):?>
-                                <p class="error_txt memo"><?= $register->getaddress03Error(); ?></p>
+                            <?php if($register->getPrefectureError()):?>
+                                <p class="error_txt memo"><?= $register->getPrefectureError(); ?></p>
                             <?php endif; ?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村*</p>
-                                <input class="form_input_item <?php if($register->getAddress04Error()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="address04"  value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['address04']);}?>">
-                                <?php if($register->getAddress04Error()):?>
-                                    <p class="error_txt memo"><?= $register->getaddress04Error(); ?></p>
+                                <input class="form_input_item <?php if($register->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city"  value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['city']);}?>">
+                                <?php if($register->getCityError()):?>
+                                    <p class="error_txt memo"><?= $register->getCityError(); ?></p>
                                 <?php endif; ?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地*</p>
-                                <input class="form_input_item <?php if($register->getAddress05Error()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="address05" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['address05']);}?>">
+                                <input class="form_input_item <?php if($register->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['block_number']);}?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>	
-                                    <?php if($register->getAddress05Error()):?>
-                                        <p class="error_txt memo"><?= $register->getaddress05Error(); ?></p>
+                                    <?php if($register->getBlockNumberError()):?>
+                                        <p class="error_txt memo"><?= $register->getBlockNumberError(); ?></p>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <input class="form_input_item" type="text" maxlength="100" name="address06" id="add06" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['address06']);}?>">
+                                <input class="form_input_item" type="text" maxlength="100" name="building_name" id="add06" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['building_name']);}?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
 

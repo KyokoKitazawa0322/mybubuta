@@ -7,7 +7,7 @@ session_start();
 $itemList = new \Controllers\ItemListAction();
 $itemList->execute();
 $items = $itemList->getItems();
-$topITems = $itemList->getTopItems(); 
+$topItems = $itemList->getTopItems(); 
 ?>
 
 <!DOCTYPE html>
@@ -77,7 +77,7 @@ $(function() {
                     <?php if(!(isset($_GET["cmd"]) && $_GET['cmd'] == "do_search") && !isset($_GET["sortkey"])): ?>
                     <ul class="item_list_rank">
                         <h3>人気ランキング</h3>
-                        <?php $i=0; foreach($topITems as $item): $i++;?>
+                        <?php $i=0; foreach($topItems as $item): $i++;?>
                         <li class="products <?php if($i=='5'){echo "rank05";}?>">
                             <div class="product_inner">
                                 <span>No.<?= $i?></span>

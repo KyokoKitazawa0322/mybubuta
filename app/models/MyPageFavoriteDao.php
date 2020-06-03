@@ -18,7 +18,7 @@ class MyPageFavoriteDao extends \Models\Model {
      */
     public function getFavoriteAll($customerId){
         try{
-            $sql = "select  items.item_code, items.item_name, items.item_image, items.item_price, items.tax FROM items left join favorite on items.item_code = favorite.item_code where favorite.customer_id = ?";
+            $sql = "select  items.item_code, items.item_name, items.item_image, items.item_price, items.item_tax FROM items left join favorite on items.item_code = favorite.item_code where favorite.customer_id = ?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId);  
@@ -32,7 +32,7 @@ class MyPageFavoriteDao extends \Models\Model {
                     $dto->setItemName($row['item_name']);
                     $dto->setItemImage($row['item_image']);
                     $dto->setItemPrice($row['item_price']);
-                    $dto->setTax($row['tax']);
+                    $dto->setItemTax($row['item_tax']);
                     $items[] = $dto; 
                 }
                 return $items;

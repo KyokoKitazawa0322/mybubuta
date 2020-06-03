@@ -7,7 +7,7 @@ class RegisterConfirmAction{
         
     public function execute(){
         
-        if($_SESSION['register']['input'] !== "complete"){
+        if($_SESSION['register']['input'] != "complete"){
             header('Location:/html/item_list.php');
         }
     }

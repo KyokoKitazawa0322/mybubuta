@@ -1112,7 +1112,7 @@ body {
     font-weight: bold;
 }
 
-#item_detail .item_count_sl {
+#item_detail .item_quantity_sl {
     width: 60px;
 }
 
@@ -1331,7 +1331,7 @@ body {
     margin-bottom: 8px;
 }
 
-#cart .item_count {
+#cart .item_quantity {
     width: 60px;    
 }
 
@@ -1562,7 +1562,7 @@ body {
     height: 1.2rem;
 }
   
-#cart .item_count {
+#cart .item_quantity {
     height: 26px;
 }
     
@@ -2452,11 +2452,11 @@ body {
     font-size: 2.0rem;
 }
 
-#order_confirm .mod_order_total dd, .buy_item_amount dd {
+#order_confirm .mod_order_total dd, .buy_item_quantity dd {
     float: left;
 }
 
-.buy_item_amount {
+.buy_item_quantity {
     position: absolute;
     bottom: 14px;
     font-size: 2.0rem; 
@@ -2490,7 +2490,7 @@ body {
     margin-right: 2px;
 }
     
-.buy_item_amount, #order_confirm .mod_order_total {
+.buy_item_quantity, #order_confirm .mod_order_total {
     font-size: 1.6rem;
 }
 }
@@ -2519,7 +2519,7 @@ body {
     width: 100px;
 }
     
-.buy_item_amount, #order_confirm .mod_order_total {
+.buy_item_quantity, #order_confirm .mod_order_total {
     font-size: 1.2rem;
 }
     
@@ -2800,7 +2800,7 @@ body {
     height: 120px;   
 }
 
-#history_detail .buy_item_amount, #history_detail .mod_order_total {
+#history_detail .buy_item_quantity, #history_detail .mod_order_total {
     font-size: 1.8rem;   
 }
 
@@ -2830,7 +2830,7 @@ body {
 }
 
 @media screen and (max-width: 767px) {
-#history_detail .buy_item_amount, #history_detail .mod_order_total {
+#history_detail .buy_item_quantity, #history_detail .mod_order_total {
     font-size: 1.5rem;   
 }
 }
@@ -2861,7 +2861,7 @@ body {
     line-height: 2;
 }
     
-#history_detail .buy_item_amount, #history_detail .mod_order_total {
+#history_detail .buy_item_quantity, #history_detail .mod_order_total {
     font-size: 1.3rem;   
 }
        

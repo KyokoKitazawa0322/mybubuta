@@ -54,13 +54,10 @@ class MyPageOrderDetailAction {
         }
     }
     
-
-    /** @return OrderHistoryDto */
     public function getOrderHistoryDto(){
         return $this->orderHistoryDto;   
     }   
-    
-    /** @return OrderDetailDto */
+
     public function getOrderDetailDto(){
         return $this->orderDetailDto;   
     }   

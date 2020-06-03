@@ -19,8 +19,8 @@ class MyPageUpdateConfirmAction {
             $customerId = $_SESSION['customer_id'];   
         }
         
-        if(!isset($_SESSION['update_data']) || $_SESSION['update_data'] !== "clear"){
-            header('Location:/html/login.php');
+        if(!isset($_SESSION['update_data']) || $_SESSION['update_data'] != "clear"){
+            header('Location:/html/mypage/mypage_update.php');
             exit();
         }
     }

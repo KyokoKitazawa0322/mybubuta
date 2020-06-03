@@ -5,8 +5,8 @@ use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
 use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
-use \Models\itemsDao;
-use \Models\itemsDto;
+use \Models\ItemsDao;
+use \Models\ItemsDto;
 use \Models\OriginalException;
 use \Config\Config;
 
@@ -21,21 +21,28 @@ class OrderCompleteAction{
 
         $cmd = filter_input(INPUT_POST, 'cmd');
         
+        /*====================================================================
+        　register_confirm.phpで「登録する」ボタンが押された時の処理
+        =====================================================================*/
         if($cmd == "order_complete" && isset($_SESSION['order'])){
-       
-            //決済方法が選択されてなければリダイレクト
-            if(!isset($_SESSION['order']['payment'])){
+            
+            /*——————————————————————————————————————————————————————————————
+             決済方法が選択されてなければリダイレクト
+            ————————————————————————————————————————————————————————————————*/
+    
+            if(!isset($_SESSION['order']['payment_term'])){
                 header('Location:/html/order/order_confirm.php');
                 $_SESSION['isPay'] = "none";
                 exit();
             }
+            /*——————————————————————————————————————————————————————————————*/
             
             $customerId = $_SESSION['customer_id'];
-            $totalPayment = $_SESSION['order']['total_payment'];
             $totalAmount = $_SESSION['order']['total_amount'];
+            $totalQuantity = $_SESSION['order']['total_quantity'];
             $tax = $_SESSION['order']['tax'];
             $postage = $_SESSION['order']['postage'];
-            $payment = $_SESSION['order']['payment'];
+            $paymentTerm = $_SESSION['order']['payment_term'];
             $name = $_SESSION['delivery']['name'];
             $address = $_SESSION['delivery']['address'];
             $post = $_SESSION['delivery']['post'];
@@ -47,21 +54,20 @@ class OrderCompleteAction{
             $itemsDao = new ItemsDao();
                 
             try{
-                $orderHistoryDao->insertOrderHistory($customerId, $totalPayment, $totalAmount, $tax, $postage, $payment, $name, $address, $post, $tel);
+                $orderHistoryDao->insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel);
 
-                //INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録
+                /*- INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録 -*/
                 $orderHistoryDto = $orderHistoryDao->getOrderId($customerId);
                 $orderId = $orderHistoryDto->getOrderId();
                 $cart = $_SESSION['cart'];
 
                 foreach($cart as $item){
                     $itemCode = $item['item_code'];
-                    $itemCount = $item['item_count'];
-                    //new
+                    $itemQuantity = $item['item_quantity'];
                     $itemPrice = $item['item_price'];
-                    $itemTax = $item['tax'];
-                    $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax);
-                    $itemsDao->insertItemSales($itemCount, $itemCode);
+                    $itemTax = $item['item_tax'];
+                    $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax);
+                    $itemsDao->insertItemSales($itemQuantity, $itemCode);
                 }
                 unset($_SESSION['cart']);
                 unset($_SESSION['order']);

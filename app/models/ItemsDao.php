@@ -44,7 +44,7 @@ class ItemsDao extends \Models\Model {
         $dto->setItemCode($res['item_code']);
         $dto->setItemName($res['item_name']);
         $dto->setItemPrice($res['item_price']);
-        $dto->setTax($res['tax']);
+        $dto->setItemTax($res['item_tax']);
         $dto->setItemCategory($res['item_category']);
         $dto->setItemImage($res['item_image']);
         $dto->setItemDetail($res['item_detail']); 
@@ -66,32 +66,32 @@ class ItemsDao extends \Models\Model {
     
     public function searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey){
         try{
-            $sql = "SELECT * FROM items WHERE item_del_flag = '0'";
+            $sql = "SELECT * FROM items WHERE delete_flag = false";
             if($categories){
                 $category = "";
                 foreach($categories as $key){
                     $category = $category.':'.$key.',';
                 }
                 $category = preg_replace("/,$/", "", $category);
-                $sql = $sql."AND item_category IN ($category) ";
+                $sql = $sql." AND item_category IN ($category) ";
             }
             if($keyWord){
-                $sql = $sql."AND item_name LIKE :keyword ";
+                $sql = $sql." AND item_name LIKE :keyword ";
             }        
             if($minPrice){
-                $sql = $sql."AND item_price+tax >= :minprice ";
+                $sql = $sql." AND item_price+item_tax >= :minprice ";
             }
             if(!empty($maxPrice)){
-                $sql = $sql."AND item_price+tax <= :maxprice ";
+                $sql = $sql." AND item_price+item_tax <= :maxprice ";
             }
             if($sortKey == "01"){
-                $sql = $sql."ORDER BY item_price ASC";
+                $sql = $sql." ORDER BY item_price ASC";
             }elseif($sortKey == "02"){
-                $sql = $sql."ORDER BY item_price DESC";
+                $sql = $sql." ORDER BY item_price DESC";
             }elseif($sortKey == "03"){
-                $sql = $sql."ORDER BY item_sales DESC";
+                $sql = $sql." ORDER BY item_sales DESC";
             }else{     
-                $sql = $sql."ORDER BY item_insert_date ASC";
+                $sql = $sql." ORDER BY item_insert_date ASC";
             }
 
             $stmt = $this->pdo->prepare($sql);
@@ -159,16 +159,16 @@ class ItemsDao extends \Models\Model {
     
     /**
      * 商品の販売数と在庫数を更新
-     * $itemCodeをキーにitem_salesに$itemCountを加算、item_stockに$itemCountを減算
+     * $itemCodeをキーにitem_salesに$itemQuantityを加算、item_stockに$itemQuantityを減算
      * @throws PDOException
      * @throws OriginalException(更新失敗時:code222)
      */
-    public function insertItemSales($itemCount, $itemCode){
+    public function insertItemSales($itemQuantity, $itemCode){
         try{
             $sql ="UPDATE items SET item_sales = item_sales+?, item_stock = item_stock-? where item_code = ?";
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindvalue(1, $itemCount, \PDO::PARAM_INT);
-            $stmt->bindvalue(2, $itemCount, \PDO::PARAM_INT);
+            $stmt->bindvalue(1, $itemQuantity, \PDO::PARAM_INT);
+            $stmt->bindvalue(2, $itemQuantity, \PDO::PARAM_INT);
             $stmt->bindvalue(3, $itemCode, \PDO::PARAM_STR);
             $stmt->execute();
             $count = $stmt->rowCount();

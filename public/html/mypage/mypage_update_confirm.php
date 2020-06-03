@@ -58,30 +58,30 @@ $myPageUpdateConfirm->execute();
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
                             <div class="addr01_input_wrapper">
-                                <p><?= Config::h($_SESSION['update']['address01']);?></p>
+                                <p><?= Config::h($_SESSION['update']['zip_code_01']);?></p>
                             </div>
                             <span class="txt_dash">－</span>
                             <div class="addr01_input_wrapper">
-                                <p><?= Config::h($_SESSION['update']['address02']);?></p>
+                                <p><?= Config::h($_SESSION['update']['zip_code_02']);?></p>
                             </div>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">都道府県</p>
                             <div class="add_list_wrapper">
-                               <p><?= Config::h($_SESSION['update']['address03']);?></p>
+                               <p><?= Config::h($_SESSION['update']['prefecture']);?></p>
                             </div>		
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">市区町村</p>
-                            <p><?= Config::h($_SESSION['update']['address04']);?></p>
+                            <p><?= Config::h($_SESSION['update']['city']);?></p>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">番地</p>
-                            <p><?= Config::h($_SESSION['update']['address05']);?></p>
+                            <p><?= Config::h($_SESSION['update']['block_number']);?></p>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">建物名</p>
-                            <p><?= Config::h($_SESSION['update']['address06']);?></p>
+                            <p><?= Config::h($_SESSION['update']['building_name']);?></p>
                         </div>
                     </div>                       
                     <div class="register_field tel_field">

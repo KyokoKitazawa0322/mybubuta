@@ -5,6 +5,8 @@ use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
+use \Models\OriginalException;
+use \Config\Config;
 
 class OrderDeliveryListAction{
 
@@ -26,18 +28,44 @@ class OrderDeliveryListAction{
         $customerDao = new CustomerDao();
         $deliveryDao = new DeliveryDao();
         
-        //登録情報を取得
-        $customerDto = $customerDao->getCustomerById($customerId);
-        $this->customerDto = $customerDto;
-        
-        //削除ボタンがおされたときの処理
+        /*====================================================================
+         「削除」ボタンが押された時の処理
+        =====================================================================*/
         if($cmd == "delete"){
-            $deliveryDao->deleteDeliveryInfo($customerId, $delId);
+            try{
+                $deliveryDao->deleteDeliveryInfo($customerId, $delId);
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
+
+            }catch(OriginalException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                die('エラー:'.$e->getMessage());
+            }
         }
-    
-        //配送先情報の取得
-        $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
-        $this->deliveryDto = $deliveryDto;
+        /*=============================================================*/
+   
+        try{
+            /*- customerテーブルの登録情報を取得 -*/
+            $customerDto = $customerDao->getCustomerById($customerId);
+            $this->customerDto = $customerDto;
+        
+            /*- deliverテーブルの登録情報を取得 -*/
+            $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            $this->deliveryDto = $deliveryDto;
+            
+        } catch(\PDOException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+            header('Content-Type: text/plain; charset=UTF-8', true, 500);
+            die('エラー:データベースの処理に失敗しました。');
+
+        }catch(OriginalException $e){
+            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+            header('Content-Type: text/plain; charset=UTF-8', true, 400);
+            die('エラー:'.$e->getMessage());
+        }
     }
 
     public function getCustomer(){
@@ -48,32 +76,23 @@ class OrderDeliveryListAction{
         return $this->deliveryDto;   
     }
     
-    //0531
-    //表示画面で検証しtrueであればchecked="checked"を出力
     public function checkCustomer($customer){
-        //order_confirm.phpで選択された場合
         if(isset($_SESSION['def_addr'])){
             if($_SESSION['def_addr'] == "customer"){
-                return true;
+                echo 'checked="checked"';
             }
-        //order_confirm.phpを未訪問状態で、かつcustomerテーブルの住所がいつもの配送先に設定されている場
-        }elseif($customer->getDelFlag() == 0){
-            return true;
-        }else{
-            return false;
+        }elseif($customer->getDeliveryFlag() == 0){
+            echo 'checked="checked"';
         }
     }
         
-    //表示画面で検証しtrueであればchecked="checked"を出力
     public function checkDelivery($delivery){
         if(isset($_SESSION['def_addr'])){
             if($_SESSION['def_addr'] == $delivery->getDeliveryId()){
-                return true;
+                echo 'checked="checked"';
             }
-        }elseif($delivery->getDelFlag() == 0){ 
-            return true;
-        }else{
-            return false;
+        }elseif($delivery->getDeliveryFlag() == 0){ 
+            echo 'checked="checked"';
         }
     }
 }

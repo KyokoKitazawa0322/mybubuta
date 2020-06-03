@@ -5,7 +5,7 @@ class OrderDetailDto extends \Models\Model{
     private $detailId;
     private $orderId;
     private $itemCode;
-    private $itemCount;
+    private $itemQuantity;
     private $itemPrice;//税別単価
     private $itemTax;
     //itemsテーブルのカラム
@@ -25,8 +25,8 @@ class OrderDetailDto extends \Models\Model{
         return $this->itemCode;   
     }
     
-    public function getItemCount(){
-        return $this->itemCount;   
+    public function getItemQuantity(){
+        return $this->itemQuantity;   
     }
 
     //new
@@ -48,8 +48,8 @@ class OrderDetailDto extends \Models\Model{
         return $this->itemName;
     }
     
-    public function getTotalPrice(){
-        return $this->getItemPriceWithTax() * $this->itemCount;
+    public function getTotalAmount(){
+        return $this->getItemPriceWithTax() * $this->itemQuantity;
     }
     
     public function getItemImage(){
@@ -68,8 +68,8 @@ class OrderDetailDto extends \Models\Model{
         $this->itemCode = $itemCode;   
     }
     
-    public function setItemCount($itemCount){
-        $this->itemCount = $itemCount;   
+    public function setItemQuantity($itemQuantity){
+        $this->itemQuantity = $itemQuantity;   
     }
     
     public function setItemPrice($itemPrice){

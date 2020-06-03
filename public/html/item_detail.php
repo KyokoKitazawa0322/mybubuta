@@ -54,7 +54,7 @@ $item = $itemDetail->getItem();
                         <div class="detail_form_wrap">
                             <form action="/html/cart.php" method="POST" class="item_num_form">
                                 <div class="select_wrap">
-                                    <select name="item_count" class="item_count_sl">
+                                    <select name="item_quantity" class="item_quantity_sl">
                                     <?php  for($i=1; $i<=10; $i++){
                                        echo "<option value={$i}>{$i}</option>";
                                     } ?>
@@ -68,7 +68,7 @@ $item = $itemDetail->getItem();
                                 </div>
                             </form>
                             <div class="favorite_btn_wrap">
-                             <form action="/html/mypage/mypage_favorite.php" method="GET">
+                             <form action="/html/mypage/mypage_favorite.php" method="POST">
                                 <input type="submit" class="btn_cmn_mid btn_design_02" value="お気に入り保存" />
                                 <input type="hidden" name="cmd" value="add_favorite" />
                                 <input type="hidden" name="item_code" value="<?= $item->getItemCode(); ?>" />

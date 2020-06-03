@@ -4,11 +4,11 @@ namespace Models;
 class OrderHistoryDto extends \Models\Model{
     private $orderId;
     private $customerId;
-    private $totalPayment;
     private $totalAmount;
+    private $totalQuantity;
     private $tax;
     private $postage;
-    private $payment;
+    private $paymentTerm;
     private $deliveryName;
     private $deliveryPost;
     private $deliveryAddr;
@@ -24,12 +24,12 @@ class OrderHistoryDto extends \Models\Model{
         $this->customerId = $customerId;
     }
     
-    public function setTotalPayment($totalPayment){
-        $this->totalPayment = $totalPayment;    
+    public function setTotalAmount($totalAmount){
+        $this->totalAmount = $totalAmount;    
     }
     
-    public function setTotalAmount($totalAmount){
-        $this->totalAmount = $totalAmount;
+    public function setTotalQuantity($totalQuantity){
+        $this->totalQuantity = $totalQuantity;
     }
     
     public function setTax($tax){
@@ -40,8 +40,8 @@ class OrderHistoryDto extends \Models\Model{
         $this->postage = $postage;   
     }
     
-    public function setPayment($payment){
-        $this->payment = $payment;   
+    public function setPaymentTerm($paymentTerm){
+        $this->paymentTerm = $paymentTerm;   
     }
     
     public function setDeliveryName($deliveryName){
@@ -72,12 +72,12 @@ class OrderHistoryDto extends \Models\Model{
         return $this->customerId;
     }
     
-    public function getTotalPayment(){
-        return $this->totalPayment;    
+    public function getTotalAmount(){
+        return $this->totalAmount;    
     }
     
-    public function getTotalAmount(){
-        return $this->totalAmount;
+    public function getTotalQuantity(){
+        return $this->totalQuantity;
     }
     
     public function getTax(){
@@ -88,8 +88,8 @@ class OrderHistoryDto extends \Models\Model{
         return $this->postage;   
     }
     
-    public function getPayment(){
-        return $this->payment;   
+    public function getPaymentTerm(){
+        return $this->paymentTerm;   
     }
     
     public function getDeliveryName(){

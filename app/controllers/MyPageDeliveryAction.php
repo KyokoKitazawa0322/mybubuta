@@ -15,7 +15,7 @@ class MyPageDeliveryAction{
         $cmd = filter_input(INPUT_POST, 'cmd');
         
         if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = null;
+            unset($_SESSION['customer_id']);
         }
         
         if(!isset($_SESSION["customer_id"])){
@@ -30,9 +30,10 @@ class MyPageDeliveryAction{
         
         $deliveryId = filter_input(INPUT_POST, 'del_id');
         
-        /**--------------------------------------------------------
-           削除ボタンがおされたときの処理
-         ---------------------------------------------------------*/
+        /*====================================================================
+        　「削除」ボタンが押された時の処理
+        =====================================================================*/
+        
         if($cmd == "delete"){
             try{
                 $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
@@ -55,10 +56,12 @@ class MyPageDeliveryAction{
             }
         }
         
-        /**--------------------------------------------------------
-           配送先設定ボタンがおされたときの処理
-         ---------------------------------------------------------*/
+        /*====================================================================
+        　「配送先設定」ボタンがおされたときの処理
+        =====================================================================*/
+        
         if($cmd == "update" && $deliveryId){
+            /*- customerテーブルの住所が選択された時の処理 -*/
             if($deliveryId == "def"){
                 try{
                     $customerDao->setDeliveryDefault($customerId);
@@ -75,7 +78,7 @@ class MyPageDeliveryAction{
                     die('エラー:'.$e->getMessage());
                 }
                 
-        //配送先登録情報であれば値はdelivery_id
+            /*- deliveryテーブルの住所が選択された時の処理 -*/
             }else{
                 try{
                     $deliveryDao->releaseDeliveryDefault($customerId);
@@ -96,9 +99,9 @@ class MyPageDeliveryAction{
         }
         
         try{
-            //会員登録情報の取得
+            /*- 会員登録情報の取得 -*/
             $this->customerDto = $customerDao->getCustomerById($customerId);
-            //配送先情報の取得
+            /*- 配送先情報の取得 -*/
             $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
             
         } catch(\PDOException $e){

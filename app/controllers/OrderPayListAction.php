@@ -4,6 +4,7 @@ namespace Controllers;
 class OrderPayListAction{
 
     public function execute(){
+        
         /**--------------------------------------------------------
          * ログイン状態の判定(セッション切れの場合はlogin.phpへ)
          ---------------------------------------------------------*/

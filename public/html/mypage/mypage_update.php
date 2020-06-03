@@ -70,32 +70,32 @@ $customer = $myPageUpdate->getCustomerDto();
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageUpdate->getAddress01Error()){echo "error_box";}?>" type="tel" name="address01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['address01']);}else{echo $customer->getAddress01();}?>"/>
+                                <input class="form_input_item <?php if($myPageUpdate->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['zip_code_01']);}else{echo $customer->getZipCode01();}?>"/>
                             </div>
                             <span class="txt_dash">―</span>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageUpdate->getAddress02Error()){echo "error_box";}?>" type="tel" name="address02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['address02']);}else{ echo $customer->getAddress02();}?>"/>
+                                <input class="form_input_item <?php if($myPageUpdate->getZipCode02Error()){echo "error_box";}?>" type="tel" name="zip_code_02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['zip_code_02']);}else{ echo $customer->getZipCode02();}?>"/>
                             </div>
-                            <?php if($myPageUpdate->getAddress01Error()){ ?>
-                                <p class="error_txt error_zip"><?=$myPageUpdate->getAddress01Error(); ?></p>
+                            <?php if($myPageUpdate->getZipCode01Error()){ ?>
+                                <p class="error_txt error_zip"><?=$myPageUpdate->getZipCode01Error(); ?></p>
                             <?php } ?>
-                            <?php if($myPageUpdate->getAddress02Error()){ ?>
-                                <p class="error_txt error_zip clear"><?=$myPageUpdate->getAddress02Error(); ?></p>
+                            <?php if($myPageUpdate->getZipCode02Error()){ ?>
+                                <p class="error_txt error_zip clear"><?=$myPageUpdate->getZipCode02Error(); ?></p>
                             <?php } ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">都道府県</p>
                             <div class="add_list_wrapper">
-                                <select class="add_list <?php if($myPageUpdate->getAddress03Error()){echo "error_box";}?>" name="address03">
+                                <select class="add_list <?php if($myPageUpdate->getPrefectureError()){echo "error_box";}?>" name="prefecture">
                                     <option value="">都道府県を選択して下さい</option>
                                     <?php foreach(Config::PREFECTURES as $kenmei):?>
                                         <?php if(isset($_SESSION['update'])):?>
-                                            <?php if($_SESSION['update']['address03'] == $kenmei):?>
+                                            <?php if($_SESSION['update']['prefecture'] == $kenmei):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                             <?php else:?>
                                                 <option  value="<?=$kenmei?>"><?=$kenmei?></option>
                                             <?php endif;?>
-                                        <?php elseif($customer->getAddress03() == $kenmei):?>
+                                        <?php elseif($customer->getPrefecture() == $kenmei):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                         <?php else:?>
                                                 <option  value="<?=$kenmei?>"><?=$kenmei?></option>   
@@ -103,30 +103,30 @@ $customer = $myPageUpdate->getCustomerDto();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <?php if($myPageUpdate->getAddress03Error()):?>
-                                <p class="error_txt memo"><?=$myPageUpdate->getAddress03Error(); ?></p>
+                            <?php if($myPageUpdate->getPrefectureError()):?>
+                                <p class="error_txt memo"><?=$myPageUpdate->getPrefectureError(); ?></p>
                             <?php endif; ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">市区町村</p>
-                            <input class="form_input_item <?php if($myPageUpdate->getAddress04Error()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="address04" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['address04']);}else{echo $customer->getAddress04();}?>"/>
-                            <?php if(isset($isaddress04Error) && $isaddress04Error):?>
-                                <p class="error_txt memo"><?=$myPageUpdate->getAddress04Error(); ?></p>
+                            <input class="form_input_item <?php if($myPageUpdate->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['city']);}else{echo $customer->getCity();}?>"/>
+                            <?php if($myPageUpdate->getCityError()):?>
+                                <p class="error_txt memo"><?= $myPageUpdate->getCityError(); ?></p>
                             <?php endif; ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">番地</p>
-                            <input class="form_input_item <?php if($myPageUpdate->getAddress05Error()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="address05" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['address05']);}else{echo $customer->getAddress05();}?>"/>
+                            <input class="form_input_item <?php if($myPageUpdate->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['block_number']);}else{echo $customer->getBlockNumber();}?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>
-                                <?php if(isset($isaddress05Error) && $isaddress05Error):?>
-                                    <p class="error_txt memo"><?=$myPageUpdate->getAddress05Error(); ?></p>
+                                <?php if($myPageUpdate->getBlockNumberError()):?>
+                                    <p class="error_txt memo"><?= $myPageUpdate->getBlockNumberError(); ?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">建物名</p>
-                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="address06" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['address06']);}else{echo $customer->getAddress06();}?>"/>
+                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="building_name" value="<?php if(isset($_SESSION['update'])){echo Config::h($_SESSION['update']['building_name']);}else{echo $customer->getBuildingName();}?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
 

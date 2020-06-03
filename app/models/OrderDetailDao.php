@@ -15,19 +15,19 @@ class OrderDetailDao extends \Models\Model{
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @param int $orderId　OrderHistoryテーブル登録時に自動発行される注文ID
      * @param string $itemCode　商品コード
-     * @param int $itemCount　商品点数
+     * @param int $itemQuantity　商品点数
      * @param int $itemPrice　商品価格
      * @param int $itemTax 消費税
      * @throws PDOException 
      * @throws OriginalException(登録失敗時:code444)
      */
-    public function insertOrderDetail($orderId, $itemCode, $itemCount, $itemPrice, $itemTax){
+    public function insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax){
         try{
-            $sql ="INSERT into order_detail(order_id, item_code, item_count, item_price, item_tax)values(?,?,?,?,?)";
+            $sql ="INSERT into order_detail(order_id, item_code, item_quantity, item_price, item_tax)values(?,?,?,?,?)";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $orderId, \PDO::PARAM_INT);
             $stmt->bindvalue(2, $itemCode, \PDO::PARAM_STR);
-            $stmt->bindvalue(3, $itemCount, \PDO::PARAM_INT);
+            $stmt->bindvalue(3, $itemQuantity, \PDO::PARAM_INT);
             $stmt->bindvalue(4, $itemPrice, \PDO::PARAM_INT);
             $stmt->bindvalue(5, $itemTax, \PDO::PARAM_INT);
             $stmt->execute();
@@ -51,7 +51,7 @@ class OrderDetailDao extends \Models\Model{
     public function getOrderDetail($orderId){
 
         try{
-            $sql = "SELECT items.item_name, items.item_image, order_detail.item_count, order_detail.item_price, order_detail.item_tax FROM items LEFT JOIN order_detail ON items.item_code = order_detail.item_code where order_detail.order_id = ?";
+            $sql = "SELECT items.item_name, items.item_image, order_detail.item_quantity, order_detail.item_price, order_detail.item_tax FROM items LEFT JOIN order_detail ON items.item_code = order_detail.item_code where order_detail.order_id = ?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $orderId);
@@ -63,7 +63,7 @@ class OrderDetailDao extends \Models\Model{
                     $dto = new OrderDetailDto();
                     $dto->setItemName($row['item_name']);
                     $dto->setItemImage($row['item_image']);
-                    $dto->setItemCount($row['item_count']);
+                    $dto->setItemQuantity($row['item_quantity']);
                     $dto->setitemPrice($row['item_price']);
                     $dto->setItemTax($row['item_tax']);
                     $orderDetail[] = $dto;

@@ -12,18 +12,21 @@ class MyPageFavoriteAction{
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
-        $itemCode = filter_input(INPUT_GET, 'item_code');
+        $itemCode = filter_input(INPUT_POST, 'item_code');
         
         if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
         
-        $dao = new MyPageFavoriteDao();
+        $mypageFavoriteDao = new MyPageFavoriteDao();
         $customerId = $_SESSION['customer_id'];
 
-        //詳細画面で「お気に入り保存」ボタンが押された時の処理
+        /*========================================================
+        item_detail.phpで「お気に入り保存」ボタンが押された時の処理
+        =========================================================*/
+        
         if($cmd == "add_favorite" ){
-            //非ログイン状態の場合はフラグをたててログイン画面へ
+            /*- 非ログイン状態の場合はフラグをたててログイン画面へ -*/
             if(!isset($customerId)){    
                 $_SESSION['fav_flug'] = "is";
                 $_SESSION['add_item_code'] = $itemCode;
@@ -31,7 +34,7 @@ class MyPageFavoriteAction{
                 exit();
             }else{
                 try{
-                    $dao->insertIntoFavorite($itemCode, $customerId);
+                    $mypageFavoriteDao->insertIntoFavorite($itemCode, $customerId);
                     
                 } catch(\PDOException $e){
                     Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
@@ -45,19 +48,25 @@ class MyPageFavoriteAction{
                 }
             }
         }
-
-         //ログイン状態の判定(セッション切れの場合はlogin.phpへ)
+        
+        /*==============================================================
+        　ログイン状態の判定(セッション切れの場合はlogin.phpへ)
+        ===============================================================*/
+        
          if(!isset($customerId)){
             header('Location:/html/login.php');
             exit();
          }
 
-        //詳細画面で「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
+        /*===============================================================
+        　item_detail.phpで「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
+        ================================================================*/
+        
         if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "is"){
             $addItemCode = $_SESSION['add_item_code'];
             
             try{
-                $dao->insertIntoFavorite($addItemCode, $customerId);
+                $mypageFavoriteDao->insertIntoFavorite($addItemCode, $customerId);
                 
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
@@ -69,22 +78,44 @@ class MyPageFavoriteAction{
                 header('Content-Type: text/plain; charset=UTF-8', true, 400);
                 die('エラー:'.$e->getMessage());
             }
-                $_SESSION['fav_flug'] = NULL;
-                $_SESSION['add_item_code'] = NULL;
+                unset($_SESSION['fav_flug']);
+                unset($_SESSION['add_item_code']);
         }
 
-        //削除」ボタンが押された時の処理
-        if($cmd == "del"){            
+        /*===============================================================
+        　「カートにいれる」ボタンがおされたときの処理
+        ================================================================*/
+        if($cmd == "add_cart"){
+            $_SESSION['add_cart_from_fav'] = "undone";
+            $_SESSION['item_code'] = $itemCode;
+            header('Location:/html/cart.php');
+            exit();
+        }
+        
+        /*===============================================================
+        　「削除」ボタンがおされたときの処理
+        ================================================================*/
+        if($cmd == "delete"){            
             try{
-                $dao->deleteFavorite($itemCode, $customerId);
-            }catch(\PDOEexception $e){
-                die('SQLエラー :'.$e->getMessage());
+                $mypageFavoriteDao->deleteFavorite($itemCode, $customerId);
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
+                
+            }catch(OriginalException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+                header('Content-Type: text/plain; charset=UTF-8', true, 400);
+                die('エラー:'.$e->getMessage());
             }
         }
 
-        //お気に入り商品一覧表示
+        /*===============================================================
+       　 お気に入り商品の一覧を取得
+        ================================================================*/
         try{
-            $this->favoriteDto = $dao->getFavoriteAll($customerId);
+            $favoriteDto = $mypageFavoriteDao->getFavoriteAll($customerId);
+            $this->favoriteDto = $favoriteDto;
             
         } catch(\PDOException $e){
             Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
@@ -93,7 +124,6 @@ class MyPageFavoriteAction{
         }
     }
     
-    /** @return ItemsDto */
     public function getFavoriteDto(){
         return $this->favoriteDto;   
     }

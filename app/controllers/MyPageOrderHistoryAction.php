@@ -36,7 +36,6 @@ class MyPageOrderHistoryAction {
         }
     }
     
-    /** @return OrderHistoryDto */
     public function getOrders(){
         return $this->orders;   
     }   

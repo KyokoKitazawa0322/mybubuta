@@ -24,24 +24,28 @@ class MyPageUpdateCompleteAction {
             $customerId = $_SESSION['customer_id'];   
         }
     
-        if($cmd == "do_register"){
+        /*====================================================================
+         mypage_update_confirm.phpで「登録する」ボタンが押された時の処理
+        =====================================================================*/
+        if($cmd == "do_register" && $_SESSION['update']){
+            
             $password = $_SESSION['update']['password'];
             $lastName = $_SESSION['update']['last_name'];
             $firstName = $_SESSION['update']['first_name'];
             $rubyLastName = $_SESSION['update']['ruby_last_name'];
             $rubyFirstName = $_SESSION['update']['ruby_first_name'];
-            $address01 = $_SESSION['update']['address01'];
-            $address02 = $_SESSION['update']['address02'];
-            $address03 = $_SESSION['update']['address03'];
-            $address04 = $_SESSION['update']['address04'];
-            $address05 = $_SESSION['update']['address05'];
-            $address06 = $_SESSION['update']['address06'];
+            $zipCode01 = $_SESSION['update']['zip_code_01'];
+            $zipCode02 = $_SESSION['update']['zip_code_02'];
+            $prefecture = $_SESSION['update']['prefecture'];
+            $city = $_SESSION['update']['city'];
+            $blockNumber = $_SESSION['update']['block_number'];
+            $buildingName = $_SESSION['update']['building_name'];
             $tel = $_SESSION['update']['tel'];
             $mail = $_SESSION['update']['mail'];
 
             try {
                 $customerDao = new CustomerDao();
-                $customerDao->updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail, $customerId);
+                $customerDao->updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $mail, $customerId);
                 
             } catch(\PDOException $e){
                 Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
@@ -54,15 +58,25 @@ class MyPageUpdateCompleteAction {
                 die('エラー:'.$e->getMessage());
             }
             
-            $_SESSION['update'] = NULL;
-            $_SESSION['password_input'] = NULL;
-        } 
-        //order_delivery_listからきた場合
-        if(isset($_SESSION['from_order_flag'])){
-            unset($_SESSION['from_order_flag']);
-            header('Location:/html/order/order_delivery_list.php');
+            unset($_SESSION['update']);
+            unset($_SESSION['password_input']);
+            unset($_SESSION['update_data']);
+            
+            /*——————————————————————————————————————————————————————————————
+             order_delivery_listからきた場合の処理
+            ————————————————————————————————————————————————————————————————*/
+       
+            if(isset($_SESSION['from_order_flag'])){
+                unset($_SESSION['from_order_flag']);
+                header('Location:/html/order/order_delivery_list.php');
+                exit();
+            }
+            /*——————————————————————————————————————————————————————————————*/
+            
+        }else{
+            header('Location:/html/mypage/mypage_update.php');
             exit();
-        } 
+        }
     }
 }
 ?>

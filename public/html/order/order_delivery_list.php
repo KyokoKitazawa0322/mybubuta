@@ -65,7 +65,7 @@ function deleteAddr(addrSeq){
                         <h3 class="ttl_cmn">お客様会員住所</h3>
                         <div class="mypage_addr_box">
                             <div class="box_info">                           
-                                <input name="def_addr" type="radio" id="def_addr" value="customer" <?php if($orderDeliveryList->checkCustomer($customer)){echo 'checked="checked"';}?>>
+                                <input name="def_addr" type="radio" id="def_addr" value="customer" <?php $orderDeliveryList->checkCustomer($customer);?>>
                                 <label for="def_addr" class="input_radio_addr_01">
                                     <dl class="list_addr_info">
                                         <dt>名前 :</dt>
@@ -89,7 +89,7 @@ function deleteAddr(addrSeq){
                                 <?php $i=0; foreach($deliveries as $delivery): $i++;?>
                                 <div class="mypage_addr_box">
                                     <div class="box_info">
-                                        <input name="def_addr" type="radio" id="def_addr<?= $i?>" value="<?=$delivery->getDeliveryId();?>" <?php if($orderDeliveryList->checkDelivery($delivery)){echo 'checked="checked"';}?>>
+                                        <input name="def_addr" type="radio" id="def_addr<?= $i?>" value="<?=$delivery->getDeliveryId();?>" <?php $orderDeliveryList->checkDelivery($delivery);?>>
                                         <label for="def_addr<?= $i?>" class="input_radio_addr_01">
                                             <dl class="list_addr_info">
                                                 <dt>名前 :</dt>

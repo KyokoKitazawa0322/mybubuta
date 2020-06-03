@@ -2,7 +2,8 @@
 namespace Models;
 use \Models\CustomerDto;
 use \Models\OriginalException;
-
+use \Config\Config;
+    
 class CustomerDao extends \Models\Model{
     
     public function __construct(){
@@ -81,15 +82,15 @@ class CustomerDao extends \Models\Model{
         $dto->setFirstName($res['first_name']);
         $dto->setRubyLastName($res['ruby_last_name']); 
         $dto->setRubyFirstName($res['ruby_first_name']); 
-        $dto->setAddress01($res['address_01']); 
-        $dto->setAddress02($res['address_02']); 
-        $dto->setAddress03($res['address_03']); 
-        $dto->setAddress04($res['address_04']); 
-        $dto->setAddress05($res['address_05']); 
-        $dto->setAddress06($res['address_06']); 
+        $dto->setZipCode01($res['zip_code_01']); 
+        $dto->setZipCode02($res['zip_code_02']); 
+        $dto->setPrefecture($res['prefecture']); 
+        $dto->setCity($res['city']); 
+        $dto->setBlockNumber($res['block_number']); 
+        $dto->setBuildingName($res['building_name']); 
         $dto->setTel($res['tel']);
         $dto->setMail($res['mail']);
-        $dto->setDelFlag($res['del_flag']);
+        $dto->setDeliveryFlag($res['delivery_flag']);
         
         return $dto;
     }
@@ -102,40 +103,42 @@ class CustomerDao extends \Models\Model{
      * @param string $first_name　入力されたユーザーの名前
      * @param string $last_name　入力されたユーザーの名字(カナ)
      * @param string $first_name　入力されたユーザーの名前(カナ)
-     * @param string $address01　入力されたユーザーの住所_郵便番号(3ケタ)
-     * @param string $address02　入力されたユーザーの住所_郵便番号(4ケタ)
-     * @param string $address03　入力されたユーザーの住所_都道府県
-     * @param string $address04　入力されたユーザーの住所_市区町村等
-     * @param string $address05　入力されたユーザーの住所_番地等
-     * @param string $address06　入力されたユーザーの住所_建物名等
+     * @param string $zipCode01　入力されたユーザーの住所_郵便番号(3ケタ)
+     * @param string $zipCode02　入力されたユーザーの住所_郵便番号(4ケタ)
+     * @param string $prefecture　入力されたユーザーの住所_都道府県
+     * @param string $city　入力されたユーザーの住所_市区町村等
+     * @param string $blockNumber　入力されたユーザーの住所_番地等
+     * @param string $buildingName　入力されたユーザーの住所_建物名等
      * @param string $tel　入力されたユーザーの電話番号
      * @param string $mail　入力されたユーザーのメールアドレス
      * @throws PDOException 
      * @throws OriginalException(登録失敗時:code444)
      */
-    public function insertCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail){
-
+    public function insertCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $mail){
+        
+        $dateTime = Config::getDateTime();
+        $hash_pass = password_hash($password, PASSWORD_DEFAULT);
+        $deliveryFlag= TRUE;
+        
         try{
-            $sql = "insert into customers(last_name, first_name, ruby_last_name, ruby_first_name, address_01, address_02, address_03, address_04, address_05, address_06, tel, mail, hash_password, del_flag, customer_insert_date)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())";
-
-            $hash_pass = password_hash($password, PASSWORD_DEFAULT);
-            $delFlag= 0;
+            $sql = "insert into customers(last_name, first_name, ruby_last_name, ruby_first_name, zip_code_01, zip_code_02, prefecture, city, block_number, building_name, tel, mail, hash_password, delivery_flag, customer_insert_date)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $lastName, \PDO::PARAM_STR);
             $stmt->bindvalue(2, $firstName, \PDO::PARAM_STR);
             $stmt->bindvalue(3, $rubyLastName, \PDO::PARAM_STR);
             $stmt->bindvalue(4, $rubyFirstName, \PDO::PARAM_STR);
-            $stmt->bindvalue(5, $address01, \PDO::PARAM_STR);
-            $stmt->bindvalue(6, $address02, \PDO::PARAM_STR);
-            $stmt->bindvalue(7, $address03, \PDO::PARAM_STR);
-            $stmt->bindvalue(8, $address04, \PDO::PARAM_STR);
-            $stmt->bindvalue(9, $address05, \PDO::PARAM_STR);
-            $stmt->bindvalue(10, $address06, \PDO::PARAM_STR);
+            $stmt->bindvalue(5, $zipCode01, \PDO::PARAM_STR);
+            $stmt->bindvalue(6, $zipCode02, \PDO::PARAM_STR);
+            $stmt->bindvalue(7, $prefecture, \PDO::PARAM_STR);
+            $stmt->bindvalue(8, $city, \PDO::PARAM_STR);
+            $stmt->bindvalue(9, $blockNumber, \PDO::PARAM_STR);
+            $stmt->bindvalue(10, $buildingName, \PDO::PARAM_STR);
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
             $stmt->bindvalue(12, $mail, \PDO::PARAM_STR);
             $stmt->bindvalue(13, $hash_pass);
-            $stmt->bindvalue(14, $delFlag);
+            $stmt->bindvalue(14, $deliveryFlag, \PDO::PARAM_INT);
+            $stmt->bindvalue(15, $dateTime, \PDO::PARAM_STR);
             $stmt->execute();
             
             $count = $stmt->rowCount();
@@ -148,7 +151,7 @@ class CustomerDao extends \Models\Model{
     }
     
     /**
-     * 会員情報の住所をいつもの配送先住所に設定(del_flagを'1'→'0'に)
+     * 会員情報の住所をいつもの配送先住所に設定
      * del_flag(=0)と$customerIdをキーにカスタマー情報を更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
@@ -157,11 +160,11 @@ class CustomerDao extends \Models\Model{
     public function setDeliveryDefault($customerId){
         try{
             $customerDto = $this->getCustomerById($customerId);
-            if($customerDto->getDelFlag() == 1){
-                $sql = "UPDATE customers SET del_flag=? where customer_id=?";
-                $delFlag= 0;
+            if(!$customerDto->getDeliveryFlag()){
+                $sql = "UPDATE customers SET delivery_flag=? where customer_id=?";
+                $deliveryFlag= TRUE;
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->bindvalue(1, $delFlag, \PDO::PARAM_INT);
+                $stmt->bindvalue(1, $deliveryFlag, \PDO::PARAM_INT);
                 $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
                 $stmt->execute();
 
@@ -176,7 +179,7 @@ class CustomerDao extends \Models\Model{
     }
     
     /**
-     * 会員情報の住所がいつもの配送先住所になっていれば解除(del_flagを'0'→'1'に)
+     * 会員情報の住所がいつもの配送先住所になっていれば解除
      * $customerIdをキーに更新
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
@@ -185,12 +188,12 @@ class CustomerDao extends \Models\Model{
     public function releaseDeliveryDefault($customerId){
         try{
             $customerDto = $this->getCustomerById($customerId);
-            if($customerDto->getDelFlag() == 0){
-                $sql = "UPDATE customers SET del_flag=? where customer_id=?";
-                $delFlag= 1;
+            if($customerDto->getDeliveryFlag() == TRUE){
+                $sql = "UPDATE customers SET delivery_flag=? where customer_id=?";
+                $deliveryFlag= FALSE;
 
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->bindvalue(1, $delFlag, \PDO::PARAM_INT);
+                $stmt->bindvalue(1, $deliveryFlag, \PDO::PARAM_INT);
                 $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
                 $stmt->execute();  
                 $count = $stmt->rowCount();
@@ -259,24 +262,25 @@ class CustomerDao extends \Models\Model{
      * @param string $first_name　入力されたユーザーの名前
      * @param string $last_name　入力されたユーザーの名字(カナ)
      * @param string $first_name　入力されたユーザーの名前(カナ)
-     * @param string $address01　入力されたユーザーの住所_郵便番号(3ケタ)
-     * @param string $address02　入力されたユーザーの住所_郵便番号(4ケタ)
-     * @param string $address03　入力されたユーザーの住所_都道府県
-     * @param string $address04　入力されたユーザーの住所_市区町村等
-     * @param string $address05　入力されたユーザーの住所_番地等
-     * @param string $address06　入力されたユーザーの住所_建物名等
+     * @param string $zipCode01　入力されたユーザーの住所_郵便番号(3ケタ)
+     * @param string $zipCode02　入力されたユーザーの住所_郵便番号(4ケタ)
+     * @param string $prefecture　入力されたユーザーの住所_都道府県
+     * @param string $city　入力されたユーザーの住所_市区町村等
+     * @param string $blockNumber　入力されたユーザーの住所_番地等
+     * @param string $buildingName　入力されたユーザーの住所_建物名等
      * @param string $tel　入力されたユーザーの電話番号
      * @param string $mail　入力されたユーザーのメールアドレス
      * @param int $customerId　ログイン時に自動セットしたカスタマーID
      * @throws PDOException 
      * @throws OriginalException(更新失敗時：code222)
      */
-    public function updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $address01, $address02, $address03, $address04, $address05, $address06, $tel, $mail, $customerId){
+    public function updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $mail, $customerId){
 
         $hash_pass = password_hash($password, PASSWORD_DEFAULT);
+        $dateTime = Config::getDateTime();
         
         try{
-            $sql ="UPDATE customers SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, address_01=?, address_02=?, address_03=?, address_04=?, address_05=?, address_06=?, tel=?, mail=?, hash_password=?, customer_updated_date=now() where customer_id=?";
+            $sql ="UPDATE customers SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, zip_code_01=?, zip_code_02=?, prefecture=?, city=?, block_number=?, building_name=?, tel=?, mail=?, hash_password=?, customer_updated_date=? where customer_id=?";
 
             $stmt = $this->pdo->prepare($sql); 
 
@@ -284,16 +288,17 @@ class CustomerDao extends \Models\Model{
             $stmt->bindvalue(2, $firstName, \PDO::PARAM_STR);
             $stmt->bindvalue(3, $rubyLastName, \PDO::PARAM_STR);
             $stmt->bindvalue(4, $rubyFirstName, \PDO::PARAM_STR);
-            $stmt->bindvalue(5, $address01, \PDO::PARAM_STR);
-            $stmt->bindvalue(6, $address02, \PDO::PARAM_STR);
-            $stmt->bindvalue(7, $address03, \PDO::PARAM_STR);
-            $stmt->bindvalue(8, $address04, \PDO::PARAM_STR);
-            $stmt->bindvalue(9, $address05, \PDO::PARAM_STR);
-            $stmt->bindvalue(10, $address06, \PDO::PARAM_STR);
+            $stmt->bindvalue(5, $zipCode01, \PDO::PARAM_STR);
+            $stmt->bindvalue(6, $zipCode02, \PDO::PARAM_STR);
+            $stmt->bindvalue(7, $prefecture, \PDO::PARAM_STR);
+            $stmt->bindvalue(8, $city, \PDO::PARAM_STR);
+            $stmt->bindvalue(9, $blockNumber, \PDO::PARAM_STR);
+            $stmt->bindvalue(10, $buildingName, \PDO::PARAM_STR);
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
             $stmt->bindvalue(12, $mail, \PDO::PARAM_STR);
-            $stmt->bindvalue(13, $hash_pass);
-            $stmt->bindvalue(14, $customerId);
+            $stmt->bindvalue(13, $hash_pass, \PDO::PARAM_STR);
+            $stmt->bindvalue(14, $dateTime, \PDO::PARAM_STR);
+            $stmt->bindvalue(15, $customerId, \PDO::PARAM_INT);
             $stmt->execute();
             $count = $stmt->rowCount();
             if($count<1){

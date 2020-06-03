@@ -20,38 +20,43 @@ class OrderConfirmAction{
         $customerDao = new CustomerDao();
         $deliveryDao = new DeliveryDao();
         
-        /**-------------------------------------------------------
-           前ページ情報をセッションへ格納
-         ---------------------------------------------------------*/
+        /*====================================================================
+         cart.phpで「レジに進む」ボタンが押された時の処理
+        =====================================================================*/
         if($cmd == "order_confirm" && isset($_SESSION['cart'])){
+
             $var = 1;
             $totalPrice = 0; 
-            $totalPayment = 0;
             $totalAmount = 0;
-            $totalTax = 0;
+            $totalQuantity = 0;
+            $tax = 0;
             
+            /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
             for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
                 $_SESSION["cart"][$i]['item_count'] = $_POST["cart{$var}"];
-                $totalAmount += $_SESSION["cart"][$i]['item_count']; 
-                $totalPayment += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
-                $totalTax += $_SESSION["cart"][$i]['tax'] * $_SESSION["cart"][$i]['item_count'];
+                $totalQuantity += $_SESSION["cart"][$i]['item_count']; 
+                $totalAmount += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
+                $tax += $_SESSION["cart"][$i]['item_tax'] * $_SESSION["cart"][$i]['item_count'];
                 $var++;
             }
-            if($totalPayment >= Config::POSTAGEFREEPRICE){
+            if($totalAmount >= Config::POSTAGEFREEPRICE){
                 $postage = 0;
             }else{
                 $postage = Config::POSTAGE;
             }
                 
             $_SESSION['order'] = array(
-                'total_amount' => $totalAmount,  
-                'total_payment' => $totalPayment,
-                'tax' => $totalTax,
+                'total_quantity' => $totalQuantity,  
+                'total_amount' => $totalAmount,
+                'tax' => $tax,
                 'postage' => $postage
             );
         }
         
-        //前画面のデータをセッションに格納したのち、非ログイン状態の場合はフラグをたててログイン画面へ。
+        /*——————————————————————————————————————————————————————————————
+        　非ログイン状態の場合の処理
+        ————————————————————————————————————————————————————————————————*/
+
         if(!isset($_SESSION["customer_id"])){
             $_SESSION['order_flag'] = "is";
             header("Location:/html/login.php");   
@@ -64,11 +69,13 @@ class OrderConfirmAction{
             header('Location:/html/cart.php');
             exit();
         }
-
+        /*——————————————————————————————————————————————————————————————*/
+        
         try{
             $customer = $customerDao->getCustomerById($customerId);
-            if($customer->getDelFlag() !== "0"){    
-                //customerテーブルの住所が配送先のデフォルトでなければdeliveryテーブルからデフォルト設定された住所を取得、セッションに格納
+            if(!$customer->getDeliveryFlag()){    
+                /*- customerテーブルの住所が配送先のデフォルトでなければ
+                deliveryテーブルからデフォルト設定された住所を取得、セッションに格納 -*/
                 $delivery = $deliveryDao->getDefDeliveryInfo($customerId);
                 $this->saveDeliveryData($delivery);
 
@@ -87,14 +94,15 @@ class OrderConfirmAction{
             die('エラー:'.$e->getMessage());
         }
 
-        /**--------------------------------------------------------
-           配送先確定ボタンがおされたときの処理
-         ---------------------------------------------------------*/
+        /*——————————————————————————————————————————————————————————————
+         「配送先確定」ボタンがおされたときの処理
+        ————————————————————————————————————————————————————————————————*/
+        
         if($cmd == "del_comp"){
             $def_addr = filter_input(INPUT_POST, 'def_addr');
             $_SESSION['def_addr'] = $def_addr;
             
-            if($def_addr !== "customer") {
+            if($def_addr != "customer") {
                 try{
                     $delivery  = $deliveryDao->getDeliveryInfoById($customerId, $def_addr);
                     $this->saveDeliveryData($delivery);
@@ -126,14 +134,14 @@ class OrderConfirmAction{
             }
         }
         
-        /**--------------------------------------------------------
-           決済方法確定ボタンが押されたときの処理
-         ---------------------------------------------------------*/
+        /*——————————————————————————————————————————————————————————————
+         「決済方法確定」ボタンがおされたときの処理
+        ————————————————————————————————————————————————————————————————*/
         if($cmd == "pay_comp") {
             $payType = filter_input(INPUT_POST, 'payType');
             $_SESSION['pay_error'] = NULL;
             $_SESSION['isPay'] = NULL;
-            $_SESSION['order']['payment'] = NULL;
+            $_SESSION['order']['payment_term'] = NULL;
 
             if(!$payType){   
                 $_SESSION['pay_error']="is";
@@ -143,14 +151,15 @@ class OrderConfirmAction{
                 $_SESSION['payType'] = $payType;
 
                 if($payType == "1") {
-                    $_SESSION['order']['payment'] = "クレジットカード";
+                    $_SESSION['order']['payment_term'] = "クレジットカード";
                 }elseif($payType == "2") {
-                    $_SESSION['order']['payment'] = "代引き";
+                    $_SESSION['order']['payment_term'] = "代引き";
                 }else{
-                    $_SESSION['order']['payment'] = "銀行振込";
+                    $_SESSION['order']['payment_term'] = "銀行振込";
                 } 
             }
         }
+        /*——————————————————————————————————————————————————————————————*/
     }
     
     public function saveDeliveryData($delivery){

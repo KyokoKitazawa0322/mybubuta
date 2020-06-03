@@ -28,6 +28,14 @@ $(function() {
         $("form#cartInForm").submit();
     });
 });
+    
+$(function() {
+    $("input#delete").click(function(){
+        var item_code = $(this).data('item');
+        $('#deleteItemId').val(item_code);
+        $("form#deleteForm").submit();
+    });
+});
 // --> 
 </script>
 </head>
@@ -60,7 +68,7 @@ $(function() {
                                             <input type="button" class="btn_cmn_mid btn_design_02" value="カートにいれる" id="cartIn" data-value="<?php echo $item->getItemCode(); ?>">
                                         </div>
                                         <div class="fav_btn_wrap">
-                                            <a href="/html/mypage/mypage_favorite.php?cmd=del&item_code=<?php echo $item->getItemCode(); ?>" class="btn_cmn_01 btn_design_03">削除</a>
+                                            <input type="button" class="btn_cmn_01 btn_design_03" value="削除" id="delete" data-item="<?php echo $item->getItemCode();?>">
                                         </div>
                                     </div>
                                 </li>
@@ -79,9 +87,13 @@ $(function() {
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
     </div>
-    <form method="POST" id="cartInForm" action="/html/cart.php">
-        <input type="hidden" name="cmd" value="add_cart_fromFav">
+    <form method="POST" id="cartInForm" action="#">
+        <input type="hidden" name="cmd" value="add_cart">
         <input type="hidden" name="item_code" id="itemId" value>
+    </form>
+    <form method="POST" id="deleteForm" action="/html/mypage/mypage_favorite.php">
+        <input type="hidden" name="cmd" value="delete">
+        <input type="hidden" name="item_code" id="deleteItemId" value>
     </form>
 </div>
 </body>

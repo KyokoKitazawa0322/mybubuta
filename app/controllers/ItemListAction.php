@@ -19,19 +19,19 @@ class ItemListAction {
         $maxPrice = filter_input(INPUT_GET, 'max_price');
         $sortKey = filter_input(INPUT_GET, 'sortkey');
 
-        //検索条件をリセット
+        /*- 検索条件をリセット -*/
         if($cmd == "do_search" || $cmd == "item_list") {
             $_SESSION['search'] = array();
         }
 
-        //カテゴリのGET値があるか確認
+        /*- カテゴリのGET値があるか確認 -*/
         $isCategory  = false;
         foreach(config::CATEGORY as $key=>$value){
             if(isset($_GET[$key])){
                 $isCategory = true;
             }
         }
-        //カテゴリのGET値が1つ以上ある場合
+        /*- カテゴリのGET値が1つ以上ある場合 -*/
         if($isCategory){
             $categories = [];
             foreach(Config::CATEGORY as $key=>$value){ 
@@ -40,7 +40,7 @@ class ItemListAction {
                     $_SESSION['search']['category'][$key] = $value;
                 } 
             }
-        //カテゴリのGET値はないがセッション値がある場合
+        /*- カテゴリのGET値はないがセッション値がある場合 -*/
         }elseif(isset($_SESSION['search']['category'])){
             $categories = [];
             foreach(Config::CATEGORY as $key=>$value){
@@ -48,7 +48,7 @@ class ItemListAction {
                     $categories[] = $key;
                 }
             }
-        //カテゴリのGET値もセッション値もない場合
+        /*- カテゴリのGET値もセッション値もない場合 -*/
         }else{
             $categories = false;   
         }
@@ -72,7 +72,7 @@ class ItemListAction {
         }
         
         if(!$sortKey){
-            $sortKey = "04";//"ORDER BY item_insert_date asc"
+            $sortKey = "04";/*- "ORDER BY item_insert_date asc" -*/
         }
 
         try{

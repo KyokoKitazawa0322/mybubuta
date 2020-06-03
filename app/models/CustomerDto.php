@@ -9,15 +9,15 @@ class CustomerDto extends \Models\Model {
     private $first_name;
     private $rubyLastName;
     private $rubyFirstName;
-    private $address01;
-    private $address02;
-    private $address03;
-    private $address04;
-    private $address05;
-    private $address06;
+    private $zipCode01;
+    private $zipCode02;
+    private $prefecture;
+    private $city;
+    private $blockNumber;
+    private $buildingName;
     private $tel;
     private $mail;
-    private $delFlag;
+    private $deliveryFlag;
     private $customerInsertDate;
     private $customerUpdatedDate;
     
@@ -45,28 +45,28 @@ class CustomerDto extends \Models\Model {
         $this->rubyFirstName = $rubyFirstName;
     }
 
-    public function setAddress01($address01){
-        $this->address01 = $address01;
+    public function setZipCode01($zipCode01){
+        $this->zipCode01 = $zipCode01;
     }
 
-    public function setAddress02($address02){
-    	$this->address02 = $address02;
+    public function setZipCode02($zipCode02){
+    	$this->zipCode02 = $zipCode02;
     }
 
-    public function setAddress03($address03){
-        $this->address03 = $address03;
+    public function setPrefecture($prefecture){
+        $this->prefecture = $prefecture;
     }
 
-    public function setAddress04($address04){
-        $this->address04 = $address04;
+    public function setCity($city){
+        $this->city = $city;
     }
 
-    public function setAddress05($address05){
-        $this->address05 = $address05;
+    public function setBlockNumber($blockNumber){
+        $this->blockNumber = $blockNumber;
     }
 
-    public function setAddress06($address06){
-        $this->address06 = $address06;
+    public function setBuildingName($buildingName){
+        $this->buildingName = $buildingName;
     }
 
     public function setTel($tel){
@@ -77,8 +77,8 @@ class CustomerDto extends \Models\Model {
         $this->mail = $mail;   
     }
 
-    public function setDelFlag($delFlag){
-        $this->delFlag = $delFlag;   
+    public function setDeliveryFlag($deliveryFlag){
+        $this->deliveryFlag = $deliveryFlag;   
     }
 
     public function setCustomerInsertDate($customerInsertDate){
@@ -118,36 +118,36 @@ class CustomerDto extends \Models\Model {
         return $this->rubyFirstName;
     }
 
-    public function getAddress01(){
-        return $this->address01;
+    public function getZipCode01(){
+        return $this->zipCode01;
     }
 
-    public function getAddress02(){
-         return $this->address02;
+    public function getZipCode02(){
+         return $this->zipCode02;
     }
 
-    public function getAddress03(){
-        return $this->address03;
+    public function getPrefecture(){
+        return $this->prefecture;
     }
 
-    public function getAddress04(){
-        return $this->address04;
+    public function getCity(){
+        return $this->city;
     }
 
-    public function getAddress05(){
-        return $this->address05;
+    public function getBlockNumber(){
+        return $this->blockNumber;
     }
 
-    public function getAddress06(){
-        return $this->address06;
+    public function getBuildingName(){
+        return $this->buildingName;
     }
 
     public function getPost(){
-        return $this->address01."-".$this->address02;
+        return $this->zipCode01."-".$this->zipCode02;
     }
     
     public function getAddress(){
-        return $this->address03.$this->address04.$this->address05.$this->address06;
+        return $this->prefecture.$this->city.$this->blockNumber.$this->buildingName;
     }
     
     public function getTel(){
@@ -158,8 +158,8 @@ class CustomerDto extends \Models\Model {
         return $this->mail;   
     }
 
-    public function getDelFlag(){
-        return $this->delFlag;   
+    public function getDeliveryFlag(){
+        return $this->deliveryFlag;   
     }
 
     public function getCustomerInsertDate(){

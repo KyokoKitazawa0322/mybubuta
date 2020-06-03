@@ -71,32 +71,32 @@ $deliveryDto = $myPageDeliveryEntry->getDeliveryDto();
                         <div class="register_form_row">
                             <p class="register_form_title">郵便番号</p>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryEntry->getAddress01Error()){echo "error_box";}?>" type="tel" name="address01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['address01'];}else{echo $deliveryDto->getAddress01();}?>"/>
+                                <input class="form_input_item <?php if($myPageDeliveryEntry->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['zip_code_01'];}else{echo $deliveryDto->getZipCode01();}?>"/>
                             </div>
                             <span class="txt_dash">―</span>
                             <div class="addr01_input_wrapper">
-                                <input class="form_input_item <?php if($myPageDeliveryEntry->getAddress02Error()){echo "error_box";}?>" type="tel" name="address02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['address02'];}else{echo $deliveryDto->getAddress02();}?>"/>
+                                <input class="form_input_item <?php if($myPageDeliveryEntry->getZipCode02Error()){echo "error_box";}?>" type="tel" name="zip_code_02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['zip_code_02'];}else{echo $deliveryDto->getZipCode02();}?>"/>
                             </div>
-                            <?php if($myPageDeliveryEntry->getAddress01Error()):?>
-                                <p class="error_txt error_zip"><?= $myPageDeliveryEntry->getAddress01Error();?></p>
+                            <?php if($myPageDeliveryEntry->getZipCode01Error()):?>
+                                <p class="error_txt error_zip"><?= $myPageDeliveryEntry->getZipCode01Error();?></p>
                             <?php endif;?>
-                            <?php if($myPageDeliveryEntry->getAddress02Error()):?>
-                                <p class="error_txt error_zip clear"><?= $myPageDeliveryEntry->getAddress01Error();?></p>
+                            <?php if($myPageDeliveryEntry->getZipCode02Error()):?>
+                                <p class="error_txt error_zip clear"><?= $myPageDeliveryEntry->getZipCode02Error();?></p>
                             <?php endif;?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">都道府県</p>
                             <div class="add_list_wrapper">
-                               <select class="add_list <?php if($myPageDeliveryEntry->getAddress03Error()){echo "error_box";}?>" name="address03">
+                               <select class="add_list <?php if($myPageDeliveryEntry->getPrefectureError()){echo "error_box";}?>" name="prefecture">
                                     <option value="">都道府県を選択して下さい</option>
                                     <?php foreach(Config::PREFECTURES as $kenmei):?>
                                         <?php if(isset($_SESSION['del_update'])):?>
-                                            <?php if($_SESSION['del_update']['address03'] == $kenmei):?>
+                                            <?php if($_SESSION['del_update']['prefecture'] == $kenmei):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                                 <?php else:?>
                                                 <option  value="<?=$kenmei?>"><?=$kenmei?></option>
                                                 <?php endif;?>
-                                        <?php elseif($deliveryDto->getAddress03() == $kenmei):?>
+                                        <?php elseif($deliveryDto->getPrefecture() == $kenmei):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                         <?php else:?>
                                                 <option  value="<?=$kenmei?>"><?=$kenmei?></option>   
@@ -104,30 +104,30 @@ $deliveryDto = $myPageDeliveryEntry->getDeliveryDto();
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <?php if($myPageDeliveryEntry->getAddress03Error()):?>
-                                <p class="error_txt memo"><?= $myPageDeliveryEntry->getAddress03Error(); ?></p>
+                            <?php if($myPageDeliveryEntry->getPrefectureError()):?>
+                                <p class="error_txt memo"><?= $myPageDeliveryEntry->getPrefectureError(); ?></p>
                             <?php endif; ?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">市区町村</p>
-                            <input class="form_input_item <?php if($myPageDeliveryEntry->getAddress04Error()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="address04" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['address04'];}else{echo $deliveryDto->getAddress04();}?>"/>
-                            <?php if($myPageDeliveryEntry->getAddress04Error()):?>
-                                <p class="error_txt memo"><?= $myPageDeliveryEntry->getAddress01Error();?></p>
+                            <input class="form_input_item <?php if($myPageDeliveryEntry->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['city'];}else{echo $deliveryDto->getCity();}?>"/>
+                            <?php if($myPageDeliveryEntry->getCityError()):?>
+                                <p class="error_txt memo"><?= $myPageDeliveryEntry->getZipCode01Error();?></p>
                             <?php endif;?>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">番地</p>
-                            <input class="form_input_item <?php if($myPageDeliveryEntry->getAddress05Error()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="address05" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['address05'];}else{echo $deliveryDto->getAddress05();}?>"/>
+                            <input class="form_input_item <?php if($myPageDeliveryEntry->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['block_number'];}else{echo $deliveryDto->getBlockNumber();}?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>
-                                <?php if($myPageDeliveryEntry->getAddress05Error()):?>
-                                    <p class="error_txt memo"><?= $myPageDeliveryEntry->getAddress05Error();?></p>
+                                <?php if($myPageDeliveryEntry->getBlockNumberError()):?>
+                                    <p class="error_txt memo"><?= $myPageDeliveryEntry->getBlockNumberError();?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
                         <div class="register_form_row">
                             <p class="register_form_title">建物名</p>
-                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="address06" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['address06'];}else{echo $deliveryDto->getAddress06();}?>"/>
+                            <input class="form_input_item" type="text" maxlength="100" id="add06" name="building_name" value="<?php if(isset($_SESSION['del_update'])){echo $_SESSION['del_update']['building_name'];}else{echo $deliveryDto->getBuildingName();}?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
 

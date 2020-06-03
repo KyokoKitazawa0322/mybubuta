@@ -14,6 +14,8 @@ class ItemDetailAction {
         $dao = new ItemsDao();
         $itemCode = filter_input(INPUT_GET, 'item_code');
         
+        $_SESSION['add_cart'] = 'undone';
+        
         try{
             $item = $dao->findItemByItemCode($itemCode);
             $this->item = $item;

@@ -11,46 +11,52 @@ class MyPageDeliveryAddAction {
     private $firstNameError = false;
     private $rubyLastNameError = false;
     private $rubyFirstNameError = false;
-    private $address01Error = false;
-    private $address02Error = false;
-    private $address03Error = false;
-    private $address04Error = false;
-    private $address05Error = false;
-    private $address06Error = false;
+    private $zipCode01Error = false;
+    private $zipCode02Error = false;
+    private $prefectureError = false;
+    private $cityError = false;
+    private $blockNumberError = false;
     private $telError = false;   
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_GET, 'cmd');
+        $cmd = filter_input(INPUT_POST, 'cmd');
         
         if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = NULL;
+            unset($_SESSION['customer_id']);
         }
         
+
         if(!isset($_SESSION["customer_id"])){
             header("Location:/html/login.php");   
             exit();
         }else{
             $customerId = $_SESSION['customer_id'];   
         }
+        
+        /*====================================================================
+            order_delivery_list.phpからきた場合
+        =====================================================================*/
 
-        //order_delivery_list.phpからきた場合
         if($cmd == "from_order"){
             $_SESSION['from_order_flag'] = "is";   
         }
+        
+        /*====================================================================
+            「配送先の保存ボタン」がおされたときの処理
+        =====================================================================*/
 
-        //配送先の保存ボタンがおされたときの処理
         if($cmd == 'add'){
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
             $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $address01 = filter_input(INPUT_POST, 'address01');
-            $address02 = filter_input(INPUT_POST, 'address02');
-            $address03 = filter_input(INPUT_POST, 'address03');
-            $address04 = filter_input(INPUT_POST, 'address04');
-            $address05 = filter_input(INPUT_POST, 'address05');
-            $address06 = filter_input(INPUT_POST, 'address06');
+            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
+            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
+            $prefecture = filter_input(INPUT_POST, 'prefecture');
+            $city = filter_input(INPUT_POST, 'city');
+            $blockNumber = filter_input(INPUT_POST, 'block_number');
+            $buildingName = filter_input(INPUT_POST, 'building_name');
             $tel = filter_input(INPUT_POST, 'tel');
             
             $_SESSION['del_add'] = array(
@@ -58,12 +64,12 @@ class MyPageDeliveryAddAction {
             'first_name' => $firstName,
             'ruby_last_name' => $rubyLastName,
             'ruby_first_name' => $rubyFirstName,
-            'address01' => $address01,
-            'address02' => $address02,
-            'address03' => $address03,
-            'address04' => $address04,
-            'address05' => $address05,
-            'address06' => $address06,
+            'zip_code_01' => $zipCode01,
+            'zip_code_02' => $zipCode02,
+            'prefecture' => $prefecture,
+            'city' => $city,
+            'block_number' => $blockNumber,
+            'building_name' => $buildingName,
             'tel' => $tel
            );
 
@@ -82,26 +88,27 @@ class MyPageDeliveryAddAction {
             $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
 
             $key = "郵便番号(3ケタ)";
-            $this->address01Error = $validator->firstZipCodeValidation($key, $address01);
+            $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
 
             $key = "郵便番号(4ケタ)";
-            $this->address02Error  = $validator->lastZipCodeValidation($key, $address02);
+            $this->zipCode02Error  = $validator->lastZipCodeValidation($key, $zipCode02);
 
             $key="都道府県";
-            $this->address03Error = $validator->requireCheck($key, $address03);
+            $this->prefectureError = $validator->requireCheck($key, $prefecture);
 
             $key="市区町村";
-            $this->address04Error = $validator->requireCheck($key, $address04);
+            $this->cityError = $validator->requireCheck($key, $city);
 
             $key="番地";
-            $this->address05Error = $validator->requireCheck($key, $address05);
+            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
 
             $key="電話番号";
             $this->telError = $validator->telValidation($key, $tel);
 
             if($validator->getResult()) {
-                //バリデ通過したら・・・
-                $_SESSION['add_data'] = "clear"; header('Location:/html/mypage/mypage_delivery_add_complete.php');
+                /*- バリデーションを全て通過したときの処理 -*/
+                $_SESSION['add_data'] = "clear"; 
+                header('Location:/html/mypage/mypage_delivery_add_complete.php');
                 exit();
             }
         }
@@ -128,28 +135,24 @@ class MyPageDeliveryAddAction {
         return $this->rubyFirstNameError;   
     }
     
-    public function getAddress01Error(){
-        return $this->address01Error;   
+    public function getZipCode01Error(){
+        return $this->zipCode01Error;   
     }
     
-    public function getAddress02Error(){
-        return $this->address02Error;   
+    public function getZipCode02Error(){
+        return $this->zipCode02Error;   
     }
    
-    public function getAddress03Error(){
-        return $this->address03Error;   
+    public function getPrefectureError(){
+        return $this->prefectureError;   
     }
     
-    public function getAddress04Error(){
-        return $this->address04Error;   
+    public function getCityError(){
+        return $this->cityError;   
     }
     
-    public function getAddress05Error(){
-        return $this->address05Error;   
-    }
-    
-    public function getAddress06Error(){
-        return $this->address06Error;   
+    public function getBlockNumberError(){
+        return $this->blockNumberError;   
     }
     
     public function getTelError(){

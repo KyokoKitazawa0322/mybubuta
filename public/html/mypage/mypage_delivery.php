@@ -70,7 +70,7 @@ function deleteAddr(addrSeq){
                     <h3 class="ttl_cmn">お客様会員住所</h3>
                     <div class="mypage_addr_box">
                         <div class="box_info">
-                            <input name="def_addr" type="radio" id="def_addr" data-value="def" <?php if($customerDto->getDelFlag() == 0){ echo 'checked="checked"';}?>>
+                            <input name="def_addr" type="radio" id="def_addr" data-value="def" <?php if($customerDto->getDeliveryFlag() == TRUE){ echo 'checked="checked"';}?>>
                             <label for="def_addr" class="input_radio_addr_01">
                                 <span class="txt_label">いつもの配送先</span>
                             </label>
@@ -95,7 +95,7 @@ function deleteAddr(addrSeq){
                             <?php foreach($deliveryDto as $delivery): $i++;?>
                                 <div class="mypage_addr_box">
                                     <div class="box_info">
-                                        <input name="def_addr" type="radio" id="reg_addr<?= $i?>" data-value="<?= $delivery->getDeliveryId();?>" <?php if($delivery->getDelFlag() == 0){ echo 'checked="checked"';}?>>
+                                        <input name="def_addr" type="radio" id="reg_addr<?= $i?>" data-value="<?= $delivery->getDeliveryId();?>" <?php if($delivery->getDeliveryFlag() == TRUE){ echo 'checked="checked"';}?>>
                                         <label for= "reg_addr<?= $i?>" class="input_radio_addr_01">
                                             <span class="txt_label">いつもの配送先</span>
                                         </label>

@@ -64,30 +64,30 @@ $registerConfirm->execute();
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号</p>
                                 <div class="addr01_input_wrapper">
-                                    <p><?= Config::h($_SESSION['register']['address01']);?></p>
+                                    <p><?= Config::h($_SESSION['register']['zip_code_01']);?></p>
                                 </div>
                                 <span class="txt_dash">－</span>
                                 <div class="addr01_input_wrapper">
-                                    <p><?= Config::h($_SESSION['register']['address02']);?></p>
+                                    <p><?= Config::h($_SESSION['register']['zip_code_02']);?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県</p>
                                 <div class="add_list_wrapper">
-                                   <p><?= Config::h($_SESSION['register']['address03']);?></p>
+                                   <p><?= Config::h($_SESSION['register']['prefecture']);?></p>
                                 </div>		
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村</p>
-                                <p><?= Config::h($_SESSION['register']['address04']);?></p>
+                                <p><?= Config::h($_SESSION['register']['city']);?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地</p>
-                                <p><?= Config::h($_SESSION['register']['address05']);?></p>
+                                <p><?= Config::h($_SESSION['register']['block_number']);?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <p><?= Config::h($_SESSION['register']['address06']);?></p>
+                                <p><?= Config::h($_SESSION['register']['building_name']);?></p>
                             </div>
                         </div>                     
                         <div class="register_field tel_field">

@@ -8,12 +8,11 @@ class RegisterAction{
     private $firstNameError = false;
     private $rubyLastNameError = false;
     private $rubyFirstNameError = false;
-    private $address01Error = false;
-    private $address02Error = false;
-    private $address03Error = false;
-    private $address04Error = false;
-    private $address05Error = false;
-    private $address06Error = false;
+    private $zipCode01Error = false;
+    private $zipCode02Error = false;
+    private $prefectureError = false;
+    private $cityError = false;
+    private $blockNumberError = false;
     private $telError = false;
     private $mailError = false;
     private $passwordError = false;
@@ -24,17 +23,20 @@ class RegisterAction{
         
         $validator = new CommonValidator();
 
+        /*====================================================================
+        　「会員登録をする」ボタンが押された時の処理
+        =====================================================================*/
         if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
             $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $address01 = filter_input(INPUT_POST, 'address01');
-            $address02 = filter_input(INPUT_POST, 'address02');
-            $address03 = filter_input(INPUT_POST, 'address03');
-            $address04 = filter_input(INPUT_POST, 'address04');
-            $address05 = filter_input(INPUT_POST, 'address05');
-            $address06 = filter_input(INPUT_POST, 'address06');
+            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
+            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
+            $prefecture = filter_input(INPUT_POST, 'prefecture');
+            $city = filter_input(INPUT_POST, 'city');
+            $blockNumber = filter_input(INPUT_POST, 'block_number');
+            $buildingName = filter_input(INPUT_POST, 'building_name');
             $tel = filter_input(INPUT_POST, 'tel');
             $mail = filter_input(INPUT_POST, 'mail');
             $password = filter_input(INPUT_POST, 'password');
@@ -45,12 +47,12 @@ class RegisterAction{
              'first_name' => $firstName,
              'ruby_last_name' => $rubyLastName,
              'ruby_first_name' => $rubyFirstName,
-             'address01' => $address01,
-             'address02' => $address02,
-             'address03' => $address03,
-             'address04' => $address04,
-             'address05' => $address05,
-             'address06' => $address06,
+             'zip_code_01' => $zipCode01,
+             'zip_code_02' => $zipCode02,
+             'prefecture' => $prefecture,
+             'city' => $city,
+             'block_number' => $blockNumber,
+             'building_name' => $buildingName,
              'tel' => $tel,
              'mail' => $mail,
              'password' => $password,
@@ -70,27 +72,29 @@ class RegisterAction{
             $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
 
             $key = "郵便番号(3ケタ)";
-            $this->address01Error = $validator->firstZipCodeValidation($key, $address01);
+            $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
 
             $key = "郵便番号(4ケタ)";
-            $this->address02Error  = $validator->lastZipCodeValidation($key, $address02);
+            $this->zipCode02Error  = $validator->lastZipCodeValidation($key, $zipCode02);
 
             $key="都道府県";
-            $this->address03Error = $validator->requireCheck($key, $address03);
+            $this->prefectureError = $validator->requireCheck($key, $prefecture);
 
             $key="市区町村";
-            $this->address04Error = $validator->requireCheck($key, $address04);
+            $this->cityError = $validator->requireCheck($key, $city);
 
             $key="番地";
-            $this->address05Error = $validator->requireCheck($key, $address05);
+            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
             
             $customerMail = "";
             try{
                 $this->mailError = $validator->checkMail($mail, $customerMail);
-            }catch(\PDOException $e){
-                die('SQLエラー :'.$e->getMessage());
+            } catch(\PDOException $e){
+                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
+                header('Content-Type: text/plain; charset=UTF-8', true, 500);
+                die('エラー:データベースの処理に失敗しました。');
             }
-            //重複がなければバリデーションチェック
+            /*- 他者とのメールアドレスの重複がなければ続けてバリデーションチェック -*/
             if(!$this->mailError){
                 $key="メールアドレス";
                 $this->mailError = $validator->mailValidation($key, $mail);
@@ -105,6 +109,7 @@ class RegisterAction{
             $key="パスワード(再確認)";
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
+            
             if($validator->getResult()) {
                 $_SESSION['register']['input'] = "complete";
                 header('Location:/html/register/register_confirm.php');
@@ -129,30 +134,26 @@ class RegisterAction{
         return $this->rubyFirstNameError;   
     }
     
-    public function getAddress01Error(){
-        return $this->address01Error;   
+    public function getZipCode01Error(){
+        return $this->zipCode01Error;   
     }
     
-    public function getAddress02Error(){
-        return $this->address02Error;   
+    public function getZipCode02Error(){
+        return $this->zipCode02Error;   
     }
    
-    public function getAddress03Error(){
-        return $this->address03Error;   
+    public function getPrefectureError(){
+        return $this->prefectureError;   
     }
     
-    public function getAddress04Error(){
-        return $this->address04Error;   
+    public function getCityError(){
+        return $this->cityError;   
     }
     
-    public function getAddress05Error(){
-        return $this->address05Error;   
+    public function getBlockNumberError(){
+        return $this->blockNumberError;   
     }
-    
-    public function getAddress06Error(){
-        return $this->address06Error;   
-    }
-    
+
     public function getTelError(){
         return $this->telError;   
     }
