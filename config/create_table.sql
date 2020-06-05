@@ -100,3 +100,11 @@ CREATE TABLE delivery (
 	delivery_insert_date     datetime not null,       -- “o˜^“ú
     delivery_updated_date    datetime                 -- XV“ú
 );
+
+drop table if exists notice;
+CREATE TABLE notice (
+	id      int not null auto_increment primary key,
+	title   varchar(255) not null,   -- Œ–¼
+	main_text   text not null,       -- –{•¶
+	insert_date datetime not null    -- “o˜^“ú
+);
