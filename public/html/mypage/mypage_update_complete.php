@@ -22,11 +22,11 @@ $myPageUpdateComplete->execute();
 <script type="text/javascript">
 <!--
 $(function(){
- history.pushState(null, null, null); //ブラウザバック無効化
- //ブラウザバックボタン押下時
- $(window).on("popstate", function (event) {
-  window.location.replace('mypage.php');
- });
+    history.pushState(null, null, null); //ブラウザバック無効化
+    //ブラウザバックボタン押下時
+    $(window).on("popstate", function (event) {
+        window.location.replace('/html/mypage/mypage.php');
+    });
 });
 // --> 
 </script>
