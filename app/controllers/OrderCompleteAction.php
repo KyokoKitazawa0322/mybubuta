@@ -22,7 +22,7 @@ class OrderCompleteAction{
         $cmd = filter_input(INPUT_POST, 'cmd');
         
         /*====================================================================
-        　register_confirm.phpで「登録する」ボタンが押された時の処理
+        　register_confirm.phpで「注文を確定する」ボタンが押された時の処理
         =====================================================================*/
         if($cmd == "order_complete" && isset($_SESSION['order'])){
             
@@ -30,9 +30,9 @@ class OrderCompleteAction{
              決済方法が選択されてなければリダイレクト
             ————————————————————————————————————————————————————————————————*/
     
-            if(!isset($_SESSION['order']['payment_term'])){
+            if(!isset($_SESSION['payment_term'])){
                 header('Location:/html/order/order_confirm.php');
-                $_SESSION['isPay'] = "none";
+                $_SESSION['pay_type'] = "none";
                 exit();
             }
             /*——————————————————————————————————————————————————————————————*/
@@ -42,7 +42,7 @@ class OrderCompleteAction{
             $totalQuantity = $_SESSION['order']['total_quantity'];
             $tax = $_SESSION['order']['tax'];
             $postage = $_SESSION['order']['postage'];
-            $paymentTerm = $_SESSION['order']['payment_term'];
+            $paymentTerm = $_SESSION['payment_term'];
             $name = $_SESSION['delivery']['name'];
             $address = $_SESSION['delivery']['address'];
             $post = $_SESSION['delivery']['post'];
@@ -73,9 +73,9 @@ class OrderCompleteAction{
                 unset($_SESSION['order']);
                 unset($_SESSION['delivery']);
                 unset($_SESSION['def_addr']);
-                unset($_SESSION['isPay']);
-                unset($_SESSION['payType']);
+                unset($_SESSION['pay_type']);
                 unset($_SESSION['pay_error']);
+                unset($_SESSION['payment_term']);
                 unset($_SESSION['cmd']);
     
             } catch(\PDOException $e){

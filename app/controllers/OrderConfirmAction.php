@@ -44,6 +44,13 @@ class OrderConfirmAction{
             }else{
                 $postage = Config::POSTAGE;
             }
+            
+            /*- 注文処理で使用するセッション変数の初期化 -*/
+            $_SESSION['pay_error'] = NULL;
+            $_SESSION['pay_type'] = NULL;
+            $_SESSION['payment_term'] = NULL;
+            $_SESSION['def_addr'] = NULL;
+            $_SESSION['delivery'] = NULL;
                 
             $_SESSION['order'] = array(
                 'total_quantity' => $totalQuantity,  
@@ -138,24 +145,23 @@ class OrderConfirmAction{
          「決済方法確定」ボタンがおされたときの処理
         ————————————————————————————————————————————————————————————————*/
         if($cmd == "pay_comp") {
-            $payType = filter_input(INPUT_POST, 'payType');
+            $payType = filter_input(INPUT_POST, 'pay_type');
             $_SESSION['pay_error'] = NULL;
-            $_SESSION['isPay'] = NULL;
-            $_SESSION['order']['payment_term'] = NULL;
+            $_SESSION['payment_term'] = NULL;
 
             if(!$payType){   
                 $_SESSION['pay_error']="is";
                 header('Location:/html/order/order_pay_list.php');
                 exit();   
             }else{
-                $_SESSION['payType'] = $payType;
+                $_SESSION['pay_type'] = $payType;
 
                 if($payType == "1") {
-                    $_SESSION['order']['payment_term'] = "クレジットカード";
+                    $_SESSION['payment_term'] = "クレジットカード";
                 }elseif($payType == "2") {
-                    $_SESSION['order']['payment_term'] = "代引き";
+                    $_SESSION['payment_term'] = "代引き";
                 }else{
-                    $_SESSION['order']['payment_term'] = "銀行振込";
+                    $_SESSION['payment_term'] = "銀行振込";
                 } 
             }
         }

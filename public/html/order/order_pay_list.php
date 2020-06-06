@@ -34,7 +34,7 @@ $orderPayList->execute();
                             <p class="error">選択して下さい</p>
                             <?php endif;?>
                             <li>
-                                <input class="" id="label_01" type="radio" name="payType" value="1" <?php if(isset($_SESSION['payType']) && $_SESSION['payType'] == "1"){echo "checked";}?>>
+                                <input class="" id="label_01" type="radio" name="pay_type" value="1" <?php if(isset($_SESSION['pay_type']) && $_SESSION['pay_type'] == "1"){echo "checked";}?>>
                                 <label class="" for="label_01">
                                     <div class="select_pay_wrap">
                                         <h3>クレジットカード</h3> 
@@ -42,7 +42,7 @@ $orderPayList->execute();
                                 </label>   
                             </li>
                             <li>
-                                <input class="" id="label_02" type="radio" name="payType" value="2" <?php if(isset($_SESSION['payType']) && $_SESSION['payType'] == "2"){echo "checked";}?>>
+                                <input class="" id="label_02" type="radio" name="pay_type" value="2" <?php if(isset($_SESSION['pay_type']) && $_SESSION['pay_type'] == "2"){echo "checked";}?>>
                                 <label class="" for="label_02">
                                     <div class="select_pay_wrap">
                                         <h3>代引き</h3>
@@ -51,7 +51,7 @@ $orderPayList->execute();
                                 </label>
                             </li>
                             <li>
-                                <input class="" id="label_03" type="radio" name="payType" value="3" <?php if(isset($_SESSION['payType']) && $_SESSION['payType'] == "3"){echo "checked";}?>>
+                                <input class="" id="label_03" type="radio" name="pay_type" value="3" <?php if(isset($_SESSION['pay_type']) && $_SESSION['pay_type'] == "3"){echo "checked";}?>>
                                 <label class="" for="label_03">
                                     <div class="select_pay_wrap">
                                         <h3>銀行振込</h3>
