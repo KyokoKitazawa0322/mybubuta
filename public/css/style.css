@@ -1251,6 +1251,17 @@ body {
     color: #A2A2A2;
 }
 
+.mypage .notice_link_wrapper {
+    overflow: hidden;
+}
+
+.mypage .notice_link {
+    width: 260px;
+    margin: 30px auto 30px;
+}
+
+
+
 @media screen and (max-width: 767px){
 .mypage .notice_wrapper .detail_link_wrap {
     display: block;
