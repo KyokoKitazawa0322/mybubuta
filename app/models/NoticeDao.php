@@ -110,6 +110,37 @@ class NoticeDao extends \Models\Model{
         }
     }
     
+    /**
+     * 最新のお知らせ2件取得
+     * @param string $title      お知らせ件名
+     * @param string $mainText   お知らせ本文
+     * @return NoticeDto[] 
+     * @throws PDOException 
+     * @throws OriginalException(取得失敗時:code111)
+     */
+    public function getLatestNoticeInfo(){
+        try{
+            $sql = "SELECT * FROM notice LIMIT 2";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            
+            if($res){
+                $notice = [];
+                foreach($res as $row){
+                    $dto = $this->setDto($row);
+                    $notice[] = $dto;
+                }
+                return $notice;
+            }else{
+                throw new OriginalException('取得に失敗しました。',111);
+            }
+        }catch(\PDOException $e){
+            throw $e;
+        }
+    }
+    
+    
     
     /**
      * お知らせ詳細取得
