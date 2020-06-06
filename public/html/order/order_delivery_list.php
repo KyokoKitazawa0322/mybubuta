@@ -2,7 +2,6 @@
 <?php
 require_once (__DIR__ ."/../../../vendor/autoload.php");
 
-session_cache_limiter('none');
 session_start();
 
 $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
@@ -22,31 +21,38 @@ $deliveries = $orderDeliveryList->getDelivery();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type = "text/javascript">
 <!--
-    	// 住所登録編集(mypage_update.php)
-function updbaseAddr(){
-	$("form#base-addr-update").submit();
-} 
+    $(function(){
+        //ブラウザバック無効化
+        history.pushState(null, null, null); 
+        //ブラウザバックボタン押下時
+        $(window).on("popstate", function (event) {
+            window.location.replace('/html/order/order_confirm.php');
+        });
+    });
 
-    	// 住所追加(mypage_delivery_add.php)
-function addAddr(){
-	$("form#add_addr").submit();
-} 
-    
-    	// 住所登録編集(mypage_delivery_add.php)
-function updAddr(addrSeq){
-	var seq = addrSeq.getAttribute("data-value");
-	document.getElementById("updId").value = seq;
-	$("form#exist-addr-update").submit();
-} 
+    // 住所登録編集(mypage_update.php)
+    function updbaseAddr(){
+        $("form#base-addr-update").submit();
+    } 
 
-        //削除
-function deleteAddr(addrSeq){
-	var seq = addrSeq.getAttribute("data-value");
-    
-    
-	document.getElementById("deleteId").value = seq;
-	$("form#exist-addr-delete").submit();
-}
+    // 住所追加(mypage_delivery_add.php)
+    function addAddr(){
+        $("form#add_addr").submit();
+    } 
+
+    // 住所登録編集(mypage_delivery_add.php)
+    function updAddr(addrSeq){
+        var seq = addrSeq.getAttribute("data-value");
+        document.getElementById("updId").value = seq;
+        $("form#exist-addr-update").submit();
+    } 
+
+    //削除
+    function deleteAddr(addrSeq){
+        var seq = addrSeq.getAttribute("data-value");
+        document.getElementById("deleteId").value = seq;
+        $("form#exist-addr-delete").submit();
+    }
 // --> 
 </script>
 </head>

@@ -1,7 +1,6 @@
 <?php
 require_once (__DIR__ ."/../../../vendor/autoload.php");
 
-session_cache_limiter('none');
 session_start();
 
 $orderPayList = new \Controllers\OrderPayListAction();
@@ -17,6 +16,17 @@ $orderPayList->execute();
 <title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+<!--
+$(function(){
+    history.pushState(null, null, null); //ブラウザバック無効化
+    //ブラウザバックボタン押下時
+    $(window).on("popstate", function (event) {
+        window.location.replace('/html/order/order_confirm.php');
+    });
+});
+// --> 
+</script>
 </head>
 <body class="mypage" id="order_pay_list">
 <div class="wrapper">  
