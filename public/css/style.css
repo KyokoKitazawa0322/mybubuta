@@ -1224,6 +1224,52 @@ body {
     font-size: 1.4rem;
 }
 }
+
+/**--------------------------------------------------------
+        mypage.php
+----------------------------------------------------------*/
+.mypage .notice_wrapper {
+    font-size: 1.5rem;
+    padding: 20px 0;
+    display: table;
+    width: 100%;
+    border-bottom: solid 1px #A2A2A2;   
+}
+
+.mypage .notice_wrapper:first-of-type {
+    padding-top: 0;
+}
+
+.mypage .notice_wrapper .detail_link_wrap {
+    display: table-cell;
+    width: 30%;
+    vertical-align: middle;
+}
+
+.mypage .notice_wrapper .notice_date {
+    padding-bottom: 10px;
+    color: #A2A2A2;
+}
+
+@media screen and (max-width: 767px){
+.mypage .notice_wrapper .detail_link_wrap {
+    display: block;
+    width: 100%;
+}
+    
+.mypage .notice_wrapper .box_info {
+    margin-bottom: 30px;
+}
+}
+
+/**--------------------------------------------------------
+        mypage_notice.php
+----------------------------------------------------------*/
+#mypage_notice h4 {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
 /**--------------------------------------------------------
         mypage_favorite.php
 ----------------------------------------------------------*/
