@@ -12,7 +12,6 @@ class MyPageNoticeAction {
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
-        $noticeId = filter_input(INPUT_POST, 'notice_id');
 
         if($cmd == "do_logout" ){
             unset($_SESSION['customer_id']);
@@ -26,7 +25,7 @@ class MyPageNoticeAction {
         $noticeDao = new NoticeDao();
         
         try{
-            $noticeDto = $noticeDao->getNoticeDetail($noticeId);
+            $noticeDto = $noticeDao->getNoticeInfoAll();
             $this->noticeDto = $noticeDto;
             
         } catch(\PDOException $e){
@@ -42,7 +41,7 @@ class MyPageNoticeAction {
     }
     
     /*
-    *@return NoticeDto[];
+    *@return NoticeDto;
     */
     public function getNoticeDto(){
         return $this->noticeDto;   

@@ -5,13 +5,14 @@ use \Models\NoticeDto;
 use \Models\OriginalException;
 use \Config\Config;
 
-class MyPageAction {
+class MyPageNoticeDetailAction {
     
     private $noticeDto; 
         
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
+        $noticeId = filter_input(INPUT_POST, 'notice_id');
 
         if($cmd == "do_logout" ){
             unset($_SESSION['customer_id']);
@@ -25,7 +26,7 @@ class MyPageAction {
         $noticeDao = new NoticeDao();
         
         try{
-            $noticeDto = $noticeDao->getLatestNoticeInfo();
+            $noticeDto = $noticeDao->getNoticeDetail($noticeId);
             $this->noticeDto = $noticeDto;
             
         } catch(\PDOException $e){
@@ -41,7 +42,7 @@ class MyPageAction {
     }
     
     /*
-    *@return NoticeDto;
+    *@return NoticeDto[];
     */
     public function getNoticeDto(){
         return $this->noticeDto;   
