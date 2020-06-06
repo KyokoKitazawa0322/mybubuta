@@ -31,7 +31,7 @@ $orderConfirm->execute();
                 </div>
                 <div class="main_contents_inner">
                     <div class="cart_item_box"> 
-                        <?php if(isset($_SESSION['isPay']) && $_SESSION['isPay'] == "none"): ?>
+                        <?php if(isset($_SESSION['pay_type']) && $_SESSION['pay_type'] == "none"): ?>
                             <h4 style="color:red;">決済方法が未選択です。</h4>  
                         <?php endif;?>
                         <h3 class="ttl_cmn">配送先住所</h3>
@@ -55,17 +55,18 @@ $orderConfirm->execute();
                         <h3 class="ttl_cmn">決済方法</h3>
                         <div class="shipping_box_wrap">
                             <div class="shipping_box">
-                            <?php if(isset($_SESSION['payType'])):?>
-                                <?php if($_SESSION['payType'] == "1"):?>
+                            <?php if(isset($_SESSION['pay_type'])):?>
+                                <?php if($_SESSION['pay_type'] == "1"):?>
                                     <h4>クレジットカード</h4> 
-                                <?php elseif($_SESSION['payType'] == "2"):?>
+                                <?php elseif($_SESSION['pay_type'] == "2"):?>
                                     <h4>代引き</h4>
                                     <p>※代引き手数料：210円</p>
-                                <?php elseif($_SESSION['payType'] == "3"):?>
+                                <?php elseif($_SESSION['pay_type'] == "3"):?>
                                     <h4>銀行振込</h4>
                                     <p>銀行振込手数料はお客様ご負担となります。</p>
                                 <?php endif;?>
-                            <?php else:?>
+                            <?php endif;?>
+                            <?php if(!isset($_SESSION['pay_type']) || $_SESSION['pay_type'] == "none"):?>
                                     <h4>決済方法を選択してください。</h4>
                             <?php endif;?>
                             </div>
