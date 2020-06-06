@@ -41,11 +41,11 @@ $registerConfirm->execute();
                                 <p class="register_form_title">氏名</p>
                                 <p class="name_label">姓:</p>
                                 <div class="name_input_wrapper">
-                                    <p><? =Config::h($_SESSION['register']['last_name']);?></p>
+                                    <p><?= Config::h($_SESSION['register']['last_name']);?></p>
                                 </div>
                                 <p class="name_label">名:</p>
                                 <div class="name_input_wrapper">
-                                    <p><? =Config::h($_SESSION['register']['first_name']);?></p>
+                                    <p><?= Config::h($_SESSION['register']['first_name']);?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
@@ -56,7 +56,7 @@ $registerConfirm->execute();
                                 </div>
                                 <p class="name_label">メイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><? =Config::h($_SESSION['register']['ruby_first_name']);?></p>
+                                    <p><?= Config::h($_SESSION['register']['ruby_first_name']);?></p>
                                 </div>
                             </div>
                         </div>  
