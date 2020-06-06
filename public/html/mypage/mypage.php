@@ -38,13 +38,16 @@ $noticeDto = $mypage->getNoticeDto();
                                 <p class="notice_title"><?= $notice->getTitle();?></p>
                             </div>
                             <div class="detail_link_wrap">
-                                <form method="POST" action="mypage_notice.php">
+                                <form method="POST" action="mypage_notice_detail.php">
                                     <input type="submit" class="btn_cmn_01 btn_design_02 btn_cmn_mid" value="お知らせを見る">
                                     <input type="hidden" name="notice_id" value="<?= $notice->getId();?>">
                                 </form>
                             </div>
                         </div>
                     <?php endforeach;?>
+                    <div class="notice_link_wrapper">
+                        <a href="/html/mypage/mypage_notice.php" class="notice_link btn_cmn_l btn_design_01">お知らせ一覧を見る</a>
+                    </div>
                 </div>
             </div>
         </div>

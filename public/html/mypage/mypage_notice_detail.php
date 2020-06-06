@@ -4,9 +4,9 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
-$mypageNotice = new \Controllers\MyPageNoticeAction();
-$mypageNotice->execute();
-$noticeDto = $mypageNotice->getNoticeDto();
+$mypageNoticeDetail = new \Controllers\MyPageNoticeDetailAction();
+$mypageNoticeDetail->execute();
+$noticeDto = $mypageNoticeDetail->getNoticeDto();
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ $noticeDto = $mypageNotice->getNoticeDto();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
-<body class="mypage">
+<body class="mypage" id="mypage_notice">
 <div class="wrapper">
     <?php require_once(__DIR__.'/../common/header_common.php')?>
     <div class="container">
@@ -31,20 +31,13 @@ $noticeDto = $mypageNotice->getNoticeDto();
                 </div>
                 <div class="main_contents_inner">
                     <h3 class="ttl_cmn">会員様へのお知らせ</h3>
-                    <?php foreach($noticeDto as $notice):?>
-                        <div class="notice_wrapper">
-                            <div class="box_info">
-                                <p class="notice_date"><?= $notice->getInsertDate();?></p>
-                                <p class="notice_title"><?= $notice->getTitle();?></p>
-                            </div>
-                            <div class="detail_link_wrap">
-                                <form method="POST" action="mypage_notice_detail.php">
-                                    <input type="submit" class="btn_cmn_01 btn_design_02 btn_cmn_mid" value="お知らせを見る">
-                                    <input type="hidden" name="notice_id" value="<?= $notice->getId();?>">
-                                </form>
-                            </div>
+                    <div class="notice_wrapper">
+                        <div class="box_info">
+                            <p class="notice_date"><?= $noticeDto->getInsertDate();?></p>
+                            <h4><?= $noticeDto->getTitle();?></h4>
+                            <p class="notice_text"><?= $noticeDto->getMainText();?></p>
                         </div>
-                    <?php endforeach;?>
+                    </div>
                 </div>
             </div>
         </div>
