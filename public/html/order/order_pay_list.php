@@ -18,13 +18,12 @@ $orderPayList->execute();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 <!--
-$(function(){
-    history.pushState(null, null, null); //ブラウザバック無効化
-    //ブラウザバックボタン押下時
-    $(window).on("popstate", function (event) {
-        window.location.replace('/html/order/order_confirm.php');
+    $(function(){
+        history.pushState(null, null, null);
+        $(window).on("popstate", function (event) {
+            window.location.replace('/html/order/order_confirm.php');
+        });
     });
-});
 // --> 
 </script>
 </head>

@@ -22,9 +22,7 @@ $deliveries = $orderDeliveryList->getDelivery();
 <script type = "text/javascript">
 <!--
     $(function(){
-        //ブラウザバック無効化
-        history.pushState(null, null, null); 
-        //ブラウザバックボタン押下時
+        history.pushState(null, null, null);
         $(window).on("popstate", function (event) {
             window.location.replace('/html/order/order_confirm.php');
         });
