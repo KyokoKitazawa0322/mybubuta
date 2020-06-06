@@ -81,7 +81,7 @@ class OrderDeliveryListAction{
             if($_SESSION['def_addr'] == "customer"){
                 echo 'checked="checked"';
             }
-        }elseif($customer->getDeliveryFlag() == 0){
+        }elseif($customer->getDeliveryFlag()){
             echo 'checked="checked"';
         }
     }
@@ -91,7 +91,7 @@ class OrderDeliveryListAction{
             if($_SESSION['def_addr'] == $delivery->getDeliveryId()){
                 echo 'checked="checked"';
             }
-        }elseif($delivery->getDeliveryFlag() == 0){ 
+        }elseif($delivery->getDeliveryFlag()){ 
             echo 'checked="checked"';
         }
     }
