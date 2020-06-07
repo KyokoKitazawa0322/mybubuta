@@ -36,7 +36,7 @@ class MyPageDeliveryCompleteAction {
             $zipCode02 = $_SESSION['del_update']['zip_code_02'];
             $prefecture = $_SESSION['del_update']['prefecture'];
             $city = $_SESSION['del_update']['city'];
-            $blockNumber = $_SESSION['del_update']['city'];
+            $blockNumber = $_SESSION['del_update']['block_number'];
             $buildingName = $_SESSION['del_update']['building_name'];
             $tel = $_SESSION['del_update']['tel'];
             
