@@ -1,9 +1,17 @@
 <?php
 namespace Controllers;
-use \Models\DeliveryDao;
-use \Models\CommonValidator;
 
-class MyPageDeliveryAddAction {
+use \Models\DeliveryDao;
+
+use \Models\CommonValidator;
+use \Config\Config;
+
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
+
+class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
     
     private $deliveryDto;
     
@@ -22,24 +30,16 @@ class MyPageDeliveryAddAction {
         
         $cmd = filter_input(INPUT_POST, 'cmd');
         
-        if($cmd == "do_logout" ){
-            unset($_SESSION['customer_id']);
-        }
-        
-
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];   
         
         /*====================================================================
             order_delivery_list.phpからきた場合
         =====================================================================*/
 
         if($cmd == "from_order"){
-            $_SESSION['from_order_flag'] = "is";   
+            $_SESSION['from_order_flag'] = TRUE;   
         }
         
         /*====================================================================
@@ -47,6 +47,7 @@ class MyPageDeliveryAddAction {
         =====================================================================*/
 
         if($cmd == 'add'){
+            
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
@@ -95,6 +96,14 @@ class MyPageDeliveryAddAction {
 
             $key="都道府県";
             $this->prefectureError = $validator->requireCheck($key, $prefecture);
+            
+            if(!$this->prefectureError){
+                try{
+                    $validator->checkPrefecture($prefecture);
+                }catch(InvalidParamException $e){
+                    $e->handler($e);   
+                }
+            }
 
             $key="市区町村";
             $this->cityError = $validator->requireCheck($key, $city);
@@ -107,9 +116,11 @@ class MyPageDeliveryAddAction {
 
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
-                $_SESSION['add_data'] = "clear"; 
-                header('Location:/html/mypage/mypage_delivery_add_complete.php');
+                $_SESSION['add_data'] = "complete"; 
+                header('Location:/html/mypage/mypage_delivery_add_confirm.php');
                 exit();
+            }else{
+                $_SESSION['add_data'] = "incomplete"; 
             }
         }
     }
@@ -157,6 +168,18 @@ class MyPageDeliveryAddAction {
     
     public function getTelError(){
         return $this->telError;   
+    }
+    
+    public function checkSelectedPrefecture($value){
+        if(isset($_SESSION['del_add']['prefecture']) && $_SESSION['del_add']['prefecture']==$value){ 
+            return true;
+        }
+    }
+    
+    public function echoValue($value){
+        if(isset($_SESSION['del_add'][$value])){
+            echo $_SESSION['del_add'][$value];
+        }
     }
 }
 ?>

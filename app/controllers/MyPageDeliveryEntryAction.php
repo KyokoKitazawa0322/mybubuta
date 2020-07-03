@@ -2,11 +2,14 @@
 namespace Controllers;
 
 use \Models\DeliveryDao;
-use \Models\OriginalException;
-use \Config\Config;
 use \Models\CommonValidator;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
+use \Config\Config;
 
-class MyPageDeliveryEntryAction {
+class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
     
     private $customerDto; 
     private $deliveryDto;
@@ -27,16 +30,9 @@ class MyPageDeliveryEntryAction {
         $cmd = filter_input(INPUT_POST, 'cmd');
         $delId = filter_input(INPUT_POST, 'del_id');
         
-        if($cmd == "do_logout" ){
-            unset($_SESSION['customer_id']);
-        }
-        
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];   
         
         /*=============================================================
     　　　　mypage_delivery.phpで「配送先の編集」ボタンがおされたときの処理
@@ -51,20 +47,25 @@ class MyPageDeliveryEntryAction {
         　order_delivery_list.phpで「配送先の編集」ボタンがおされたときの処理
         ==============================================================*/
         elseif($cmd == "from_order"){
-            $_SESSION['from_order_flag'] = "is";  
+            $_SESSION['from_order_flag'] = TRUE;  
             unset($_SESSION['del_update']);
             $_SESSION['del_id'] = $delId;
         }
         
+        
         /*==============================================================
-        　それ以外の訪問はlogin.phpへリダイレクト
+        　上記以外の訪問
         ==============================================================*/
-        else{
-            header('Location:/html/login.php');   
+        try{
+            if(!isset($_SESSION['del_id'])){
+                throw new InvalidParamException('Invalid param for delivery_complete:$_SESSION["del_id"]=nothing');
+            }
+        }catch(InvalidParamException $e){
+            $e->handler($e);   
         }
-        
+
         /*=============================================================*/
-        
+
         $deliveryId = $_SESSION['del_id'];
     
         $deliveryDao = new DeliveryDao();
@@ -73,15 +74,11 @@ class MyPageDeliveryEntryAction {
         try{
             $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
             
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
             
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
         
         /*====================================================================
@@ -100,7 +97,7 @@ class MyPageDeliveryEntryAction {
             $blockNumber = filter_input(INPUT_POST, 'block_number');
             $buildingName = filter_input(INPUT_POST, 'building_name');
             $tel = filter_input(INPUT_POST, 'tel');
-
+            
             $_SESSION['del_update'] = array(
                  'last_name' => $lastName,
                  'first_name' => $firstName,
@@ -135,6 +132,14 @@ class MyPageDeliveryEntryAction {
 
             $key="都道府県";
             $this->prefectureError = $validator->requireCheck($key, $prefecture);
+            
+            if(!$this->prefectureError){
+                try{
+                    $validator->checkPrefecture($prefecture);
+                }catch(InvalidParamException $e){
+                    $e->handler($e);   
+                }
+            }
 
             $key="市区町村";
             $this->cityError = $validator->requireCheck($key, $city);
@@ -147,9 +152,11 @@ class MyPageDeliveryEntryAction {
 
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
-                $_SESSION['update_data'] = "clear"; 
-                header('Location:/html/mypage/mypage_delivery_complete.php');
+                $_SESSION['delivery_entry_data'] = "complete"; 
+                header('Location:/html/mypage/mypage_delivery_entry_confirm.php');
                 exit();
+            }else{
+                $_SESSION['delivery_entry_data'] = "incomplete"; 
             }
         }
     }
@@ -201,6 +208,24 @@ class MyPageDeliveryEntryAction {
     
     public function getTelError(){
         return $this->telError;   
+    }
+    
+    public function checkSelectedPrefecture($value, $customerData){
+        if(isset($_SESSION['update']['prefecture'])){
+            if($_SESSION['update']['prefecture']==$value){ 
+                return true;
+            }
+        }elseif($customerData==$value){
+            return true;    
+        }
+    }
+    
+    public function echoValue($value, $customerDate){
+        if(isset($_SESSION['del_update'][$value])){
+            echo $_SESSION['del_update'][$value];
+        }else{
+            echo $customerDate;
+        }
     }
 }
 ?>
