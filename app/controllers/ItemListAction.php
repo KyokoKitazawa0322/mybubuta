@@ -1,17 +1,21 @@
 <?php
 namespace Controllers;
+
 use \Models\ItemsDao;
 use \Models\ItemsDto;
-use \Models\OriginalException;
+
 use \Config\Config;
+
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
+
 
 class ItemListAction {
     private $items;
     private $topItems;
     
     public function execute() {
-        
-        $dao = new itemsDao();
         
         $cmd = filter_input(INPUT_GET, 'cmd');
         $keyWord = filter_input(INPUT_GET, 'keyword');
@@ -25,10 +29,10 @@ class ItemListAction {
         }
 
         /*- カテゴリのGET値があるか確認 -*/
-        $isCategory  = false;
+        $isCategory  = FALSE;
         foreach(config::CATEGORY as $key=>$value){
             if(isset($_GET[$key])){
-                $isCategory = true;
+                $isCategory = TRUE;
             }
         }
         /*- カテゴリのGET値が1つ以上ある場合 -*/
@@ -50,7 +54,7 @@ class ItemListAction {
             }
         /*- カテゴリのGET値もセッション値もない場合 -*/
         }else{
-            $categories = false;   
+            $categories = "";   
         }
 
         if($keyWord){
@@ -72,22 +76,18 @@ class ItemListAction {
         }
         
         if(!$sortKey){
-            $sortKey = "04";/*- "ORDER BY item_insert_date asc" -*/
+            $sortKey = "04";/*- "ORDER BY item_insert_date desc" -*/
         }
 
-        try{
-            $this->items = $dao->searchItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
-            $this->topItems = $dao->selectItemsRank();
-       
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        
+        $itemsDao = new ItemsDao();
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        try{
+            $this->items = $itemsDao->findItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
+            $this->topItems = $itemsDao->getItemsInfoRankByWeek();
+       
+        } catch(MyPDOException $e){
+            $e->handler($e);
         }
     }
     
@@ -99,6 +99,32 @@ class ItemListAction {
         return $this->topItems;   
     }
     
+    public function checkRequest(){
+        $cmd = filter_input(INPUT_GET, 'cmd');
+        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        if($cmd !== "do_search" && !$sortkey){
+            return true;
+       }
+    }
+
+    public function checkSortkey($value){
+        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        if($sortkey==$value){
+            return true;
+        }
+    }
+    
+    public function checkSelectedSortkey($value){
+        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        if($sortkey==$value){
+            echo "selected";   
+        }
+        if($sortkey=="03"){
+            if(!$sortkey){
+                echo "selected";   
+            }
+        }
+    }
 }
 ?>    
 
