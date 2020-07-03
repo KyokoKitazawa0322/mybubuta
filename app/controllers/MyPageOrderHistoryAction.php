@@ -2,7 +2,9 @@
 namespace Controllers;
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
 
 class MyPageOrderHistoryAction {
@@ -23,16 +25,15 @@ class MyPageOrderHistoryAction {
         }else{
             $customerId = $_SESSION['customer_id'];   
         }
-
+        
+        unset($_SESSION['order_id']);
         $orderHistoryDao = new OrderHistoryDao();
         
         try{
             $this->orders = $orderHistoryDao->getAllOrderHistory($customerId);
        
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
         }
     }
     

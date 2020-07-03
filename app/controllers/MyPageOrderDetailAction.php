@@ -1,11 +1,18 @@
 <?php
 namespace Controllers;
+
 use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
-use \Models\OriginalException;
+
 use \Config\Config;
+
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
+
 
 class MyPageOrderDetailAction {
     
@@ -16,8 +23,9 @@ class MyPageOrderDetailAction {
 
         $cmd = filter_input(INPUT_POST, 'cmd');
         $orderId = filter_input(INPUT_POST, 'order_id');
-        if(isset($_SESSION['order_id'])){
-            $orderId = $_SESSION['order_id'];   
+        
+        if($orderId){
+            $_SESSION['order_id'] = $orderId;
         }
         
         if($cmd == "do_logout" ){
@@ -31,8 +39,16 @@ class MyPageOrderDetailAction {
             $customerId = $_SESSION['customer_id'];   
         }
         
-        if(!$orderId){
-            header('Location:/html/mypage/mypage_order_history.php');
+        
+        if(isset($_SESSION['order_id'])){
+            $orderId = $_SESSION['order_id'];   
+        }
+        try{
+            if(!$orderId){
+                throw new InvalidParamException('Invalid param for order-detail:$orderId="nothing"');
+            }
+        }catch(InvalidParamException $e){
+            $e->handler($e);   
         }
         
         $orderHistoryDao = new OrderHistoryDao();
@@ -42,15 +58,11 @@ class MyPageOrderDetailAction {
             $this->orderHistoryDto = $orderHistoryDao->getOrderHistory($customerId, $orderId);
             $this->orderDetailDto = $orderDetailDao->getOrderDetail($orderId);
         
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
     
