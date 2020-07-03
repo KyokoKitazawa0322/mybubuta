@@ -1,7 +1,9 @@
 <?php
 namespace Models;
 use \Models\DeliveryDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
     
 class DeliveryDao extends \Models\Model{
@@ -33,27 +35,27 @@ class DeliveryDao extends \Models\Model{
         $dto->setBlockNumber($res['block_number']); 
         $dto->setBuildingName($res['building_name']); 
         $dto->setTel($res['tel']);
-        $dto->setdeliveryFlag($res['delivery_flag']);
+        $dto->setDeliveryFlag($res['delivery_flag']);
+        $dto->setDeliveryInsertDate($res['delivery_insert_date']);
         
         return $dto;
     }
     
     /**
      * 配送先住所の登録
-     * @param string $last_name　入力されたユーザーの名字
-     * @param string $first_name　入力されたユーザーの名前
-     * @param string $last_name　入力されたユーザーの名字(カナ)
-     * @param string $first_name　入力されたユーザーの名前(カナ)
-     * @param string $zipCode01　入力されたユーザーの住所_郵便番号(3ケタ)
-     * @param string $zipCode02　入力されたユーザーの住所_郵便番号(4ケタ)
-     * @param string $prefecture　入力されたユーザーの住所_都道府県
-     * @param string $city　入力されたユーザーの住所_市区町村等
-     * @param string $blockNumber　入力されたユーザーの住所_番地等
-     * @param string $buildingName　入力されたユーザーの住所_建物名等
-     * @param string $tel　入力されたユーザーの電話番号
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @throws PDOException 
-     * @throws OriginalException(登録失敗時:code400)
+     * @param string $last_name　ユーザーの名字
+     * @param string $first_name　ユーザーの名前
+     * @param string $last_name　ユーザーの名字(カナ)
+     * @param string $first_name　ユーザーの名前(カナ)
+     * @param string $zipCode01　ユーザーの住所_郵便番号(3ケタ)
+     * @param string $zipCode02　ユーザーの住所_郵便番号(4ケタ)
+     * @param string $prefecture　ユーザーの住所_都道府県
+     * @param string $city　ユーザーの住所_市区町村等
+     * @param string $blockNumber　ユーザーの住所_番地等
+     * @param string $buildingName　ユーザーの住所_建物名等
+     * @param string $tel　ユーザーの電話番号
+     * @param int $customerId　カスタマーID
+     * @throws MyPDOException 
      */
     public function insertDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $customerId){
         
@@ -75,44 +77,41 @@ class DeliveryDao extends \Models\Model{
             $stmt->bindvalue(9, $blockNumber, \PDO::PARAM_STR);
             $stmt->bindvalue(10, $buildingName, \PDO::PARAM_STR);
             $stmt->bindvalue(11, $tel, \PDO::PARAM_STR);
-            $stmt->bindvalue(12, $customerId);
-            $stmt->bindvalue(13, $deliveryFlag);
+            $stmt->bindvalue(12, $customerId, \PDO::PARAM_STR);
+            $stmt->bindvalue(13, $deliveryFlag, \PDO::PARAM_INT);
             $stmt->bindvalue(14, $dateTime, \PDO::PARAM_STR);
             $stmt->execute();
             
             $count = $stmt->rowCount();
-            if($count<1){
-                throw new OriginalException('更新に失敗しました。',222);
-            }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
      * 配送先住所の更新
-     * @param string $last_name　入力されたユーザーの名字
-     * @param string $first_name　入力されたユーザーの名前
-     * @param string $last_name　入力されたユーザーの名字(カナ)
-     * @param string $first_name　入力されたユーザーの名前(カナ)
-     * @param string $zipCode01　入力されたユーザーの住所_郵便番号(3ケタ)
-     * @param string $zipCode02　入力されたユーザーの住所_郵便番号(4ケタ)
-     * @param string $prefecture　入力されたユーザーの住所_都道府県
-     * @param string $city　入力されたユーザーの住所_市区町村等
-     * @param string $blockNumber　入力されたユーザーの住所_番地等
-     * @param string $buildingName　入力されたユーザーの住所_建物名等
-     * @param string $tel　入力されたユーザーの電話番号
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @param int $deliveryId　登録時に自動生成される配送先住所ID
-     * @throws PDOException 
-     * @throws OriginalException(更新失敗時：code200)
+     * @param string $last_name　ユーザーの名字
+     * @param string $first_name　ユーザーの名前
+     * @param string $last_name　ユーザーの名字(カナ)
+     * @param string $first_name　ユーザーの名前(カナ)
+     * @param string $zipCode01　ユーザーの住所_郵便番号(3ケタ)
+     * @param string $zipCode02　ユーザーの住所_郵便番号(4ケタ)
+     * @param string $prefecture　ユーザーの住所_都道府県
+     * @param string $city　ユーザーの住所_市区町村等
+     * @param string $blockNumber　ユーザーの住所_番地等
+     * @param string $buildingName　ユーザーの住所_建物名等
+     * @param string $tel　ユーザーの電話番号
+     * @param int $customerId　カスタマーID
+     * @param int $deliveryId　配送先住所ID
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function updateDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $customerId, $deliveryId){
 
         $dateTime = Config::getDateTime();
         
         try{
-            $sql ="UPDATE delivery SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, zip_code_01=?, zip_code_02=?, prefecture=?, city=?, block_number=?, building_name=?, tel=?, delivery_updated_date=? where customer_id=? && delivery_id=?";
+            $sql ="UPDATE delivery SET last_name=?, first_name=?, ruby_last_name=?, ruby_first_name=?, zip_code_01=?, zip_code_02=?, prefecture=?, city=?, block_number=?, building_name=?, tel=?, delivery_updated_date=? WHERE customer_id=? && delivery_id=?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $lastName, \PDO::PARAM_STR);
@@ -133,102 +132,128 @@ class DeliveryDao extends \Models\Model{
             
             $count = $stmt->rowCount();
             if($count<1){
-                throw new OriginalException('更新に失敗しました。',222);
+                
+                $pattern = array("/last_name=\?/", "/first_name=\?/", "/ruby_last_name=\?/", "/ruby_first_name=\?/", "/zip_code_01\?/", "/zip_code_02=\?/", "/prefecture=\?/", "/city=\?/", "/block_number=\?/", "/building_name=\?/", "/tel=\?/", "/delivery_updated_date=\?/", "/customer_id=\?/", "/delivery_id=\?/");
+                
+                $replace = array('last_name='.$lastName, 'first_name='.$firstName, 'ruby_last_name='.$rubyLastName, 'ruby_first_name='.$rubyFirstName, 'zip_code_01'.$zipCode01, 'zip_code_02='.$zipCode02, 'prefecture='.$prefecture, 'city='.$city, 'block_number='.$blockNumber, 'building_name='.$buildingName, 'tel='.$tel, 'delivery_updated_date='.$dateTime, 'customer_id='.$customerId, 'delivery_id='.$deliveryId);
+                $result = preg_replace($pattern, $replace, $sql);
+                
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
-     * 配送先住所の中にいつもの配送先住所があれば解除(delivery_flagを'0'→'1'に)
+     * 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新)
      * $customerIdをキーに更新
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @throws PDOException 
-     * @throws OriginalException(更新失敗時:code200)
+     * @param int $customerId　カスタマーID
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
-    public function releaseDeliveryDefault($customerId){  
-        try{
-            $deliveryDto = $this->getDefDeliveryInfo($customerId);
-            if($deliveryDto){
-                $deliveryFlag = 1;
-                $deliveryId = $deliveryDto->getDeliveryId();
-                $sql ="UPDATE delivery SET delivery_flag=? where customer_id=? && delivery_id=?";
-                $stmt = $this->pdo->prepare($sql);
-                $stmt->bindvalue(1, $deliveryFlag, \PDO::PARAM_INT);
-                $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-                $stmt->bindvalue(3, $deliveryId, \PDO::PARAM_INT);
-                $stmt->execute();
+    public function releaseDeliveryFlag($customerId){  
 
-                $count = $stmt->rowCount();
-                if($count<1){
-                    throw new OriginalException('更新に失敗しました。',222);
-                }
+        $dateTime = Config::getDateTime();
+
+        try{
+            $sql = "UPDATE delivery JOIN customers ON delivery.customer_id = customers.customer_id SET delivery.delivery_flag=FALSE, customers.delivery_flag=FALSE, delivery.delivery_updated_date=?, customers.customer_updated_date=? WHERE delivery.customer_id=?";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $dateTime, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $dateTime, \PDO::PARAM_STR);
+            $stmt->bindvalue(3, $customerId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $count = $stmt->rowCount();
+
+            if($count<1){
+                $pattern = array("/delivery_updated_date=\?/", "/customer_updated_date=\?/", "/customer_id=\?/");
+                $replace = array('delivery_updated_date='.$dateTime, 'customer_updated_date='.$dateTime, 'customer_id='.$customerId);
+
+                $result=preg_replace($pattern, $replace, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
-     * 配送先住所をいつもの配送先住所に更新(delivery_flagを'1'→'0'に)
+     * 配送先住所を「いつもの配送先住所」に更新(delivery_flagをTRUEに)
      * $customerIdをキーに更新
-     * 既にいつもの配送先住所に設定されている場合は更新なし
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @throws PDOException 
-     * @throws OriginalException(更新失敗時:code200)
+     * @param int $customerId　カスタマーID
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
-    public function setDeliveryDefault($customerId, $deliveryId){
+    public function setDeliveryFlag($customerId, $deliveryId){
 
         try{
-            $deliveryDto = $this->getDeliveryInfoById($customerId, $deliveryId);
-            if(!$deliveryDto->getDeliveryFlag()){
-                $deliveryFlag = TRUE;
-                $sql ="UPDATE delivery SET delivery_flag=? where customer_id=? && delivery_id=?";
-                $stmt = $this->pdo->prepare($sql);
-                $stmt->bindvalue(1, $deliveryFlag, \PDO::PARAM_INT);
-                $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
-                $stmt->bindvalue(3, $deliveryId, \PDO::PARAM_INT);
-                $stmt->execute();
+            $dateTime = Config::getDateTime();
 
-                $count = $stmt->rowCount();
-                if($count<1){
-                    throw new OriginalException('更新に失敗しました。',222);
-                }
+            $sql ="UPDATE delivery SET delivery_flag=TRUE, delivery_updated_date=? WHERE customer_id=? && delivery_id=?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $dateTime, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $customerId, \PDO::PARAM_INT);
+            $stmt->bindvalue(3, $deliveryId, \PDO::PARAM_INT);
+            $stmt->execute();
+
+            $count = $stmt->rowCount();
+            if($count<1){
+                $pattern = array("/delivery_updated_date=\?/", "/customer_id=\?/");
+                $replace = array('delivery_updated_date='.$dateTime, 'customer_id='.$customerId);
+
+                $result=preg_replace($pattern, $replace, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 
     /**
      * 配送先住所削除(退会時)
      * $deliveryIdと$customerIdをキーに配送先住所を削除
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @param int $deliveryId　登録時に自動生成される配送先住所ID
-     * @throws PDOException 
-     * @throws OriginalException(削除失敗時:code300)
+     * @param int $customerId　カスタマーID
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
-    public function deleteDeliveryInfo($customerId, $deliveryId){
-        $sql = "DELETE FROM delivery WHERE customer_id = ? && delivery_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
-        $stmt->bindvalue(2, $deliveryId, \PDO::PARAM_INT);
-        $stmt->execute();
+    public function deleteDeliveryInfo($customerId){
+        try{
+            $sql = "DELETE FROM delivery WHERE customer_id= && delivery_id=?";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+            $stmt->bindvalue(2, $deliveryId, \PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $count = $stmt->rowCount();
+            if($count<1){
+                $pattern = array("/customer_id=\?/", "/delivery_id=\?/");
+                $replace = array('customer_id='.$customerId, 'delivery_id='.$deliveryId);
+
+                $result=preg_replace($pattern, $replace, $sql);
+                throw new DBParamException("invalid param error".$result);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+        
+
     }
     
     /**
      * 配送先住所情報取得
      * $cutomerIdをキーに全配送先住所情報を取得する。
-     * なければfalseを返す
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @return DeliveryDto[]
-     * @throws PDOException 
+     * @param int $customerId　カスタマーID
+     * @return DeliveryDto[] | FALSE
+     * @throws MyPDOException 
      */
     public function getDeliveryInfo($customerId){
 
         try{
-            $sql = "SELECT * FROM delivery WHERE customer_id = ?";
+            $sql = "SELECT * FROM delivery WHERE customer_id=?";
+            
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId);
             $stmt->execute();
@@ -242,54 +267,52 @@ class DeliveryDao extends \Models\Model{
                 }
                 return $deliveries;
             }else{
-                return false;
+                return FALSE;
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
-     * いつもの配送先住所情報取得
-     *　なければfalseを返す
+     * 「いつもの配送先住所」情報取得
      * $customerIdとdelivery_flagをキーに配送先住所情報を取得する。
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @return DeliveryDto
-     * @throws PDOException 
+     * @param int $customerId　カスタマーID
+     * @return DeliveryDto | FALSE
+     * @throws MyPDOException 
      */
     public function getDefDeliveryInfo($customerId){
-        $deliveryFlag = TRUE;
+
         try{
-            $sql = "SELECT * FROM delivery WHERE customer_id = ? && delivery_flag =?";
+            $sql = "SELECT * FROM delivery WHERE customer_id=? && delivery_flag=TRUE";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
-            $stmt->bindvalue(2, $deliveryFlag, \PDO::PARAM_INT);
             $stmt->execute();
             $res = $stmt->fetch();
             if($res){
                 $dto = $this->setDto($res);
                 return $dto;      
             }else{
-                return false;
+                return FALSE;
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
      * 配送先住所情報取得
      * $customerIdと$deliveryIdをキーに配送先住所情報を取得する。
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @param int $deliveryId　登録時に自動生成される配送先住所ID
+     * @param int $customerId　カスタマーID
+     * @param int $deliveryId　配送先住所ID
      * @return DeliveryDto
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code100) 
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function getDeliveryInfoById($customerId, $deliveryId){
         
         try{
-            $sql = "SELECT * FROM delivery WHERE customer_id = ? && delivery_id =?";
+            $sql = "SELECT * FROM delivery WHERE customer_id=? && delivery_id=?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
             $stmt->bindvalue(2, $deliveryId, \PDO::PARAM_INT);
@@ -299,10 +322,37 @@ class DeliveryDao extends \Models\Model{
                 $dto = $this->setDto($res);
                 return $dto;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                $pattern = array("/customer_id=\?/", "/delivery_id=\?/");
+                $replace = array('customer_id='.$customerId, 'delivery_id='.$deliveryId);
+
+                $result=preg_replace($pattern, $replace, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 会員配送先情報削除(退会時)
+     * $customerIdをキーにカスタマー情報を削除
+     * @param int $customerId　カスタマーID
+     * @throws MyPDOException 
+     * @throws DBParamException
+     */
+    public function deleteAllDeliveryInfo($customerId){
+        try{
+            $sql = "DELETE from delivery where customer_id=?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
+            $stmt->execute();
+            $count = $stmt->rowCount();
+            if($count<1){
+                $result=preg_replace("/customer_id=\?/", 'customer_id='.$customerId, $sql);
+                throw new DBParamException("invalid param error".$result);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 }

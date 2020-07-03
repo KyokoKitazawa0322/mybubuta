@@ -94,7 +94,11 @@ class DeliveryDto extends \Models\Model {
     public function getFirstName(){
         return $this->firstName;
     }
-
+    
+    public function getFullName(){
+        return $this->lastName.$this->firstName;
+    }
+    
     public function getRubyLastName(){
         return $this->rubyLastName;
     }
@@ -102,9 +106,9 @@ class DeliveryDto extends \Models\Model {
     public function getRubyFirstName(){
         return $this->rubyFirstName;
     }
-    
-    public function getFullName(){
-        return $this->lastName.$this->firstName;
+
+    public function getFullRubyName(){
+        return $this->rubyLastName.$this->rubyFirstName;
     }
 
     public function getZipCode01(){
@@ -113,6 +117,10 @@ class DeliveryDto extends \Models\Model {
 
     public function getZipCode02(){
          return $this->zipCode02;
+    }
+    
+    public function getZipCode(){
+         return $this->zipCode01."-".$this->zipCode02;
     }
 
     public function getPrefecture(){
