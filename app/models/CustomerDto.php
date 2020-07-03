@@ -6,7 +6,7 @@ class CustomerDto extends \Models\Model {
     private $customerId;
     private $hashPassword;
     private $lastName;
-    private $first_name;
+    private $firstName;
     private $rubyLastName;
     private $rubyFirstName;
     private $zipCode01;
@@ -33,8 +33,8 @@ class CustomerDto extends \Models\Model {
         $this->lastName = $lastName;
     }
 
-    public function setFirstName($first_name){
-        $this->first_name = $first_name;
+    public function setFirstName($firstName){
+        $this->firstName = $firstName;
     }
 
     public function setRubyLastName($rubyLastName){
@@ -103,11 +103,11 @@ class CustomerDto extends \Models\Model {
     }
 
     public function getFirstName(){
-        return $this->first_name;
+        return $this->firstName;
     }
 
     public function getFullName(){
-        return $this->lastName.$this->first_name;
+        return $this->lastName.$this->firstName;
     }
     
     public function getRubyLastName(){
@@ -118,12 +118,20 @@ class CustomerDto extends \Models\Model {
         return $this->rubyFirstName;
     }
 
+    public function getFullRubyName(){
+        return $this->rubyLastName.$this->rubyFirstName;
+    }
+    
     public function getZipCode01(){
         return $this->zipCode01;
     }
 
     public function getZipCode02(){
          return $this->zipCode02;
+    }
+    
+    public function getZipCode(){
+         return $this->zipCode01."-".$this->zipCode02;
     }
 
     public function getPrefecture(){
