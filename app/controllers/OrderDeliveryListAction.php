@@ -5,7 +5,10 @@ use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
 use \Config\Config;
 
 class OrderDeliveryListAction{
@@ -21,7 +24,15 @@ class OrderDeliveryListAction{
         }else{
             $customerId = $_SESSION['customer_id'];   
         }
-        
+
+        try{
+            if(!isset($_SESSION['availableForPurchase'])){
+                throw new InvalidParamException('Invalid param for order_confirm_pay_list:$_SESSION["availableForPurchase"]=nothing');
+            }
+        } catch(InvalidParamException $e){
+            $e->handler($e);
+        }
+            
         $delId = filter_input(INPUT_POST, 'del_id');
         $cmd = filter_input(INPUT_POST, 'cmd');
         
@@ -34,15 +45,12 @@ class OrderDeliveryListAction{
         if($cmd == "delete"){
             try{
                 $deliveryDao->deleteDeliveryInfo($customerId, $delId);
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
+                
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-            }catch(OriginalException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                die('エラー:'.$e->getMessage());
+            }catch(DBParamException $e){
+                $e->handler($e);
             }
         }
         /*=============================================================*/
@@ -56,15 +64,11 @@ class OrderDeliveryListAction{
             $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
             $this->deliveryDto = $deliveryDto;
             
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
 
