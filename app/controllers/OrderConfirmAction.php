@@ -4,11 +4,16 @@ use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
-use \Models\OriginalException;
+use \Models\ItemsDao;
+use \Models\ItemsDto;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
 use \Config\Config;
 
 class OrderConfirmAction{
-    
+        
     public function execute(){        
 
         $cmd = filter_input(INPUT_POST, 'cmd');
@@ -23,41 +28,72 @@ class OrderConfirmAction{
         /*====================================================================
          cart.phpで「レジに進む」ボタンが押された時の処理
         =====================================================================*/
-        if($cmd == "order_confirm" && isset($_SESSION['cart'])){
+        if($cmd == "order_confirm"){
+            try{
+                if(isset($_SESSION['cart']) && isset($_SESSION['availableForPurchase'])){
+                    $this->setToken();
+                    $var = 1;
+                    $totalPrice = 0; 
+                    $totalAmount = 0;
+                    $totalQuantity = 0;
+                    $tax = 0;
 
-            $var = 1;
-            $totalPrice = 0; 
-            $totalAmount = 0;
-            $totalQuantity = 0;
-            $tax = 0;
-            
-            /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
-            for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
-                $_SESSION["cart"][$i]['item_count'] = $_POST["cart{$var}"];
-                $totalQuantity += $_SESSION["cart"][$i]['item_count']; 
-                $totalAmount += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_count'];
-                $tax += $_SESSION["cart"][$i]['item_tax'] * $_SESSION["cart"][$i]['item_count'];
-                $var++;
+                    /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
+                    for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
+                        
+                        $_SESSION["cart"][$i]['item_quantity'] = $_POST["cart{$var}"];
+                        
+                        /*- $_SESSION['order']に格納する値を計算-*/
+                        $totalQuantity += $_SESSION["cart"][$i]['item_quantity']; 
+                        $totalAmount += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_quantity'];
+                        $tax += $_SESSION["cart"][$i]['item_tax'] * $_SESSION["cart"][$i]['item_quantity'];
+                        
+                        $var++;
+                    }
+                    if($totalAmount >= Config::POSTAGEFREEPRICE){
+                        $postage = 0;
+                    }else{
+                        $postage = Config::POSTAGE;
+                    }
+
+                    /*- 注文処理で使用するセッション変数の初期化 -*/
+                    $_SESSION['pay_error'] = NULL;
+                    $_SESSION['pay_type'] = NULL;
+                    $_SESSION['payment_term'] = NULL;
+                    $_SESSION['def_addr'] = NULL;
+                    $_SESSION['delivery'] = NULL;
+
+                    $_SESSION['order'] = array(
+                        'total_quantity' => $totalQuantity,  
+                        'total_amount' => $totalAmount,
+                        'tax' => $tax,
+                        'postage' => $postage
+                    );
+                    
+                }else{
+                    if(isset($_SESSION['cart'])){
+                        $cart = print_r($_SESSION['cart'], true);
+                    }else{
+                        $cart = "nothing";   
+                    }
+                    if(isset($_SESSION['availableForPurchase'])){
+                        $availableForPurchase = $_SESSION['availableForPurchase'];
+                    }else{
+                        $availableForPurchase = "nothing";   
+                    }
+                    throw new InvalidParamException('Invalid param for order_confirm:$cart='.$cart.'/$_SESSION["availableForPurchase"]='.$availableForPurchase);
+                } 
+            } catch(InvalidParamException $e){
+                $e->handler($e);
             }
-            if($totalAmount >= Config::POSTAGEFREEPRICE){
-                $postage = 0;
-            }else{
-                $postage = Config::POSTAGE;
+        }
+        
+        try{
+            if(!isset($_SESSION['availableForPurchase'])){
+                throw new InvalidParamException('Invalid param for order_confirm_pay_list:$_SESSION["availableForPurchase"]=nothing');
             }
-            
-            /*- 注文処理で使用するセッション変数の初期化 -*/
-            $_SESSION['pay_error'] = NULL;
-            $_SESSION['pay_type'] = NULL;
-            $_SESSION['payment_term'] = NULL;
-            $_SESSION['def_addr'] = NULL;
-            $_SESSION['delivery'] = NULL;
-                
-            $_SESSION['order'] = array(
-                'total_quantity' => $totalQuantity,  
-                'total_amount' => $totalAmount,
-                'tax' => $tax,
-                'postage' => $postage
-            );
+        } catch(InvalidParamException $e){
+            $e->handler($e);
         }
         
         /*——————————————————————————————————————————————————————————————
@@ -72,7 +108,7 @@ class OrderConfirmAction{
             $customerId = $_SESSION['customer_id'];   
         }
         
-        if(!isset($_SESSION["order"])){
+        if(!isset($_SESSION['order'])){
             header('Location:/html/cart.php');
             exit();
         }
@@ -90,15 +126,11 @@ class OrderConfirmAction{
                 $this->saveCustomerData($customer);
             }
 
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
 
         /*——————————————————————————————————————————————————————————————
@@ -113,30 +145,23 @@ class OrderConfirmAction{
                 try{
                     $delivery  = $deliveryDao->getDeliveryInfoById($customerId, $def_addr);
                     $this->saveDeliveryData($delivery);
-                } catch(\PDOException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
+                    
+                } catch(MyPDOException $e){
+                    $e->handler($e);
 
-                }catch(OriginalException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                    die('エラー:'.$e->getMessage());
+                }catch(DBParamException $e){
+                    $e->handler($e);
                 }
             }else{
                 try{
                     $customer = $customerDao->getCustomerById($customerId); 
                     $this->saveCustomerData($customer);
 
-                } catch(\PDOException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
+               } catch(MyPDOException $e){
+                $e->handler($e);
 
-                }catch(OriginalException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                    die('エラー:'.$e->getMessage());
+                }catch(DBParamException $e){
+                    $e->handler($e);
                 }
             }
         }
@@ -165,9 +190,30 @@ class OrderConfirmAction{
                 } 
             }
         }
+        
+        if(isset($_SESSION['purchase_error'])){
+
+            try{
+                for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
+                    //購入できない商品を特定し最新の商品ステータスに更新
+                    if($_SESSION['purchase_error'] == $_SESSION["cart"][$i]['item_code']){
+                        $itemCode = $_SESSION["cart"][$i]['item_code'];
+                        $itemsDao = new ItemsDao();
+                        $itemsDto = $itemsDao->getItemByItemCode($itemCode);
+                        $_SESSION["cart"][$i]['item_status'] = $itemsDto->getItemStatus();
+                    }
+                }
+            } catch(MyPDOException $e){
+                $e->handler($e);
+
+            }catch(DBParamException $e){
+                $e->handler($e);
+            }
+        }
         /*——————————————————————————————————————————————————————————————*/
     }
     
+    /*- DTOクラスで用意したgetterメソッド名は同じだが、念のためにcustomerテーブルとdeliveryテーブルとで分けて下記メソッドを用意。 -*/
     public function saveDeliveryData($delivery){
         $_SESSION['delivery'] = array(
             'name' => $delivery->getFullName(),
@@ -176,7 +222,6 @@ class OrderConfirmAction{
             'tel' => $delivery->getTel()
         );
     }
-
     
     public function saveCustomerData($customer){
         $_SESSION['delivery'] = array(
@@ -185,6 +230,13 @@ class OrderConfirmAction{
             'address' => $customer->getAddress(),
             'tel' => $customer->getTel()
         );
+    }
+    
+    /*---------------------------------------*/
+    //トークンをセッションにセット
+    public function setToken(){
+        $token = sha1(uniqid(mt_rand(), true));
+        $_SESSION['token']['order_complete'] = $token;
     }
 }
 
