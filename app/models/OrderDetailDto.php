@@ -8,9 +8,14 @@ class OrderDetailDto extends \Models\Model{
     private $itemQuantity;
     private $itemPrice;//税別単価
     private $itemTax;
+    
     //itemsテーブルのカラム
     private $itemName;
-    private $itemImage;
+    private $itemImagePath;
+    private $purchaseDate;
+    
+    //orderhistoryテーブルのカラム
+    private $customerId;
 
     
     public function getDetailId(){
@@ -29,17 +34,14 @@ class OrderDetailDto extends \Models\Model{
         return $this->itemQuantity;   
     }
 
-    //new
     public function getItemPrice(){
         return $this->itemPrice;
     }
     
-    //new
     public function getItemTax(){
         return $this->itemTax;
     }
     
-    //new
     public function getItemPriceWithTax(){
         return $this->itemPrice + $this->itemTax;
     }
@@ -52,8 +54,20 @@ class OrderDetailDto extends \Models\Model{
         return $this->getItemPriceWithTax() * $this->itemQuantity;
     }
     
-    public function getItemImage(){
-        return $this->itemImage;
+    public function getItemImagePath(){
+        return $this->itemImagePath;
+    }
+    
+    public function getPurchaseDate(){
+        return $this->purchaseDate;
+    }
+    
+    public function getCustomerId(){
+        return $this->customerId;
+    }
+    
+    public function getTotalPrice(){
+        return ($this->itemPrice+$this->itemTax)*$this->itemQuantity;
     }
     
     public function setDetailId($detailId){
@@ -84,8 +98,16 @@ class OrderDetailDto extends \Models\Model{
         $this->itemName = $itemName;
     }
     
-    public function setitemImage($itemImage){
-        $this->itemImage = $itemImage;
+    public function setitemImagePath($itemImagePath){
+        $this->itemImagePath = $itemImagePath;
+    }
+    
+    public function setPurchaseDate($purchaseDate){
+        $this->purchaseDate = $purchaseDate;
+    }
+    
+    public function setCustomerId($customerId){
+        $this->customerId = $customerId;
     }
 }
 
