@@ -1,25 +1,24 @@
 <?php
 namespace Controllers;
-use \Models\CustomerDao;
-use \Models\OriginalException;
+
+use \Models\DeliveryDao;
+use \Models\CustomerDao;    
+
 use \Config\Config;
 
-class MyPageLeaveAction {
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
+
+class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
     
-        if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = null;
-        }
-        
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];  
         
         /*====================================================================
          削除ボタンがおされたときの処理
@@ -28,16 +27,22 @@ class MyPageLeaveAction {
         if($cmd == "leave"){
             
             $memPwd = filter_input(INPUT_POST, 'memPwd');
-            $customerDao = new CustomerDao();
             
             try{
+                $customerDao = new CustomerDao();
+                
                 $customerDto = $customerDao->getCustomerById($customerId);
                 $hashPassword = $customerDto->getHashPassword();
                 
                 if(!password_verify($memPwd, $hashPassword)){
                     echo 'パスワードが正しくありません。';
+                    
                 }else{
+                    $deliveryDao = new DeliveryDao();
+                    
                     $customerDao->deleteCustomerInfo($customerId);
+                    $deliveryDao->deleteAllDeliveryInfo($customerId);
+                        
                     unset($_SESSION['customer_id']);
                     unset($_COOKIE['password']);
                     unset($_COOKIE['mail']);
@@ -45,15 +50,11 @@ class MyPageLeaveAction {
                     exit();
                 }
 
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-            }catch(OriginalException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                die('エラー:'.$e->getMessage());
+            }catch(DBParamlException $e){
+                $e->handler($e);
             }
         
         }
