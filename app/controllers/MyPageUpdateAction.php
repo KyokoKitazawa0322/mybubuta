@@ -3,10 +3,13 @@ namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;
 use \Models\CommonValidator;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
 use \Config\Config;
 
-class MyPageUpdateAction {
+class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
 
     private $customerDto;
     
@@ -21,6 +24,7 @@ class MyPageUpdateAction {
     private $blockNumberError = false;
     private $telError = false;
     private $mailError = false;
+    private $oldPasswordError = false;
     private $passwordError = false;
     private $passwordConfirmError = false;
     
@@ -28,46 +32,34 @@ class MyPageUpdateAction {
 
         $cmd = filter_input(INPUT_POST, 'cmd');
         
-        if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = null;
-        }
-        
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];   
         
         /*——————————————————————————————————————————————————————————————
         　order_deliver_list.phpからの訪問
         ————————————————————————————————————————————————————————————————*/
         
         if($cmd == "from_order"){
-            $_SESSION['from_order_flag']= "is";   
+            $_SESSION['from_order_flag'] = TRUE;   
         }
         /*—————————————————————————————————————————————————————————————— */
         
-        $customerDao = new CustomerDao();
         try{
+            $customerDao = new CustomerDao();
             $this->customerDto = $customerDao->getCustomerById($customerId);
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+            
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
 
         /*====================================================================
          「変更内容を確認する」ボタンが押された時の処理
         =====================================================================*/
-        if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
-            
-            $validator = new CommonValidator();
+        if($cmd=="confirm"){
             
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
@@ -81,18 +73,22 @@ class MyPageUpdateAction {
             $buildingName = filter_input(INPUT_POST, 'building_name');
             $tel = filter_input(INPUT_POST, 'tel');
             $mail = filter_input(INPUT_POST, 'mail');
+            $oldPassword = filter_input(INPUT_POST, 'oldPassword');
             $password = filter_input(INPUT_POST, 'password');
             $passwordConfirm = filter_input(INPUT_POST, 'password_confirm');
 
             /*- パスワード、パスワード確認ともに入力がなければ、
             ログイン時にセットしたクッキー値を格納しバリデーションを通す。(変更なしとみなす) -*/
             if(!$password && !$passwordConfirm){
+                $oldPassword = $_COOKIE['password'];
                 $password = $_COOKIE['password'];
                 $passwordConfirm = $_COOKIE['password'];
             }else{
                 $_SESSION['password_input'] = "is";
             }
-
+            
+            $validator = new CommonValidator();
+            
             $_SESSION['update'] = array(
              'last_name' => $lastName,
              'first_name' => $firstName,
@@ -106,6 +102,7 @@ class MyPageUpdateAction {
              'building_name' => $buildingName,
              'tel' => $tel,
              'mail' => $mail,
+             'oldPassword' => $oldPassword,
              'password' => $password,
              'password_confirm' => $passwordConfirm
             );
@@ -130,6 +127,14 @@ class MyPageUpdateAction {
 
             $key="都道府県";
             $this->prefectureError = $validator->requireCheck($key, $prefecture);
+            
+            if(!$this->prefectureError){
+                try{
+                    $validator->checkPrefecture($prefecture);
+                }catch(InvalidParamException $e){
+                    $e->handler($e);   
+                }
+            }
 
             $key="市区町村";
             $this->cityError = $validator->requireCheck($key, $city);
@@ -141,34 +146,58 @@ class MyPageUpdateAction {
             $this->mailError = $validator->mailValidation($key, $mail);
             
             if(!$this->mailError){
+                
                 $ExistingMail = $this->customerDto->getMail();
+            
                 try{
+                    /*- 他ユーザとの重複確認 -*/
                     $this->mailError = $validator->checkMail($mail, $ExistingMail);
-                    
-                } catch(\PDOException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
+                } catch(MyPDOException $e){
+                    $e->handler($e);
                 }
             }
 
             $key="電話番号";
             $this->telError = $validator->telValidation($key, $tel);
-
-            $key="パスワード";
+            
+            //現在のパスワードの一致確認
+            $this->oldPasswordError = $this->checkPassword($this->customerDto, $oldPassword);
+            
+            $key="新しいパスワード";
             $this->passwordError = $validator->passValidation($key, $password);
 
-            $key="パスワード(再確認)";
+            $key="新しいパスワード(再確認)";  
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
-            if($validator->getResult()) {
-                $_SESSION['update_data'] = "clear";
+            if($validator->getResult() && !($this->oldPasswordError)) {
+                $_SESSION['update_data'] = "complete";
                 header('Location:/html/mypage/mypage_update_confirm.php');
                 exit();
+            }else{
+                $_SESSION['update_data'] = "incomplete";
             }
         }
     }
     
+
+    /*---------------------------------------*/
+    /**
+     * 現在のパスワード確認
+     * @throws MyPDOException 
+     * @throws DBParamException
+     */
+    public function checkPassword($customerDto, $password){
+        
+        $error = FALSE;
+        
+        $hashPassword = $customerDto->getHashPassWord();
+        if(!password_verify($password, $hashPassword)){
+            $error = "パスワードが間違ってます。";
+        }
+        return $error;
+    }
+        
+    /*---------------------------------------*/
     public function getLastNameError(){
         return $this->lastNameError;   
     }
@@ -213,6 +242,10 @@ class MyPageUpdateAction {
         return $this->mailError;   
     }
     
+    public function getOldPasswordError(){
+        return $this->oldPasswordError;   
+    }
+    
     public function getPasswordError(){
         return $this->passwordError;   
     }
@@ -223,6 +256,24 @@ class MyPageUpdateAction {
     
     public function getCustomerDto(){
         return $this->customerDto;   
+    }
+    
+    public function checkSelectedPrefecture($value, $customerData){
+        if(isset($_SESSION['update']['prefecture'])){
+            if($_SESSION['update']['prefecture']==$value){ 
+                return true;
+            }
+        }elseif($customerData==$value){
+            return true;    
+        }
+    }
+    
+    public function echoValue($value, $customerData){
+        if(isset($_SESSION['update'][$value])){
+            echo $_SESSION['update'][$value];
+        }else{
+            echo $customerData;
+        }
     }
 }
 ?>
