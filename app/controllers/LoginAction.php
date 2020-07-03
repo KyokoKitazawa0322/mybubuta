@@ -2,13 +2,14 @@
 namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
+use \Config\Config;
 
 class LoginAction{
     
     public function execute(){
-        
-        $dao = new CustomerDao();
-
         
         /*====================================================================
       　  $_SESSION['customer_id']があればマイページへリダイレクト
@@ -25,17 +26,16 @@ class LoginAction{
         =====================================================================*/
         
         if($cmd == "do_login"){
-            $_SESSION['login_error'] = null;
+            unset($_SESSION['login_error']);
             $mail = filter_input(INPUT_POST, 'mail');
             $password = filter_input(INPUT_POST, 'password');
             
+            $dao = new CustomerDao();
+            
             try{
                 $customer = $dao->getCustomerByMail($mail);
-                
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
+            } catch(MyPDOException $e){
+                $e->handler($e);
             }
             
             if(!$customer){ 
@@ -44,7 +44,7 @@ class LoginAction{
                  ————————————————————————————————————————————————————————————————*/  
                 $_SESSION['login_error'] = 'mail_error';
             }else{
-                $hash_pass = $customer->getHashPassWord($mail);
+                $hash_pass = $customer->getHashPassWord();
                 /*——————————————————————————————————————————————————————————————
                 　ログイン失敗した際の処理(メールアドレスの登録はあるがパスワード不一致)
                  ————————————————————————————————————————————————————————————————*/  
@@ -100,6 +100,26 @@ class LoginAction{
                     }
                 }
             }
+        }
+    }
+    
+    public function echoMail(){
+        if(isset($_POST['mail'])){
+            echo $_POST['mail'];
+        }elseif(isset($_COOKIE['mail'])){
+            echo $_COOKIE['mail'];
+        }else{
+            echo "hanako@yahoo.co.jp";   
+        }
+    }
+    
+    public function echoPassword(){
+        if(isset($_POST['password'])){
+            echo $_POST['password'];
+        }elseif(isset($_COOKIE['password'])){
+            echo $_COOKIE['password'];
+        }else{
+            echo "hanako875";   
         }
     }
 }
