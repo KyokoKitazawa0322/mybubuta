@@ -7,7 +7,10 @@ use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
 use \Config\Config;
 
 class OrderCompleteAction{
@@ -24,75 +27,112 @@ class OrderCompleteAction{
         /*====================================================================
         　register_confirm.phpで「注文を確定する」ボタンが押された時の処理
         =====================================================================*/
-        if($cmd == "order_complete" && isset($_SESSION['order'])){
-            
-            /*——————————————————————————————————————————————————————————————
-             決済方法が選択されてなければリダイレクト
-            ————————————————————————————————————————————————————————————————*/
-    
-            if(!isset($_SESSION['payment_term'])){
-                header('Location:/html/order/order_confirm.php');
-                $_SESSION['pay_type'] = "none";
-                exit();
+        try{
+            $this->checkToken();
+        }catch(InvalidParamException $e){
+            $e->handler($e);   
+        }
+        
+        /*——————————————————————————————————————————————————————————————
+         決済方法が選択されてなければリダイレクト
+        ————————————————————————————————————————————————————————————————*/
+
+        if(!isset($_SESSION['payment_term'])){
+            header('Location:/html/order/order_confirm.php');
+            $_SESSION['pay_type'] = "none";
+            exit();
+        }
+        /*——————————————————————————————————————————————————————————————*/
+
+        $customerId = $_SESSION['customer_id'];
+        $totalAmount = $_SESSION['order']['total_amount'];
+        $totalQuantity = $_SESSION['order']['total_quantity'];
+        $tax = $_SESSION['order']['tax'];
+        $postage = $_SESSION['order']['postage'];
+        $paymentTerm = $_SESSION['payment_term'];
+        $name = $_SESSION['delivery']['name'];
+        $address = $_SESSION['delivery']['address'];
+        $post = $_SESSION['delivery']['post'];
+        $tel = $_SESSION['delivery']['tel'];
+
+        /*- 商品のitem_statusが1(販売中)か最終確認 -*/
+        try{
+            foreach($_SESSION['cart'] as $item){
+                $itemCode = $item['item_code'];
+                $itemsDao = new ItemsDao();
+                $itemsDao->getItemByItemCodeForPurchase($itemCode);
             }
-            /*——————————————————————————————————————————————————————————————*/
-            
-            $customerId = $_SESSION['customer_id'];
-            $totalAmount = $_SESSION['order']['total_amount'];
-            $totalQuantity = $_SESSION['order']['total_quantity'];
-            $tax = $_SESSION['order']['tax'];
-            $postage = $_SESSION['order']['postage'];
-            $paymentTerm = $_SESSION['payment_term'];
-            $name = $_SESSION['delivery']['name'];
-            $address = $_SESSION['delivery']['address'];
-            $post = $_SESSION['delivery']['post'];
-            $tel = $_SESSION['delivery']['tel'];
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
+        } catch(DBParamException $e){
+            $_SESSION['purchase_error'] = $itemCode;
+            header("Location:/html/order/order_confirm.php");   
+            exit();
+        }
 
+        try{
             $orderHistoryDao = new OrderHistoryDao();
+
+            $orderHistoryDao->insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel);
+
+            /*- INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録 -*/
             $orderDetailDao = new OrderDetailDao();
+
+            $orderHistoryDto = $orderHistoryDao->getOrderId($customerId);
+            $orderId = $orderHistoryDto->getOrderId();
+
             $itemsDao = new ItemsDao();
-                
-            try{
-                $orderHistoryDao->insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel);
+            $cart = $_SESSION['cart'];        
 
-                /*- INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録 -*/
-                $orderHistoryDto = $orderHistoryDao->getOrderId($customerId);
-                $orderId = $orderHistoryDto->getOrderId();
-                $cart = $_SESSION['cart'];
-
-                foreach($cart as $item){
-                    $itemCode = $item['item_code'];
-                    $itemQuantity = $item['item_quantity'];
-                    $itemPrice = $item['item_price'];
-                    $itemTax = $item['item_tax'];
-                    $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax);
-                    $itemsDao->insertItemSales($itemQuantity, $itemCode);
-                }
-                unset($_SESSION['cart']);
-                unset($_SESSION['order']);
-                unset($_SESSION['delivery']);
-                unset($_SESSION['def_addr']);
-                unset($_SESSION['pay_type']);
-                unset($_SESSION['pay_error']);
-                unset($_SESSION['payment_term']);
-                unset($_SESSION['cmd']);
-    
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
-
-            }catch(OriginalException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                die('エラー:'.$e->getMessage());
+            foreach($cart as $item){
+                $itemCode = $item['item_code'];
+                $itemQuantity = $item['item_quantity'];
+                $itemPrice = $item['item_price'];
+                $itemTax = $item['item_tax'];
+                $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax);
+                $itemsDao->recordItemSales($itemQuantity, $itemCode);
             }
-        }else{
-            header('Location:/html/login.php');
-            exit();  
+
+            unset($_SESSION['cart']);
+            unset($_SESSION['order']);
+            unset($_SESSION['delivery']);
+            unset($_SESSION['def_addr']);
+            unset($_SESSION['pay_type']);
+            unset($_SESSION['pay_error']);
+            unset($_SESSION['payment_term']);
+            unset($_SESSION['cmd']);
+            unset($_SESSION['availableForPurchase']);
+
+        } catch(MyPDOException $e){
+            $e->handler($e);
+
+        } catch(DBParamException $e){
+            $e->handler($e);   
         }
     }   
+    
+    /*---------------------------------------*/
+    //トークンをセッションから取得
+    public function checkToken(){
+        $tokenOrderComplete = filter_input(INPUT_POST, "token_order_complete");
+        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
+        if(!isset($_SESSION['token']['order_complete']) || ($_SESSION['token']['order_complete'] != $tokenOrderComplete) || !isset($_SESSION['order'])){
+            if(!isset($_SESSION['token']['order_complete'])){
+                $sessionTokenOrderComplete = "nothing"; 
+            }else{
+                $sessionTokenOrderComplete = $_SESSION['token']['order_complete'];   
+            }
+            if(isset($_SESSION['order'])){
+                $order = print_r($_SESSION['order'], true);
+            }else{
+                $order = "nothing";   
+            }
+            throw new InvalidParamException('Invalid param for register_complete:$tokenOrderComplete='.$tokenOrderComplete.'/$_SESSION["token"]["order_complete"]='.$sessionTokenOrderComplete.'/$_SESSION["order"]='.$order);
+        }else{
+            unset($_SESSION['token']);   
+        }
+    }
 }
 ?>    
 
