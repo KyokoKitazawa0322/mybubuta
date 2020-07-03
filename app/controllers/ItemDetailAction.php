@@ -2,8 +2,10 @@
 namespace Controllers;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
-use \Models\OriginalException;
 
 class ItemDetailAction {
     
@@ -17,26 +19,20 @@ class ItemDetailAction {
         $_SESSION['add_cart'] = 'undone';
         
         try{
-            $item = $dao->findItemByItemCode($itemCode);
+            $item = $dao->getItemByItemCodeForDetail($itemCode);
             $this->item = $item;
             
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        }catch(MyPDOException $e){
+            $e->hadler($e);
             
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
     
     public function getItem(){
         return $this->item;   
     }
-    
-
 }
     
 ?>
