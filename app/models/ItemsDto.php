@@ -10,11 +10,14 @@ class ItemsDto{
     private $itemPrice;
     private $itemitemTax;
     private $itemCategory;
-    private $itemImage;
+    private $itemImageName;
+    private $itemImagePath;
     private $itemDetail;
     private $itemStock;
+    private $itemStatus;
     private $deleteFlag;
-    private $itemInsertdate;
+    private $itemInsertDate;
+    private $itemUpdatedDate;
     private $itemSales;
 
     //getter--------------------------------
@@ -42,8 +45,12 @@ class ItemsDto{
         return $this->itemCategory;
     }
     
-    public function getItemImage(){
-        return $this->itemImage;
+    public function getItemImageName(){
+        return $this->itemImageName;
+    }
+    
+    public function getItemImagePath(){
+        return $this->itemImagePath;
     }
     
     public function getItemDetail(){
@@ -54,12 +61,47 @@ class ItemsDto{
         return $this->itemStock;
     }
     
-    public function getDeleteFlug(){
+    public function getItemStatus(){
+        return $this->itemStatus;
+    }
+    
+//ステータス(1:販売中(表示有/購入可),2:入荷待ち(表示有/購入不可),3:販売終了(非表示/購入不可),4:一時掲載停止(非表示/購入不可),5:在庫切れ(表示有、購入不可),6:販売前待機中(非表示))
+    public function getItemStatusAsString(){
+        switch($this->itemStatus){
+            case "1":
+                return "販売中";
+                break;
+            case "2":
+                return "入荷待ち";
+                break;
+            case "3":
+                return "販売終了";
+                break;
+            case "4":
+                return "一時掲載停止";
+                break;
+            case "5":
+                return "在庫切れ";
+                break;
+            case "6":
+                return "販売前待機中";
+                break;
+        }
+    }
+    public function getDeleteFlag(){
         return $this->deleteFlag;
     }
     
     public function getItemInsertDate(){
-        return $this->iteminsertdate;
+        return $this->itemInsertDate;
+    }
+    
+    public function getItemUpdatedDate(){
+        if($this->itemUpdatedDate == '0000-00-00 00:00:00'){
+            return false;
+        }else{
+            return $this->itemUpdatedDate;
+        }
     }
     
     public function getItemSales(){
@@ -87,8 +129,12 @@ class ItemsDto{
         $this->itemCategory = $itemCategory;
     }
     
-    public function setItemImage($itemImage){
-        $this->itemImage = $itemImage;
+    public function setItemImageName($itemImageName){
+        $this->itemImageName = $itemImageName;
+    }
+    
+    public function setItemImagePath($itemImagePath){
+        $this->itemImagePath = $itemImagePath;
     }
     
     public function setItemDetail($itemDetail){
@@ -99,12 +145,20 @@ class ItemsDto{
         $this->itemStock = $itemStock;
     }
     
+    public function setItemStatus($itemStatus){
+        $this->itemStatus = $itemStatus;
+    }
+    
     public function setDeleteFlug($deleteFlag){
         $this->deleteFlag = $deleteFlag;
     }
     
     public function setItemInsertDate($itemInsertDate){
-        $this->itemInsertdate = $itemInsertDate;
+        $this->itemInsertDate = $itemInsertDate;
+    }
+    
+    public function setItemUpdatedDate($itemUpdatedDate){
+        $this->itemUpdatedDate = $itemUpdatedDate;
     }
     
     public function setItemSales($itemSales){
