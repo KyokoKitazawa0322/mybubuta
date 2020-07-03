@@ -14,6 +14,9 @@ class OrderHistoryDto extends \Models\Model{
     private $deliveryAddr;
     private $deliveryTel;
     private $purchaseDate;
+    
+    private $totalAmountByTerm;
+    private $totalQuantityByTerm;
 
 
     public function setOrderId($orderId){
@@ -64,6 +67,14 @@ class OrderHistoryDto extends \Models\Model{
         $this->purchaseDate = $purchaseDate;   
     }
     
+    public function setTotalQuantityByTerm($totalQuantityByTerm){
+        $this->totalQuantityByTerm = $totalQuantityByTerm;   
+    }
+    
+    public function setTotalAmountByTerm($totalAmountByTerm){
+        $this->totalAmountByTerm = $totalAmountByTerm;   
+    }
+    
     public function getOrderId(){
         return $this->orderId;
     }
@@ -112,6 +123,13 @@ class OrderHistoryDto extends \Models\Model{
         return $this->purchaseDate;  
     }
     
+    public function getTotalQuantityByTerm(){
+        return $this->totalQuantityByTerm;   
+    }
+    
+    public function getTotalAmountByTerm(){
+        return $this->totalAmountByTerm;   
+    }
     
     
 }

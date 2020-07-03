@@ -1,13 +1,32 @@
 <?php
 namespace Models;
+
 use \Models\OrderHistoryDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
     
 class OrderHistoryDao extends \Models\Model{
     
     public function __construct(){
         parent::__construct();
+    }
+    
+    /**
+     * select文共通処理
+     * @return OrderHistoryDto[]
+     * 例外処理は呼び出し元で行う
+     */
+    public function select($sql){
+        $stmt = $this->pdo->query($sql); 
+        $res = $stmt->fetchAll();
+        $orders = [];
+        foreach($res as $row) {
+            $dto = $this->setDto($row);
+            $orders[] = $dto;
+        }
+        return $orders;
     }
     
     /**
@@ -20,6 +39,7 @@ class OrderHistoryDao extends \Models\Model{
         
         $dto = new OrderHistoryDto();
         
+        $dto->setCustomerId($res['customer_id']);
         $dto->setOrderId($res['order_id']);
         $dto->setTotalAmount($res['total_amount']);
         $dto->setTotalQuantity($res['total_quantity']);
@@ -37,25 +57,24 @@ class OrderHistoryDao extends \Models\Model{
     
     /**
      * 購入履歴の登録
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
+     * @param int $customerId　カスタマーID
      * @param string $totalAmount　合計金額
      * @param string $totalQuantity　合計点数
      * @param string $tax　消費税額
      * @param string $postage　送料(自動計算)
      * @param string paymentTerm　支払い方法(選択)
-     * @param string $delivery_name　入力されたユーザーの名前
+     * @param string $delivery_name　ユーザーの名前
      * @param string $address　ユーザーの住所(郵便番号以外)
      * @param string $post　ユーザの郵便番号
      * @param string $tel　ユーザーの電話番号
-     * @throws PDOException 
-     * @throws OriginalException(登録失敗時:code444)
+     * @throws MyPDOException 
      */
     public function insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel){
         
         $dateTime = Config::getDateTime();
         
         try{
-            $sql ="insert into order_history(customer_id, total_amount, total_quantity, tax, postage, payment_term, delivery_name, delivery_addr, delivery_post, delivery_tel, purchase_date)values(?,?,?,?,?,?,?,?,?,?,?)";
+            $sql ="INSERT INTO order_history(customer_id, total_amount, total_quantity, tax, postage, payment_term, delivery_name, delivery_addr, delivery_post, delivery_tel, purchase_date)VALUES(?,?,?,?,?,?,?,?,?,?,?)";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
@@ -71,28 +90,23 @@ class OrderHistoryDao extends \Models\Model{
             $stmt->bindvalue(11, $dateTime, \PDO::PARAM_STR);
                 
             $stmt->execute();
-            
-            $count = $stmt->rowCount();
-            if($count<1){
-                throw new OriginalException('登録に失敗しました。',444);
-            }
+
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
      * 全購入履歴取得
      * $cutomerIdをキーにカスタマー情報を購入日の新しい順に取得する。
-     * なければfalseを返す。
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
-     * @return OrderHistoryDto[]
-     * @throws PDOException 
+     * @param int $customerId　カスタマーID
+     * @return OrderHistoryDto[] | boolean FALSE
+     * @throws MyPDOException 
      */
     public function  getAllOrderHistory($customerId){
             
         try{
-            $sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_amount, payment_term FROM order_history where customer_id = ? order by purchase_date DESC";
+            $sql = "SELECT CAST(purchase_date AS DATE) AS date, order_id, total_amount, payment_term FROM order_history WHERE customer_id=? ORDER BY purchase_date DESC";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
@@ -106,29 +120,31 @@ class OrderHistoryDao extends \Models\Model{
                     $dto->setTotalAmount($row['total_amount']);
                     $dto->setPaymentTerm($row['payment_term']); 
                     $dto->setPurchaseDate($row['date']); 
+                    $dto->setCustomerId($customerId);
                     $orders[] = $dto;
                 }
                 return $orders;
             }else{
-                return false;   
+                return FALSE;   
             }
-        }catch(\PDOException $e){
-            throw $e;
+         }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
      * 購入履歴取得
      * $cutomerIdと$orderIdキーに購入情報詳細を取得する。
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
+     * @param int $customerId　カスタマーID
+     * @param int $orderId　注文ID
      * @return OrderHistoryDto
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code111) 
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function getOrderHistory($customerId, $orderId){
 
         try{
-            $sql = "SELECT * FROM order_history where customer_id = ? && order_id = ?";
+            $sql = "SELECT * FROM order_history WHERE customer_id=? && order_id=?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
@@ -139,25 +155,29 @@ class OrderHistoryDao extends \Models\Model{
                 $dto = $this->setDto($res);
                 return $dto;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                $pattern = array("/customer_id=\?/", "/order_id=\?/");
+                $replace = array('customer_id='.$customerId, 'order_id='.$orderId);
+
+                $result=preg_replace($pattern, $replace, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
     /**
      * INSERT時に自動発行される注文idを取得
      * $cutomerIdをキーに取得する。
-     * @param int $customerId　ログイン時に自動セットしたカスタマーID
+     * @param int $customerId　カスタマーID
      * @return OrderHistoryDto
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code111) 
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function getOrderId($customerId){
 
         try{
-            $sql = "SELECT order_id FROM order_history where customer_id = ? order by purchase_date DESC LIMIT 1";
+            $sql = "SELECT order_id FROM order_history WHERE customer_id=? ORDER BY purchase_date DESC LIMIT 1";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
@@ -168,12 +188,248 @@ class OrderHistoryDao extends \Models\Model{
                 $dto->setOrderId($res['order_id']);
                 return $dto;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                $result=preg_replace("/customer_id=\?/", 'customer_id='.$customerId, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
+    
+    /**
+     * 全購入履歴を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAll() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY purchase_date DESC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(purchase_date昇順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByPurchaseDateASC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY purchase_date ASC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(purchase_date降順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByPurchaseDateDESC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY purchase_date DESC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(total_amount昇順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByTotalAmountASC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY total_amount ASC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(total_amount降順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByTotalAmountDESC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY total_amount DESC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(total_quantity昇順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByTotalQuantityASC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY total_quantity ASC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 全購入履歴(total_quantity降順)を取得
+     * @return OrderHistoryDto[]
+     * @throws MyPDOException
+     * @throws NoRecordException
+     */
+    public function getOrdersAllSortByTotalQuantityDESC() {
+        
+        try{
+            $sql = "SELECT * FROM order_history ORDER BY total_quantity DESC";
+            $orders = $this->select($sql);
+            if($orders){
+                return $orders;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 購入履歴総計(月指定)を取得
+     * @return OrderHistoryDto || FALSE
+     * @throws MyPDOException
+     */
+    public function getOrderHistoryByMonth($month) {
+        
+        try{
+            $sql = "SELECT DATE_FORMAT(purchase_date, '%Y年%m月') AS month, SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m')=? THEN total_quantity ELSE 0 END) AS total_quantity_by_month, SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m')=? THEN total_amount ELSE 0 END) AS total_amount_by_month FROM order_history;";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $month, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $month, \PDO::PARAM_STR);
+            $stmt->execute();
+            $res = $stmt->fetch();
+            if($res){
+                $dto = new OrderHistoryDto();
+                $dto->setTotalQuantityByTerm($res['total_quantity_by_month']);
+                $dto->setTotalAmountByTerm($res['total_amount_by_month']);
+                return $dto;
+            }else{
+                return FALSE;
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 購入履歴総計(日付指定)を取得
+     * @return OrderHistoryDto || FALSE
+     * @throws MyPDOException
+     */
+    public function getOrderHistoryByDate($date) {
+        
+        try{
+            $sql = "SELECT SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m-%d')=? THEN total_quantity ELSE 0 END) AS total_quantity_by_date, SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m-%d')=? THEN total_amount ELSE 0 END) AS total_amount_by_date FROM order_history;";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $date, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $date, \PDO::PARAM_STR);
+            $stmt->execute();
+            $res = $stmt->fetch();
+            if($res){
+                $dto = new OrderHistoryDto();
+                $dto->setTotalQuantityByTerm($res['total_quantity_by_date']);
+                $dto->setTotalAmountByTerm($res['total_amount_by_date']);
+                return $dto;
+            }else{
+                return FALSE;
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * 購入履歴総計(期間指定)を取得
+     * @return OrderHistoryDto || FALSE
+     * @throws MyPDOException
+     */
+    public function getOrderHistoryByTerm($date_1, $date_2) {
+        
+        try{
+            $sql = "SELECT SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m-%d') BETWEEN ? AND ? THEN total_quantity ELSE 0 END) AS total_quantity_by_term, SUM(CASE WHEN DATE_FORMAT(purchase_date, '%Y-%m-%d') BETWEEN ? AND ? THEN total_amount ELSE 0 END) AS total_amount_by_term FROM order_history;";
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindvalue(1, $date_1, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $date_2, \PDO::PARAM_STR);
+            $stmt->bindvalue(3, $date_1, \PDO::PARAM_STR);
+            $stmt->bindvalue(4, $date_2, \PDO::PARAM_STR);
+            $stmt->execute();
+            $res = $stmt->fetch();
+            if($res){
+                $dto = new OrderHistoryDto();
+                $dto->setTotalQuantityByTerm($res['total_quantity_by_term']);
+                $dto->setTotalAmountByTerm($res['total_amount_by_term']);
+                return $dto;
+            }else{
+                return FALSE;
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+        
+        
 }
 
 ?>
