@@ -1,6 +1,11 @@
 <?php
 namespace Controllers;
 use \Models\CommonValidator;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\InvalidParamException;
+use \Models\MyPDOException;
+use \Config\Config;
 
 class RegisterAction{
     
@@ -20,13 +25,14 @@ class RegisterAction{
         
         
     public function execute(){
-        
-        $validator = new CommonValidator();
 
+        $cmd = filter_input(INPUT_POST, 'cmd');
+        
         /*====================================================================
         　「会員登録をする」ボタンが押された時の処理
         =====================================================================*/
-        if(isset($_POST['cmd']) && $_POST['cmd']=="confirm"){
+        if($cmd == "confirm"){
+            
             $lastName = filter_input(INPUT_POST, 'last_name');
             $firstName = filter_input(INPUT_POST, 'first_name');
             $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
@@ -42,6 +48,8 @@ class RegisterAction{
             $password = filter_input(INPUT_POST, 'password');
             $passwordConfirm = filter_input(INPUT_POST, 'passwordConfirm');
 
+            $validator = new CommonValidator();
+            
             $_SESSION['register'] = array(
              'last_name' => $lastName,
              'first_name' => $firstName,
@@ -80,6 +88,14 @@ class RegisterAction{
             $key="都道府県";
             $this->prefectureError = $validator->requireCheck($key, $prefecture);
 
+            if(!$this->prefectureError){
+                try{
+                    $validator->checkPrefecture($prefecture);
+                }catch(InvalidParamException $e){
+                    $e->handler($e);   
+                }
+            }
+            
             $key="市区町村";
             $this->cityError = $validator->requireCheck($key, $city);
 
@@ -89,11 +105,12 @@ class RegisterAction{
             $customerMail = "";
             try{
                 $this->mailError = $validator->checkMail($mail, $customerMail);
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
+                
+            } catch(MyPDOException $e){
+                $e->handler($e);
+
             }
+            
             /*- 他者とのメールアドレスの重複がなければ続けてバリデーションチェック -*/
             if(!$this->mailError){
                 $key="メールアドレス";
@@ -111,13 +128,16 @@ class RegisterAction{
 
             
             if($validator->getResult()) {
-                $_SESSION['register']['input'] = "complete";
+                $_SESSION['register_data'] = "complete";
                 header('Location:/html/register/register_confirm.php');
                 exit();
+            }else{
+                $_SESSION['register_data'] = "incomplete";
             }
         }
     }
     
+    /*---------------------------------------*/
     public function getLastNameError(){
         return $this->lastNameError;   
     }
@@ -168,6 +188,18 @@ class RegisterAction{
     
     public function getPasswordConfirmError(){
         return $this->passwordConfirmError;   
+    }
+
+    public function checkSelectedPrefecture($value){
+        if(isset($_SESSION['admin_update']['prefecture']) && $_SESSION['admin_update']['prefecture']==$value){ 
+            return true;
+        }
+    }
+    
+    public function echoValue($value){
+        if(isset($_SESSION['register'][$value])){
+            echo $_SESSION['register'][$value];
+        }
     }
 }
 
