@@ -1,43 +1,37 @@
 <?php
 namespace Controllers;
+
 use \Models\NoticeDao;
 use \Models\NoticeDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
 
-class MyPageNoticeDetailAction {
+class MyPageNoticeDetailAction extends \Controllers\CommonMyPageAction{
     
     private $noticeDto; 
         
     public function execute(){
-        
+
         $cmd = filter_input(INPUT_POST, 'cmd');
         $noticeId = filter_input(INPUT_POST, 'notice_id');
 
-        if($cmd == "do_logout" ){
-            unset($_SESSION['customer_id']);
-        }
-        
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];   
         
         $noticeDao = new NoticeDao();
-        
+
         try{
             $noticeDto = $noticeDao->getNoticeDetail($noticeId);
             $this->noticeDto = $noticeDto;
             
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
+        } catch(MyPDOException $e){
+            $e->handler($e);
 
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
     
