@@ -2,10 +2,12 @@
 namespace Controllers;
 use \Models\DeliveryDao;
 use \Models\CustomerDao;    
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
 
-class MyPageDeliveryAction{
+class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
     
     private $customerDto; 
     private $deliveryDto;
@@ -13,22 +15,14 @@ class MyPageDeliveryAction{
     public function execute(){
         
         $cmd = filter_input(INPUT_POST, 'cmd');
+        $deliveryId = filter_input(INPUT_POST, 'del_id');
         
-        if($cmd == "do_logout" ){
-            unset($_SESSION['customer_id']);
-        }
-        
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin();
+        $customerId = $_SESSION['customer_id'];   
 
         $deliveryDao = new DeliveryDao();
         $customerDao = new CustomerDao();
-        
-        $deliveryId = filter_input(INPUT_POST, 'del_id');
         
         /*====================================================================
         　「削除」ボタンが押された時の処理
@@ -41,18 +35,13 @@ class MyPageDeliveryAction{
                 //全件削除した場合にデフォルト住所を基本登録にもどす
                 $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
                 if(!$deliveryDto){
-                    $customerDao->setDeliveryDefault($customerId);
+                    $customerDao->setDeliveryFlag($customerId);
                 }
-                
-            } catch(\PDOException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                die('エラー:データベースの処理に失敗しました。');
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-            }catch(OriginalException $e){
-                Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                die('エラー:'.$e->getMessage());
+            }catch(DBParamException $e){
+                $e->handler($e);
             }
         }
         
@@ -60,40 +49,40 @@ class MyPageDeliveryAction{
         　「配送先設定」ボタンがおされたときの処理
         =====================================================================*/
         
-        if($cmd == "update" && $deliveryId){
-            /*- customerテーブルの住所が選択された時の処理 -*/
-            if($deliveryId == "def"){
-                try{
-                    $customerDao->setDeliveryDefault($customerId);
-                    $deliveryDao->releaseDeliveryDefault($customerId);
+        if($cmd=="update"){
+            /*- 配送先情報があるか確認し、取得できた場合のみ更新処理。-*/
+            $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            if($deliveryDto){
+                /*- customerテーブルの住所が選択された時の処理 -*/
+                if($deliveryId == "def"){
+                    try{
+                        /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
+                        $deliveryDao->releaseDeliveryFlag($customerId);
+                        $customerDao->setDeliveryFlag($customerId);
+                        
+                    } catch(MyPDOException $e){
+                        $e->handler($e);
 
-                } catch(\PDOException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
+                    }catch(DBParamException $e){
+                        $e->handler($e);
+                    }
 
-                }catch(OriginalException $e){
-                    Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                    die('エラー:'.$e->getMessage());
-                }
-                
-            /*- deliveryテーブルの住所が選択された時の処理 -*/
-            }else{
-                try{
-                    $deliveryDao->releaseDeliveryDefault($customerId);
-                    $customerDao->releaseDeliveryDefault($customerId);
-                    $deliveryDao->setDeliveryDefault($customerId, $deliveryId);
-                    
-                } catch(\PDOException $e){
-                    Config::outputLog($e);
-                    header('Content-Type: text/plain; charset=UTF-8', true, 500);
-                    die('エラー:データベースの処理に失敗しました。');
-            
-                }catch(OriginalException $e){
-                    Config::outputLog($e->getMessage().$e->getTraceAsString());
-                    header('Content-Type: text/plain; charset=UTF-8', true, 400);
-                    die('エラー:'.$e->getMessage());
+                /*- deliveryテーブルの住所が選択された時の処理 -*/
+                }else{
+                    try{
+                        /*- (値精査)「いつもの配送先住所」解除前にdelivery_idを確認し、取得できた場合のみ更新処理。なければgetDeliveryInfoByIdの中で例外発生-*/
+                        $deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
+                        if($deliveryDto){
+                            /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
+                            $deliveryDao->releaseDeliveryFlag($customerId);
+                            $deliveryDao->setDeliveryFlag($customerId, $deliveryId);
+                        }
+                    } catch(MyPDOException $e){
+                        $e->handler($e);
+
+                    }catch(DBParamException $e){
+                        $e->handler($e);
+                    }
                 }
             }
         }
@@ -104,15 +93,11 @@ class MyPageDeliveryAction{
             /*- 配送先情報の取得 -*/
             $this->deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
             
-        } catch(\PDOException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());;
-            header('Content-Type: text/plain; charset=UTF-8', true, 500);
-            die('エラー:データベースの処理に失敗しました。');
-            
-        }catch(OriginalException $e){
-            Config::outputLog($e->getCode(), $e->getMessage(), $e->getTraceAsString());
-            header('Content-Type: text/plain; charset=UTF-8', true, 400);
-            die('エラー:'.$e->getMessage());
+        } catch(MyPDOException $e){
+            $e->handler($e);
+
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
     
