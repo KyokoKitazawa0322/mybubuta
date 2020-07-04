@@ -1,7 +1,10 @@
 <?php
 namespace Models;
+
 use \Models\NoticeDto;
-use \Models\OriginalException;
+use \Models\DBParamException;
+use \Models\NoRecordException;
+use \Models\MyPDOException;
 use \Config\Config;
     
 class NoticeDao extends \Models\Model{
@@ -32,28 +35,23 @@ class NoticeDao extends \Models\Model{
      * お知らせの登録(管理画面)
      * @param string $title      お知らせ件名
      * @param string $mainText   お知らせ本文
-     * @throws PDOException 
-     * @throws OriginalException(登録失敗時:code444)
+     * @throws MyPDOException 
      */
     public function insertNoticeInfo($title, $mainText){
         
         $dateTime = Config::getDateTime();
         
         try{
-            $sql = "insert into notice(title, main_text, insert_date)values(?,?,?)";
+            $sql = "INSERT INTO notice(title, main_text, insert_date)VALUES(?,?,?)";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $title, \PDO::PARAM_STR);
             $stmt->bindvalue(2, $mainText, \PDO::PARAM_STR);
             $stmt->bindvalue(3, $dateTime, \PDO::PARAM_STR);
             $stmt->execute();
-            
-            $count = $stmt->rowCount();
-            if($count<1){
-                throw new OriginalException('登録に失敗しました。',444);
-            }
+
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
@@ -62,21 +60,22 @@ class NoticeDao extends \Models\Model{
      * お知らせの削除(管理画面)
      * @param string $title      お知らせ件名
      * @param string $mainText   お知らせ本文
-     * @throws PDOException 
-     * @throws OriginalException(削除失敗時:code333)
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function deleteNoticeInfo($id){
         try{
-            $sql = "DELETE from notice where id = ?";
+            $sql = "DELETE FROM notice WHERE id=?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $id, \PDO::PARAM_INT);
             $stmt->execute();
             $count = $stmt->rowCount();
             if($count<1){
-                throw new OriginalException('削除に失敗しました。',333);
+                $result=preg_replace("/id=\?/", 'id='.$id, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
     
@@ -85,12 +84,12 @@ class NoticeDao extends \Models\Model{
      * @param string $title      お知らせ件名
      * @param string $mainText   お知らせ本文
      * @return NoticeDto[] 
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code111)
+     * @throws MyPDOException 
+     * @throws NoRecordException
      */
     public function getNoticeInfoAll(){
         try{
-            $sql = "SELECT * FROM notice";
+            $sql = "SELECT * FROM notice ORDER BY insert_date DESC";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -103,24 +102,86 @@ class NoticeDao extends \Models\Model{
                 }
                 return $notice;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                throw new NoRecordException("no record error:".$sql);
             }
         }catch(\PDOException $e){
+            Config::outputLog($e);
             throw $e;
         }
     }
+    
+    /**
+     * お知らせ一覧(id昇順)取得
+     * @param string $title      お知らせ件名
+     * @param string $mainText   お知らせ本文
+     * @return NoticeDto[] 
+     * @throws MyPDOException 
+     * @throws NoRecordException
+     */
+    public function getNoticeAllSortByIdAsc(){
+        try{
+            $sql = "SELECT * FROM notice ORDER BY id ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            
+            if($res){
+                $notice = [];
+                foreach($res as $row){
+                    $dto = $this->setDto($row);
+                    $notice[] = $dto;
+                }
+                return $notice;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
+    /**
+     * お知らせ一覧(id降順)取得
+     * @param string $title      お知らせ件名
+     * @param string $mainText   お知らせ本文
+     * @return NoticeDto[] 
+     * @throws MyPDOException 
+     * @throws NoRecordException
+     */
+    public function getNoticeAllSortByIdDesc(){
+        try{
+            $sql = "SELECT * FROM notice ORDER BY id DESC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            
+            if($res){
+                $notice = [];
+                foreach($res as $row){
+                    $dto = $this->setDto($row);
+                    $notice[] = $dto;
+                }
+                return $notice;
+            }else{
+                throw new NoRecordException("no record error:".$sql);
+            }
+        }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+    
     
     /**
      * 最新のお知らせ2件取得
      * @param string $title      お知らせ件名
      * @param string $mainText   お知らせ本文
      * @return NoticeDto[] 
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code111)
+     * @throws MyPDOException 
+     * @throws NoRecordException
      */
     public function getLatestNoticeInfo(){
         try{
-            $sql = "SELECT * FROM notice LIMIT 2";
+            $sql = "SELECT * FROM notice ORDER BY insert_date DESC LIMIT 2";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -133,25 +194,23 @@ class NoticeDao extends \Models\Model{
                 }
                 return $notice;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                throw new NoRecordException("no record error:".$sql);
             }
-        }catch(\PDOException $e){
-            throw $e;
+          }catch(\PDOException $e){
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
-    
-    
     
     /**
      * お知らせ詳細取得
      * @param int $noticeId
      * @return NoticeDto
-     * @throws PDOException 
-     * @throws OriginalException(取得失敗時:code111)
+     * @throws MyPDOException 
+     * @throws DBParamException
      */
     public function getNoticeDetail($noticeId){
         try{
-            $sql = "SELECT * FROM notice where id=?";
+            $sql = "SELECT * FROM notice WHERE id=?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $noticeId);
             $stmt->execute();
@@ -160,10 +219,11 @@ class NoticeDao extends \Models\Model{
                 $dto = $this->setDto($res);
                 return $dto;
             }else{
-                throw new OriginalException('取得に失敗しました。',111);
+                $result=preg_replace("/id=\?/", 'id='.$customerId, $sql);
+                throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
-            throw $e;
+            throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 }
