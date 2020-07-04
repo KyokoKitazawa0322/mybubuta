@@ -34,13 +34,13 @@ $noticeDto = $mypage->getNoticeDto();
                     <?php foreach($noticeDto as $notice):?>
                         <div class="notice_wrapper">
                             <div class="box_info">
-                                <p class="notice_date"><?= $notice->getInsertDate();?></p>
-                                <p class="notice_title"><?= $notice->getTitle();?></p>
+                                <p class="notice_date"><?=$notice->getInsertDate();?></p>
+                                <p class="notice_title"><?=$notice->getTitle();?></p>
                             </div>
                             <div class="detail_link_wrap">
                                 <form method="POST" action="mypage_notice_detail.php">
                                     <input type="submit" class="btn_cmn_01 btn_design_02 btn_cmn_mid" value="お知らせを見る">
-                                    <input type="hidden" name="notice_id" value="<?= $notice->getId();?>">
+                                    <input type="hidden" name="notice_id" value="<?=$notice->getId();?>">
                                 </form>
                             </div>
                         </div>
@@ -51,7 +51,7 @@ $noticeDto = $mypage->getNoticeDto();
                 </div>
             </div>
         </div>
-        <?php require_once(__DIR__.'/mypage_common.php'); ?>
+        <?php require_once(__DIR__.'/mypage_common.php');?>
         </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

@@ -1,3 +1,15 @@
+<script type="text/javascript">
+$(function(){
+    $('.list_nav li a').each(function(){
+        var $href = $(this).attr('href');
+        if(location.href.match($href)) {
+        $(this).addClass('mypage_menu_active');
+        } else {
+        $(this).removeClass('mypage_menu_active');
+        }
+    });
+});
+</script>
     <div id="mypage_menu">
         <div class="side_menu">
             <div class="box" id="mypage">
