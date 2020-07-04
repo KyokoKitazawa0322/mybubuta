@@ -1,4 +1,7 @@
-<?php use \Config\Config; ?>
+<?php 
+use \Config\Config;
+$leftPane = new \Controllers\LeftPaneAction();
+?>
 <script>
 <!--
 $(function() {
@@ -37,7 +40,7 @@ $(function() {
                 <div class="search_item">
                     <p>商品名</p>
                     <div class="text_wrapper">
-                        <input type="text" name="keyword" class="text" placeholder="キーワード" value="<?php if(isset($_SESSION['search']["keyword"])){echo $_SESSION['search']["keyword"]; }?>" />
+                        <input type="text" name="keyword" class="text" placeholder="キーワード" value="<?=Config::h($leftPane->echoValue("keyword"))?>"/>
                     </div>
                 </div>
                 <div class="search_item_bycategory">
@@ -46,8 +49,8 @@ $(function() {
                         <ul class="category_list">
                             <?php foreach(Config::CATEGORY as $key=>$value):?>
                             <li>
-                                <input type="checkbox" name="<?= $key?>" id="<?= $key?>_l" value="<?= $key?>" <?php if(isset($_SESSION['search']['category'][$key])){ echo "checked"; } ?> />
-                                <label for="<?= $key?>_l"><?= $value?></label>
+                                <input type="checkbox" name="<?=$key?>" id="<?=$key?>_l" value="<?=$key?>" <?=$leftPane->checkCategoryValue($key)?>  />
+                                <label for="<?=$key?>_l"><?=$value?></label>
                             </li>
                             <?php endforeach;?>
                         </ul>
@@ -59,7 +62,7 @@ $(function() {
                         <select name="min_price" class="minimum_price">
                             <option value="">  </option>
                             <?php foreach(Config::PRICERANGE as $key):?>
-                                <option value="<?= $key ?>" <?php if(isset($_SESSION['search']['min_price']) && $_SESSION['search']['min_price'] == $key){echo "selected";}?>>￥<?= number_format($key)?></option>
+                                <option value="<?=$key ?>" <?=$leftPane->checkValue("min_price", $key)?>>￥<?=number_format($key)?></option>
                             <?php endforeach;?>
                         </select>
                     </div>
@@ -68,7 +71,7 @@ $(function() {
                         <select name="max_price" class="maximum_price">
                             <option value="">  </option>
                             <?php foreach(Config::PRICERANGE as $key):?>
-                                <option value="<?= $key ?>" <?php if(isset($_SESSION['search']['max_price']) && $_SESSION['search']['max_price'] == $key){echo "selected";}?>>￥<?= number_format($key)?></option>
+                                <option value="<?=$key ?>" <?=$leftPane->checkValue("max_price", $key)?>>￥<?=number_format($key)?></option>
                             <?php endforeach;?>
                         </select>
                     </div>
