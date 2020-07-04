@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $myPageDeliveryComplete = new \Controllers\MyPageDeliveryCompleteAction();
 $myPageDeliveryComplete->execute();
 ?>
@@ -37,7 +39,7 @@ $myPageDeliveryComplete->execute();
                 </div>
             </div>
         </div>
-     <?php require_once(__DIR__.'/mypage_common.php'); ?>
+     <?php require_once(__DIR__.'/mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved. </p>

@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $mypageNoticeDetail = new \Controllers\MyPageNoticeDetailAction();
 $mypageNoticeDetail->execute();
 $noticeDto = $mypageNoticeDetail->getNoticeDto();
@@ -33,15 +35,15 @@ $noticeDto = $mypageNoticeDetail->getNoticeDto();
                     <h3 class="ttl_cmn">会員様へのお知らせ</h3>
                     <div class="notice_wrapper">
                         <div class="box_info">
-                            <p class="notice_date"><?= $noticeDto->getInsertDate();?></p>
-                            <h4><?= $noticeDto->getTitle();?></h4>
-                            <p class="notice_text"><?= $noticeDto->getMainText();?></p>
+                            <p class="notice_date"><?=Config::h($noticeDto->getInsertDate());?></p>
+                            <h4><?=Config::h($noticeDto->getTitle());?></h4>
+                            <p class="notice_text"><?=$noticeDto->getMainText();?></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <?php require_once(__DIR__.'/mypage_common.php'); ?>
+        <?php require_once(__DIR__.'/mypage_common.php');?>
         </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
