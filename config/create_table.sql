@@ -23,26 +23,27 @@ CREATE TABLE customers (
 	mail            varchar(255) not null unique, -- 顧客アドレス  
 	delivery_flag   tinyint(1) not null,          -- いつもの配達先フラグ
 	customer_insert_date  datetime not null,      -- 登録日
-    customer_updated_date datetime                -- 更新日
+    customer_updated_date datetime not null       -- 更新日
 );
 
 
 drop table if exists items;
 CREATE TABLE items (
-	item_code      varchar(10) not null primary key,  -- 商品コード
-	item_name      varchar(255) not null,             -- 商品名
-	item_price     int not null,               -- 税別単価
-    item_tax       int not null,               -- 消費税      
-	item_category  varchar(255) not null,      -- カテゴリ
-	item_image     varchar(255) not null,      -- 商品画像
-	item_detail    varchar(255) not null,      -- 詳細説明
-    item_stock     int not null,               -- 在庫
-	delete_flag    tinyint(1) not null,         -- 削除フラグ
-	item_insert_date datetime not null,        -- 登録数
-    item_sales     int not null                -- 売上個数
+	item_code        varchar(10) not null primary key,  -- 商品コード
+	item_name        varchar(255) not null,             -- 商品名
+	item_price       int not null,               -- 税別単価
+    item_tax         int not null,               -- 消費税      
+	item_category    varchar(255) not null,      -- カテゴリ
+	item_image_name  varchar(255) not null,      -- 画像のファイル名
+    item_image_path  varchar(255) not null,      -- 画像のパス
+	item_detail      varchar(255) not null,      -- 詳細説明
+    item_stock       int not null,               -- 在庫
+	delete_flag      tinyint(1) not null,        -- 削除フラグ
+	item_insert_date datetime not null,          -- 登録日
+    item_updated_date datetime,                  -- 更新日
+    item_sales       int not null,               -- 売上個数
+    item_status      varchar(1)                  -- ステータス(1:販売中(表示有/購入可),2:入荷待ち(表示有/購入不可),3:販売終了(非表示/購入不可),4:一時掲載停止(非表示/購入不可),5:在庫切れ(表示有、購入不可),6:販売前待機中(非表示))
 );
-
-
 
 
 drop table if exists order_history;
@@ -60,7 +61,6 @@ CREATE TABLE order_history (
     delivery_tel   varchar(11) not null,        -- 配送先電話番号 
 	purchase_date  datetime not null            -- 購入日
 );
-
 
 drop table if exists order_detail;
 CREATE TABLE order_detail (
@@ -107,4 +107,11 @@ CREATE TABLE notice (
 	title   varchar(255) not null,   -- 件名
 	main_text   text not null,       -- 本文
 	insert_date datetime not null    -- 登録日
+);
+
+drop table if exists admin;
+CREATE TABLE admin (
+	id               int not null auto_increment primary key,
+    admin_id         varchar(255) not null,
+	admin_password   varchar(255) not null
 );
