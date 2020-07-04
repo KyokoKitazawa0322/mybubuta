@@ -367,9 +367,10 @@ body {
 .main_contents_inner {
     padding: 10px 10px 0 10px;
     clear: both;
+    overflow: hidden;
 }
 
-#login .main_wrapper, #register .main_wrapper, #register_confirm .main_wrapper, #register_complete .main_wrapper, #cart .main_wrapper, #order_confirm .main_wrapper, #order_del_list .main_wrapper, #order_pay_list .main_wrapper, #order_complete .main_wrapper { 
+.admin .main_wrapper, #login .main_wrapper, #register .main_wrapper, #register_confirm .main_wrapper, #register_complete .main_wrapper, #cart .main_wrapper, #order_confirm .main_wrapper, #order_del_list .main_wrapper, #order_pay_list .main_wrapper, #order_complete .main_wrapper { 
     width: 100%;    
     float: none;
 }
@@ -948,6 +949,7 @@ body {
 .product_link {
     margin-bottom: 6px;
     font-size: 1.5rem;
+    display: block;
 }
 
 .button_wrapper {
@@ -995,6 +997,13 @@ body {
     text-align: center;
 }
 
+#item_list .calcuration_period {
+    display: inline-block;   
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: inline-block;
+    background: linear-gradient(transparent 50%, #FAEBD7 50%);
+}
 
 @media only screen and (max-width: 979px) {
 .bunner_wrap_center .bx-wrapper {
@@ -1153,6 +1162,13 @@ body {
     display: none;
     }
 
+#item_detail .status_text {
+    margin-top: 10px;
+    font-size: 18px;
+    color: red;
+    font-weight: bold;
+}
+
 @media screen and (max-width: 979px) {
 #item_detail .main_wrapper {
     width: 740px;
@@ -1289,7 +1305,18 @@ body {
 }
 
 .fav_btn_wrap {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    padding: 5px;
+    height: 45px;
+}
+
+#favorite .status_text {
+    height: 45px;
+    margin-bottom: 20px;
+    padding: 5px;
+    font-weight: bold;
+    color: red;
 }
 
 #favorite .btn_cmn_mid, #favorite .btn_cmn_01  {
@@ -1364,7 +1391,7 @@ body {
 .cart_item {
     position: relative;
     height: 136px;
-    padding: 20px;
+    padding: 30px 20px;
     border-bottom: 1px solid #A2A2A2;
     box-sizing: content-box;
 }
@@ -1415,6 +1442,13 @@ body {
 
 #cart .cart_btn_wrap .btn_design_03 {
     margin-top: 30px;
+}
+
+#cart .status_text {
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    color: red;   
 }
 
 .box-shipping-sub {
@@ -1695,6 +1729,7 @@ body {
 
 .login_button_wrapper {
     margin-top: 20px;
+    margin-bottom: 30px;
 }
 
 .login_form_input {
@@ -1789,7 +1824,7 @@ body {
 }
 
 .register_form_title {
-    width: 142px;
+    width: 150px;
     float: left;
     height: 30px;
     line-height: 30px;
@@ -1849,8 +1884,16 @@ body {
     width: 180px;
 }
 
-#password.form_input_item, #confirm.form_input_item {
+#oldPassword.form_input_item, #password.form_input_item, #confirm.form_input_item {
     width: 250px;
+}
+
+.new_password_conf_title {
+    height: 60px;   
+}
+
+.pass_field_text{
+    margin-bottom: 15px;
 }
 
 .register_button_wrapper {
@@ -2153,23 +2196,27 @@ body {
     padding-bottom: 24px;
 }
 
+.mypage_menu_active span{
+    background-color: #F8F8FF;   
+}
+
 @media screen and (max-width: 979px) {
-#mypage_menu  .side_menu {
-    float: none;
-    width: 100%;
-    display: block;
-}
-    
-.logout_button_wrapper form {
-    width: 280px;
-    margin: 0 auto;  
-}
-    
-.logout_button_wrapper .btn_cmn_full {
-    width: 100%;
-    height: 50px;
-    font-size: 1.2rem;
-}
+    #mypage_menu  .side_menu {
+        float: none;
+        width: 100%;
+        display: block;
+    }
+
+    .logout_button_wrapper form {
+        width: 280px;
+        margin: 0 auto;  
+    }
+
+    .logout_button_wrapper .btn_cmn_full {
+        width: 100%;
+        height: 50px;
+        font-size: 1.2rem;
+    }
 }
 /**--------------------------------------------------------
         mypage_delivery.php
@@ -2307,6 +2354,21 @@ body {
     width: 200px;
 }
 
+
+/**--------------------------------------------------------
+        mypage_delivery_add_confirm.php, mypage_delivery_entry_comfirm.php
+----------------------------------------------------------*/
+#mypage_delivery_add_confirm .register_wrapper p, #mypage_delivery_entry_confirm .register_wrapper p {
+    line-height: 30px;
+    float: left;
+}
+
+@media screen and (max-width: 767px){
+    #mypage_delivery_add_confirm .name_input_wrapper, #mypage_delivery_entry_confirm .name_input_wrapper {
+        max-width: 100px;
+        width: 33.3%;
+    }
+}
 /**--------------------------------------------------------
         mypage_update.php
 ----------------------------------------------------------*/
@@ -2493,7 +2555,7 @@ body {
 }
 
 #order_confirm .cart_item {
-    padding: 20px 0;
+    padding: 25px 0;
     height: 120px;
 }
 
@@ -2521,6 +2583,19 @@ body {
 
 #order_confirm .cart_item_img img{
     width: 120px;   
+}
+
+#order_confirm .purchase_error_text {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;   
+}
+
+#order_confirm .status_text {
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    color: red;   
 }
 
 @media screen and (max-width: 767px) {
@@ -2862,8 +2937,8 @@ body {
 }
 
 #history_detail .mod_payment_details {
-    font-size: 1.6rem;   
-    line-height: 3.6rem;
+    font-size: 1.5rem;   
+    line-height: 3rem;
 }
 
 #history_detail .mod_payment_total {
@@ -2985,6 +3060,488 @@ body {
 
 #leave_comp h3 {
     margin-bottom: 20px;
+}
+
+/**--------------------------------------------------------
+        admin_login.php
+----------------------------------------------------------*/
+#admin_login .main_contents_inner {
+    width: 40%;
+    min-width: 240px;
+    margin: 0 auto;
+}
+
+.admin h2 {
+    font-size: 2.2rem;
+    line-height: 32px;
+}
+
+.admin .admin_title {
+    margin-bottom: 30px;
+}   
+
+/**--------------------------------------------------------
+        admin_index.php
+----------------------------------------------------------*/
+.admin .admin_index_wrapper{
+    text-align: center;
+}
+
+.admin .admin_index_wrapper a, .admin_logout_btn{
+    font-size: 18px;
+    line-height: 36px;
+    display: block;
+    text-decoration: underline;
+    margin-bottom: 20px;
+}
+
+.admin .admin_index_wrapper a:hover{
+    background-color: darkgray;
+}
+
+.admin_logout_btn {
+    position: absolute;
+    right: 20px;
+    bottom: 0;
+    margin-bottom: 0;
+    background-color: transparent;
+}
+
+.admin h2 a {
+    font-weight: inherit;   
+}
+/**--------------------------------------------------------
+        admin_items.php
+----------------------------------------------------------*/
+
+#admin_items .container {
+    width: 90%;   
+}
+
+.admin_item_list_wrapper, .admin_notice_list_wrapper {
+    font-size: 1.4rem;
+    width: 100%;
+    text-align: center;
+    border: 1px gray solid;
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+.admin td, .admin th {
+    border: 1px solid gray;
+    padding: 0.8em; 
+}
+
+#admin_items .link_wrap a{
+    margin: 0 5px 20px auto;
+}
+
+.admin th{
+    background-color: #BAD3FF;
+}
+
+#admin_items th a{
+    text-decoration: underline;
+    color: darkblue;
+    cursor: pointer;
+}
+
+.admin td{
+    background-color: #F5F5F5;
+}
+
+#admin_items .admin_item_link {
+    display: block;
+    overflow: hidden;
+}
+
+#admin_items .admin_item_image {
+    width: 12%;
+}
+
+#admin_items .admin_item_name {
+    width: 14%;
+}
+
+#admin_items .admin_item_insert_date, #admin_items .admin_item_updated_date {
+    width: 10%;
+}
+
+#admin_items .admin_item_link img{
+    width: 100%;
+    border: 1px solid gray;
+}
+
+#admin_items .admin_button_area input{
+    height: 24px;
+    line-height: 24px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#admin_items .admin_button_area input:first-of-type {
+    margin-bottom: 22px;   
+}
+
+#admin_items .admin_item_search_row input, #admin_items .admin_item_search_row select{
+    height: 32px;
+    padding: 5px 40px 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+    float: left;
+}
+
+#admin_items .admin_item_search_wrap span {
+    float: left;
+    width: 20%;
+    text-align: right;
+    height: 32px;
+    line-height: 32px;
+    padding-right: 4px;
+}
+
+#admin_items .admin_item_search_wrap{
+    width: 70%;
+    background-color: lightgray;
+    float: left;
+    padding: 10px;
+    border: 2px #00008B solid;
+    margin-bottom: 10px;
+}
+
+#admin_items .admin_item_search_row{
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+}
+
+#admin_items .admin_search_item_code ,#admin_items .admin_search_item_category{
+    width: 20%;   
+}
+
+#admin_items .admin_search_item_keyword ,#admin_items .admin_search_item_status {
+    width: 30%;   
+}
+
+#admin_items .admin_search_item_minprice, #admin_items .admin_search_item_maxprice {
+    width: 16%;   
+}
+
+#admin_items .admin_item_search_row .tilde{
+    width: 4%;
+}
+
+#admin_items .admin_item_search_wrap .min_price_title, #admin_items .admin_item_search_wrap .max_price_title{
+    width: 12%;
+}
+
+#admin_items .admin_search_button_wrap button{
+    width: 45%;
+    float: left;
+}
+
+#admin_items .admin_search_button_wrap a{
+    cursor: pointer;
+    width: 45%;
+    float: right;
+}
+
+#admin_items .admin_search_button_wrap{
+    float:left;
+    width: 40%;
+    padding-left: 20px;
+}
+
+#admin_items .admin_none_text {
+    font-size: 18px;   
+    text-align: center;
+    margin-top: 30px;
+}
+
+/**--------------------------------------------------------
+        admin_item_update.php
+----------------------------------------------------------*/
+#admin_item_update .admin_item_list_wrapper {
+    text-align: left;
+}
+
+#admin_item_update th{
+    width: 160px;
+    background-color: #BAD3FF;
+}
+
+#admin_item_update .admin_item_image img{
+    width: 200px;
+    border: 1px gray solid;
+    display: block;
+}
+
+#admin_item_update .update_btn_wrap {
+    margin-top: 30px;   
+    margin-bottom: 30px;   
+}
+
+#admin_item_update .admin_item_list_wrapper input, #admin_item_update .admin_item_list_wrapper textarea{
+    line-height: 2rem;
+    padding: 0.5rem;
+    border: 1px solid gray;
+}
+
+#admin_item_update .admin_item_list_wrapper .item_image_upfile{
+    border: none;
+    margin-top: 20px;
+}
+
+.admin_item_name input{
+    width: 60%;
+    min-width: 200px;
+}
+
+.admin_item_detail textarea{
+    width: 100%;
+    word-wrap: break-word;
+}
+
+#admin_item_update .error_txt {
+    margin-top: 4px;   
+}
+
+#admin_item_update .admin_item_status label {
+    margin-right: 1.5rem;
+}
+/**--------------------------------------------------------
+        admin_item_register.php
+----------------------------------------------------------*/
+#admin_item_register .admin_item_list_wrapper input, #admin_item_register .admin_item_list_wrapper textarea{
+    line-height: 2rem;
+    padding: 0.5rem;
+    border: 1px solid gray;
+}
+
+#admin_item_register .admin_item_list_wrapper {
+    text-align: left;
+}
+
+#admin_item_register .register_btn_wrap {
+    margin-top: 30px;   
+    margin-bottom: 30px;   
+}
+
+#admin_item_register .admin_item_category label, #admin_item_register .admin_item_status label {
+    margin-right: 1.5rem;   
+}
+
+#admin_item_register .admin_item_list_wrapper .item_image_upfile{
+    border: none;
+}
+
+/**--------------------------------------------------------
+        admin_notice.php
+----------------------------------------------------------*/
+.admin_notice_title {
+    width: 50%;   
+}
+
+#admin_notice .admin_button_area input{
+    height: 28px;
+    line-height: 28px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#admin_notice .admin_button_area input:first-of-type {
+    margin-bottom: 2rem;   
+}
+
+#admin_notice th a{
+    text-decoration: underline;
+    color: darkblue;
+    cursor: pointer;
+}
+
+#admin_notice .link_wrap a{
+    margin: 0 5px 20px auto;
+}
+
+/**--------------------------------------------------------
+        admin_notice_detail.php
+----------------------------------------------------------*/
+#admin_notice_detail th, #admin_notice_register th {
+    width: 10%;   
+}
+
+#admin_notice_detail td, #admin_notice_register td {
+    width: 90%;   
+    text-align: left;
+}
+
+/**--------------------------------------------------------
+        admin_notice_register.php
+----------------------------------------------------------*/
+#admin_notice_register .admin_notice_list_wrapper input, #admin_notice_register .admin_notice_list_wrapper textarea{
+    line-height: 2rem;
+    padding: 0.5rem;
+    border: 1px solid gray;
+    width: 80%;
+}
+
+#admin_notice_register .register_btn_wrap {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/**--------------------------------------------------------
+        admin_customers.php
+----------------------------------------------------------*/
+.admin_customer_list_wrapper {
+    font-size: 1.4rem;
+    width: 100%;
+    text-align: center;
+    border: 1px gray solid;
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+#admin_customers th a{
+    text-decoration: underline;
+    color: darkblue;
+    cursor: pointer;
+}
+
+#admin_customers .container {
+    width: 100%;   
+}
+
+#admin_customers .admin_button_area input{
+    height: 24px;
+    line-height: 24px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/**--------------------------------------------------------
+        admin_customer_detail.php
+----------------------------------------------------------*/
+#admin_customer_detail .admin_customer_list_wrapper {
+    text-align: left;
+    width: 90%;
+}
+
+#admin_customer_detail .admin_customer_list_wrapper {
+    margin-bottom: 40px;
+}
+
+#admin_customer_detail th {
+    width: 14%;
+}
+
+.admin caption {
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: left;
+}
+
+.default_info {
+    background-color: lightpink;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+#admin_customer_detail .link_wrap input{
+    margin: 0 5px 10px auto;
+}
+
+/**--------------------------------------------------------
+        admin_customer_order_history.php
+----------------------------------------------------------*/
+#admin_customer_order_history .detail_link_wrap input{
+    height: 26px;
+    line-height: 26px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#admin_customer_order_history .admin_customer_list_wrapper tr{
+    height: 60px;
+}
+
+/**--------------------------------------------------------
+        admin_orders.php
+----------------------------------------------------------*/
+.admin_orders_list_wrapper {
+    font-size: 1.4rem;
+    width: 100%;
+    text-align: center;
+    border: 1px gray solid;
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+#admin_orders th a{
+    text-decoration: underline;
+    color: darkblue;
+    cursor: pointer;
+}
+
+#admin_orders .admin_order_detail{
+    height: 24px;
+    line-height: 24px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#admin_orders tr{
+    height: 60px;
+}
+
+/**--------------------------------------------------------
+        admin_sales.php
+----------------------------------------------------------*/
+#admin_sales .admin_sales_list_wrapper, #admin_sales .sales_aggregate, #admin_sales .sales_result_list {
+    font-size: 1.6rem;
+    width: 100%;
+    text-align: left;
+    border: 1px gray solid;
+    padding: 10px;
+    border-collapse: collapse;
+}
+
+#admin_sales .sales_result_list td, #admin_sales .sales_result_list th {
+    padding: 0.6em;
+}
+
+#admin_sales .admin_sales_list_wrapper th {
+    width: 20%;
+}
+
+#admin_sales .sales_aggregate th, #admin_sales .result_list th{
+    text-align: center;    
+}
+
+#admin_sales .sales_result_list{
+    margin-top: 50px;
+}
+
+#admin_sales select {
+    outline: none;
+    height: 32px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+#admin_sales .search_sales_btn_wrap {
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+#admin_sales .error_text {
+    color: red;
+    margin-bottom: 6px;
+    font-weight: bold;
 }
 
 @media screen and (min-width:1024px) {
