@@ -41,53 +41,53 @@ $register->execute();
                                 <p class="register_form_title">氏名*</p>
                                 <p class="name_label">姓</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['last_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getLastNameError()){echo "error_box";}?>" type="text" maxlength="20" name="last_name" value="<?=Config::h($register->echoValue("last_name"))?>">
                                 </div>
                                 <p class="name_label">名</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['first_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?=Config::h($register->echoValue("first_name"))?>">
                                 </div>
                                 <?php if($register->getLastNameError()):?>
-                                    <p class="error_txt error_cmn"><?= $register->getLastNameError();?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt error_cmn"><?=$register->getLastNameError();?></p>
+                                <?php endif;?>
                                 <?php if($register->getFirstNameError()):?>
-                                    <p class="error_txt error_cmn"><?= $register->getFirstNameError();?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt error_cmn"><?=$register->getFirstNameError();?></p>
+                                <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">氏名(全角カナ)*</p>
                                 <p class="name_label">セイ</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['ruby_last_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getRubyLastNameError()){echo "error_box";}?>" type="text" maxlength="20"  name="ruby_last_name" value="<?=Config::h($register->echoValue("ruby_last_name"))?>">
                                 </div>
                                 <p class="name_label">メイ</p>
                                 <div class="name_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getRubyFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="ruby_first_name" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['ruby_first_name']);}?>">
+                                    <input class="form_input_item <?php if($register->getRubyFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="ruby_first_name" value="<?=Config::h($register->echoValue("ruby_first_name"))?>">
                                 </div>
                                 <?php if($register->getRubyLastNameError()):?>
-                                    <p class="error_txt error_cmn"><?= $register->getRubyLastNameError(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt error_cmn"><?=$register->getRubyLastNameError();?></p>
+                                <?php endif;?>
                                 <?php if($register->getRubyFirstNameError()):?>
-                                    <p class="error_txt error_cmn"><?= $register->getRubyFirstNameError(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt error_cmn"><?=$register->getRubyFirstNameError();?></p>
+                                <?php endif;?>
                             </div>
                         </div>                                         
                         <div class="register_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号*</p>
                                 <div class="addr01_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" id="add01" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['zip_code_01']);}?>">
+                                    <input class="form_input_item <?php if($register->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" oninput="value = value.replace(/[^0-9]+/i,'');" id="add01" value="<?=Config::h($register->echoValue("zip_code_01"))?>">
                                 </div>
                                 <span class="txt_dash">―</span>
                                 <div class="addr01_input_wrapper">
-                                    <input class="form_input_item <?php if($register->getZipCode02Error()){echo "error_box";}?>" type="tel" name="zip_code_02" maxlength="4" id="add02" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['zip_code_02']);}?>">
+                                    <input class="form_input_item <?php if($register->getZipCode02Error()){echo "error_box";}?>" type="tel" name="zip_code_02" maxlength="4" oninput="value = value.replace(/[^0-9]+/i,'');" id="add02" value="<?=Config::h($register->echoValue("zip_code_02"))?>">
                                 </div>
                                 <?php if($register->getZipCode01Error()):?>
-                                    <p class="error_txt memo zip_memo"><?= $register->getZipCode01Error(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt memo zip_memo"><?=$register->getZipCode01Error();?></p>
+                                <?php endif;?>
                                 <?php if($register->getZipCode02Error()):?>
-                                    <p class="error_txt memo"><?= $register->getZipCode02Error(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt memo"><?=$register->getZipCode02Error();?></p>
+                                <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県*</p>
@@ -95,7 +95,7 @@ $register->execute();
                                     <select class="add_list <?php if($register->getPrefectureError()){echo "error_box";}?>" id="add03" name="prefecture">
                                         <option value="">都道府県を選択して下さい</option>
                                         <?php foreach(Config::PREFECTURES as $kenmei):?>
-                                            <?php if(isset($_SESSION['register']) && $_SESSION['register']['prefecture'] == $kenmei):?>
+                                            <?php if($register->checkSelectedPrefecture($kenmei)):?>
                                                 <option  value="<?=$kenmei?>"selected><?=$kenmei?></option>
                                             <?php else:?>
                                             <option  value="<?=$kenmei?>"><?=$kenmei?></option>
@@ -104,29 +104,29 @@ $register->execute();
                                     </select>
                                 </div>		
                             <?php if($register->getPrefectureError()):?>
-                                <p class="error_txt memo"><?= $register->getPrefectureError(); ?></p>
-                            <?php endif; ?>
+                                <p class="error_txt memo"><?=$register->getPrefectureError();?></p>
+                            <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村*</p>
-                                <input class="form_input_item <?php if($register->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city"  value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['city']);}?>">
+                                <input class="form_input_item <?php if($register->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city" value="<?=Config::h($register->echoValue("city"))?>">
                                 <?php if($register->getCityError()):?>
-                                    <p class="error_txt memo"><?= $register->getCityError(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt memo"><?=$register->getCityError();?></p>
+                                <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地*</p>
-                                <input class="form_input_item <?php if($register->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['block_number']);}?>">
+                                <input class="form_input_item <?php if($register->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?=Config::h($register->echoValue("block_number"))?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>	
                                     <?php if($register->getBlockNumberError()):?>
-                                        <p class="error_txt memo"><?= $register->getBlockNumberError(); ?></p>
-                                    <?php endif; ?>
+                                        <p class="error_txt memo"><?=$register->getBlockNumberError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <input class="form_input_item" type="text" maxlength="100" name="building_name" id="add06" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['building_name']);}?>">
+                                <input class="form_input_item" type="text" maxlength="100" name="building_name" id="add06" value="<?=Config::h($register->echoValue("building_name"))?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
 
@@ -136,24 +136,24 @@ $register->execute();
                         <div class="register_field tel_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">電話番号*</p>
-                                <input class="form_input_item <?php if($register->getTelError()){echo "error_box";}?>" name="tel" type="tel" maxlength="11" id="tel" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['tel']);}?>">
+                                <input class="form_input_item <?php if($register->getTelError()){echo "error_box";}?>" name="tel" type="tel" maxlength="11" id="tel" oninput="value = value.replace(/[^0-9]+/i,'');" value="<?=Config::h($register->echoValue("tel"))?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※ハイフン(-)なし</p>
                                     <?php if($register->getTelError()):?>
-                                        <p class="error_txt memo"><?= $register->getTelError(); ?></p>
-                                    <?php endif; ?>
+                                        <p class="error_txt memo"><?=$register->getTelError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
                         <div class="register_field mail_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">メール*</p>
-                                <input class="form_input_item <?php if($register->getMailError()){echo "error_box";}?>" type="text" maxlength="100" name="mail" id="mail" value="<?php if(isset($_SESSION['register'])){echo Config::h($_SESSION['register']['mail']);}?>">
+                                <input class="form_input_item <?php if($register->getMailError()){echo "error_box";}?>" type="text" maxlength="100" name="mail" id="mail" value="<?=Config::h($register->echoValue("mail"))?>">
                                 <div class="memo_wrapper">
                                     <p class="memo">※お間違いがないか必ずご確認下さい。</p>
                                     <?php if($register->getMailError()):?>
-                                        <p class="error_txt memo"><?= $register->getMailError(); ?></p>
-                                    <?php endif; ?>
+                                        <p class="error_txt memo"><?=$register->getMailError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
@@ -164,16 +164,16 @@ $register->execute();
                                 <div class="memo_wrapper">
                                     <p class="memo">※半角英数字の組み合わせ8〜20文字</p>
                                     <?php if($register->getPasswordError()):?>
-                                        <p class="error_txt memo"><?= $register->getPasswordError(); ?></p>
-                                    <?php endif; ?>
+                                        <p class="error_txt memo"><?=$register->getPasswordError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">パスワード(再確認)*</p>
                                 <input class="form_input_item <?php if($register->getPasswordConfirmError()){echo "error_box";}?>" type="password" placeholder="" name="passwordConfirm" id="confirm" maxlength="20">
                                 <?php if($register->getPasswordConfirmError()):?>
-                                    <p class="error_txt memo"><?= $register->getPasswordConfirmError(); ?></p>
-                                <?php endif; ?>
+                                    <p class="error_txt memo"><?=$register->getPasswordConfirmError();?></p>
+                                <?php endif;?>
                             </div>
                         </div>
      <!------------------------------------------------------------
