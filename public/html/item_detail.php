@@ -25,7 +25,7 @@ $item = $itemDetail->getItem();
 <div class="wrapper">
     <?php require_once(__DIR__.'/common/header_common.php');?>
     <div class="container">
-    <?php require_once(__DIR__.'/common/left_pane.php'); ?>
+    <?php require_once(__DIR__.'/common/left_pane.php');?>
         <div class="main_wrapper">
             <div class="main_contents">  
                 <div class="item_detail_title">
@@ -36,20 +36,20 @@ $item = $itemDetail->getItem();
                 <div class="main_contents_inner">
                     <div class="item_name_wrap">
                         <h3 class="item_name-sp">
-                            <?= $item->getItemName(); ?>
+                            <?=Config::h($item->getItemName());?>
                         </h3>
                     </div>
                     <p class="photo">
-                        <img src="/img/items/<?= $item->getItemImage(); ?>" />
+                        <img src="<?=Config::h($item->getItemImagePath());?>" />
                     </p>
                     <div class="text_side">
                         <h3 class="item_name">
-                            <?= $item->getItemName(); ?>
+                            <?=Config::h($item->getItemName());?>
                         </h3>
-                        <p class="price">&yen;<?= $item->getItemPriceWithTax(); ?><span>(税込)</span>
+                        <p class="price">&yen;<?=Config::h(number_format($item->getItemPriceWithTax()))?><span>(税込)</span>
                         </p>
                         <p class="item_detail_txt">
-                            <?= $item->getItemDetail(); ?>
+                            <?=Config::h($item->getItemDetail());?>
                         </p>
                         <div class="detail_form_wrap">
                             <form action="/html/cart.php" method="POST" class="item_num_form">
@@ -61,17 +61,24 @@ $item = $itemDetail->getItem();
                                     </select>
                                 </div>
                                 <span>個</span>
+                                <?php if($item->getItemStatus()=="2"):?>
+                                    <p class="status_text">この商品は現在、入荷待ちです。</p>
+                                <?php elseif($item->getItemStatus()=="5"):?>
+                                    <p class="status_text">この商品は現在、品切れ中です(入荷未定)。</p>
+                                <?php endif;?>
+                                <?php if($item->getItemStatus()=="1"):?>
                                 <div class="cart_btn_wrap">
                                     <input type="submit" class="btn_cmn_mid btn_design_01" value="カートにいれる" />
                                     <input type="hidden" name="cmd" value="add_cart" />
-                                    <input type="hidden" name="item_code" value="<?= $item->getItemCode(); ?>" />
+                                    <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>" />
                                 </div>
+                                <?php endif;?>
                             </form>
                             <div class="favorite_btn_wrap">
                              <form action="/html/mypage/mypage_favorite.php" method="POST">
                                 <input type="submit" class="btn_cmn_mid btn_design_02" value="お気に入り保存" />
                                 <input type="hidden" name="cmd" value="add_favorite" />
-                                <input type="hidden" name="item_code" value="<?= $item->getItemCode(); ?>" />
+                                <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>" />
                                 </form>
                             </div>
                         </div>
