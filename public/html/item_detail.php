@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $itemDetail = new \Controllers\ItemDetailAction();
 $itemDetail->execute();
 $item = $itemDetail->getItem();
