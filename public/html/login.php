@@ -4,8 +4,11 @@ require_once (__DIR__ ."/../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $login = new \Controllers\LoginAction();
 $login->execute();
+header('X-FRAME-OPTIONS: SAMEORIGIN');
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +41,7 @@ $login->execute();
 							<div class="account-label">
 								<label for="mail">メールアドレス</label>
 							</div>
-							<input class="login_form_input" type="text" placeholder="" name="mail" value="<?php if(isset($_COOKIE['mail'])){echo $_COOKIE['mail'];} ?>">
+							<input class="login_form_input" type="text" placeholder="" name="mail" value="<?=Config::h($login->echoMail())?>">
 							
 						</div>
 						<div class="account_field">
@@ -46,7 +49,7 @@ $login->execute();
 								<label for="password">パスワード</label>
 							</div>
 							<div class="login_form_input_wrapper">
-								<input class="login_form_input" name="password" type="password" placeholder="" value="<?php if(isset($_COOKIE['password'])){echo $_COOKIE['password'];} ?>">
+								<input class="login_form_input" name="password" type="password" placeholder="" value="<?=Config::h($login->echoPassword())?>">
 							</div>
                             <?php if(isset($_SESSION['login_error'])):?>  
                                 <?php if($_SESSION['login_error'] == 'pass_error'):?>
@@ -54,7 +57,7 @@ $login->execute();
                                 <?php else:?>
                                     <p class="login_error_txt">登録されていないメールアドレスです。</p>
                                 <?php endif;?>
-                            <?php endif; ?>
+                            <?php endif;?>
 						</div>
 						<div class="login_button_wrapper">
 							<input class="btn_cmn_mid btn_design_01" type="submit" value="ログイン">
