@@ -29,6 +29,13 @@ $(function() {
 });
     
 $(function() {
+    $("#caution").click(function(){
+        var warn = "購入できない商品が含まれてます。カート内の商品を確認してください。";
+        alert(warn);
+    });
+});
+    
+$(function() {
     $("select").change(function() {
         var price = [];
         var quantity = [];
@@ -61,15 +68,15 @@ $(function() {
         for(var i = 0; i < tax.length; i++){
             totalTax += tax[i];
         }
-        var postageFreePrice = <?= Config::POSTAGEFREEPRICE?>;
+        var postageFreePrice = <?=Config::POSTAGEFREEPRICE?>;
         var message = document.getElementById("postage_message");
         if(totalAmount >= postageFreePrice){
             var postage = 0;
             var postageDis = '\xA5' + 0;
             message.style.display = 'none';
         }else{
-            var postage = <?= Config::POSTAGE?>;
-            var postageDis = '\xA5' + <?= Config::POSTAGE?>;
+            var postage = <?=Config::POSTAGE?>;
+            var postageDis = '\xA5' + <?=Config::POSTAGE?>;
             var difference = postageFreePrice - totalAmount;
             message.style.display = 'block';
             message.innerHTML = "あと"+difference+"円のご購入で送料無料";
@@ -127,33 +134,33 @@ function separate(num){
                     <div class="cart_item_box">                      
                     <?php if(isset($_SESSION["cart"])):?>
                         <?php $var = 0; $total_amount = 0; $total_quantity = 0; $total_tax = 0;?>
-                        <?php foreach($_SESSION["cart"] as $cart):?>
+                        <?php foreach($_SESSION["cart"] as $cartItem):?>
                             <?php 
                                 $var++;
-                                $item_total_amount = $cart['item_price_with_tax']*$cart['item_quantity'];
-                                $total_amount += $cart['item_price_with_tax']*$cart['item_quantity'];
-                                $total_tax += $cart['item_tax']*$cart['item_quantity'];
-                                $total_quantity += $cart['item_quantity']; 
+                                $item_total_amount = $cartItem['item_price_with_tax']*$cartItem['item_quantity'];
+                                $total_amount += $cartItem['item_price_with_tax']*$cartItem['item_quantity'];
+                                $total_tax += $cartItem['item_tax']*$cartItem['item_quantity'];
+                                $total_quantity += $cartItem['item_quantity']; 
                             ?>
                             <div class="cart_item">
                                 <div class="cart_item_img">
-                                    <a href="/html/item_detail.php?item_code=<?=$cart["item_code"]?>">
-                                        <img src="/img/items/<?= $cart["item_image"] ?>"/>
+                                    <a href="/html/item_detail.php?item_code=<?=Config::h($cartItem["item_code"])?>">
+                                        <img src="<?=Config::h($cartItem["item_image_path"])?>"/>
                                     </a>
                                 </div>
                                 <div class="cart_item_txt">
-                                    <p><a class="product_link" href="/html/item_detail.php?item_code=<?= $cart["item_code"]; ?>"><?=$cart["item_name"]; ?></a></p>
-                                    <dl class="buy_itemu_menu mod_order_info" data-price="<?= $cart['item_price_with_tax']?>" data-tax="<?= $cart['item_tax']?>">
+                                    <p><a class="product_link" href="/html/item_detail.php?item_code=<?=Config::h($cartItem["item_code"])?>"><?=Config::h($cartItem["item_name"]);?></a></p>
+                                    <dl class="buy_itemu_menu mod_order_info" data-price="<?=Config::h($cartItem['item_price_with_tax'])?>" data-tax="<?=Config::h($cartItem['item_tax'])?>">
                                         <dt>価格:</dt>
-                                        <dd>&yen;<?= number_format($cart["item_price_with_tax"]); ?>(税込)</dd>
+                                        <dd>&yen;<?=Config::h(number_format($cartItem["item_price_with_tax"]))?>(税込)</dd>
                                     </dl>
                                     <div class="select_wrap">
-                                        <select name="cart<?= $var?>" class="item_quantity">
+                                        <select name="cart<?=$var?>" class="item_quantity">
                                         <?php for($i=1; $i<=10; $i++):?>
-                                            <?php if($cart['item_quantity'] == $i):?>
-                                                <option data-num="<?= $i?>" value="<?= $i?>" selected><?= $i?></option>
+                                            <?php if($cartItem['item_quantity'] == $i):?>
+                                                <option data-num="<?=$i?>" value="<?=$i?>" selected><?=$i?></option>
                                             <?php else:?>
-                                                <option data-num="<?= $i?>" value="<?= $i?>"><?= $i?></option>
+                                                <option data-num="<?=$i?>" value="<?=$i?>"><?=$i?></option>
                                             <?php endif;?>
                                         <?php endfor;?>
                                         </select>
@@ -161,15 +168,24 @@ function separate(num){
                                     <span>個</span>
                                     <dl class="mod_order_info mod_order_total">
                                         <dt>小計:</dt>
-                                        <dd class="item_price">&yen;<?= number_format($item_total_amount)?>(税込)</dd>
+                                        <dd class="item_price">&yen;<?=number_format($item_total_amount)?>(税込)</dd>
                                     </dl>
                                     <div class="cart_btn_wrap">
-                                        <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?= $cart["item_code"]; ?>">あとで買う<br/>
+                                        <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?=Config::h($cartItem["item_code"])?>">あとで買う<br/>
                                             <span>(お気に入りへ)</span>
                                         </a>
-                                        <a class="btn_cmn_01 btn_design_03" href="/html/cart.php?cmd=del&item_code=<?= $cart["item_code"]; ?>">削除</a>
+                                        <a class="btn_cmn_01 btn_design_03" href="/html/cart.php?cmd=del&item_code=<?=Config::h($cartItem["item_code"]);?>">削除</a>
                                     </div>
                                 </div>
+                                <?php if($cartItem["item_status"]=="2"):?>
+                                    <p class="status_text">この商品は現在、入荷待ちです。</p>
+                                <?php elseif($cartItem["item_status"]=="3"):?>
+                                    <p class="status_text">この商品は販売終了しました。</p>
+                                <?php elseif($cartItem["item_status"]=="4"):?>
+                                    <p class="status_text">この商品は現在、一時掲載を停止してます。</p>
+                                <?php elseif($cartItem["item_status"]=="5"):?>
+                                    <p class="status_text">この商品は現在、品切れ中です(入荷未定)。</p>
+                                <?php endif;?>
                             </div>
                         <?php endforeach;?>
                     <?php endif;?>
@@ -182,13 +198,13 @@ function separate(num){
                                 <div class="payment_details">
                                     <dl class="mod_payment mod_payment_details">
                                         <dt>商品点数</dt>
-                                        <dd id="total_quantity"><?= $total_quantity?>点</dd>
+                                        <dd id="total_quantity"><?=$total_quantity?>点</dd>
                                         <dt>商品代金合計<span>(税込)</span></dt>
-                                        <dd id="total_amount">&yen;<?= number_format($total_amount)?></dd>
+                                        <dd id="total_amount">&yen;<?=number_format($total_amount)?></dd>
                                         <dt>送料</dt>
                                         <dd id="postage">&yen;<?php if($total_amount <= Config::POSTAGEFREEPRICE){echo Config::POSTAGE;}else{echo 0;}?></dd>
                                         <dt>内消費税</dt>
-                                        <dd id="total_tax">&yen;<?= number_format($total_tax);?></dd>
+                                        <dd id="total_tax">&yen;<?=number_format($total_tax);?></dd>
                                     </dl>
                                     <dl class="mod_payment mod_payment_total">
                                         <dt>ご注文合計</dt>
@@ -198,8 +214,12 @@ function separate(num){
                             </div>
                             <br/>
                             <div class="cart_button_area">
-                                <input type="submit" class="btn_cmn_full btn_design_01" value="レジに進む" />
-                                <input type="hidden" name="cmd" value="order_confirm">
+                                <?php if($cart->getAvailableForPurchase()):?>
+                                    <input type="submit" class="btn_cmn_full btn_design_01" value="レジに進む" />
+                                    <input type="hidden" name="cmd" value="order_confirm">
+                                <?php else:?>
+                                    <input type="button" class="btn_cmn_full btn_design_01" id="caution" value="レジに進む" />
+                                <?php endif;?>
                                 <div class="back_button">
                                     <input class="btn_cmn_full btn_design_03" type="button" value="お買い物を続ける" onclick="history.back()" />   
                                 </div>
