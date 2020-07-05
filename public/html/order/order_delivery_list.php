@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 
 session_start();
 
+use \Config\Config;
+
 $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
 $orderDeliveryList->execute();
 $customer = $orderDeliveryList->getCustomer();
@@ -73,13 +75,13 @@ $deliveries = $orderDeliveryList->getDelivery();
                                 <label for="def_addr" class="input_radio_addr_01">
                                     <dl class="list_addr_info">
                                         <dt>名前 :</dt>
-                                        <dd><?=$customer->getFullName();?></dd>
+                                        <dd><?=Config::h($customer->getFullName());?></dd>
                                         <dt>郵便番号 :</dt>
-                                        <dd><?=$customer->getPost();?></dd>
+                                        <dd><?=Config::h($customer->getPost());?></dd>
                                         <dt>電話番号 :</dt>
-                                        <dd><?=$customer->getTel();?></dd>
+                                        <dd><?=Config::h($customer->getTel());?></dd>
                                         <dt>住所 :</dt>
-                                        <dd><?=$customer->getAddress();?></dd>
+                                        <dd><?=Config::h($customer->getAddress());?></dd>
                                     </dl>
                                 </label>
                             </div>
@@ -93,23 +95,23 @@ $deliveries = $orderDeliveryList->getDelivery();
                                 <?php $i=0; foreach($deliveries as $delivery): $i++;?>
                                 <div class="mypage_addr_box">
                                     <div class="box_info">
-                                        <input name="def_addr" type="radio" id="def_addr<?= $i?>" value="<?=$delivery->getDeliveryId();?>" <?php $orderDeliveryList->checkDelivery($delivery);?>>
-                                        <label for="def_addr<?= $i?>" class="input_radio_addr_01">
+                                        <input name="def_addr" type="radio" id="def_addr<?=$i?>" value="->getDeliveryId();?>" <?php $orderDeliveryList->checkDelivery($delivery);?>>
+                                        <label for="def_addr<?=$i?>" class="input_radio_addr_01">
                                             <dl class="list_addr_info">
                                                 <dt>名前 :</dt>
-                                                <dd><?=$delivery->getFullName();?></dd>
+                                                <dd><?=Config::h($delivery->getFullName());?></dd>
                                                 <dt>郵便番号 :</dt>
-                                                <dd><?=$delivery->getPost();?></dd>
+                                                <dd><?=Config::h($delivery->getPost());?></dd>
                                                 <dt>電話番号 :</dt>
-                                                <dd><?=$delivery->getTel();?></dd>
+                                                <dd><?=Config::h($delivery->getTel());?></dd>
                                                 <dt>住所 :</dt>
-                                                <dd><?=$delivery->getAddress();?></dd>
+                                                <dd><?=Config::h($delivery->getAddress());?></dd>
                                             </dl>
                                         </label>
                                     </div>
                                     <div class="update_reg_link_wrap">
-                                        <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" onclick="updAddr(this)" data-value="<?=$delivery->getDeliveryId();?>"> 
-                                        <input type="button" onclick="deleteAddr(this)" class="btn_cmn_mid btn_design_03" value="削除" data-value="<?=$delivery->getDeliveryId();?>"> 
+                                        <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" onclick="updAddr(this)" data-value="<?=Config::h($delivery->getDeliveryId());?>"> 
+                                        <input type="button" onclick="deleteAddr(this)" class="btn_cmn_mid btn_design_03" value="削除" data-value="<?=Config::h($delivery->getDeliveryId());?>"> 
                                     </div>
                                 </div>
                                 <?php endforeach;?>

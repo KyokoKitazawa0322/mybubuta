@@ -37,7 +37,7 @@ $orderPayList->execute();
                     <h2>決済方法を選んでください</h2>
                 </div>
                 <div class="main_contents_inner">
-                    <form action="order_confirm.php" method="POST">
+                    <form action="/html/order/order_confirm.php" method="POST">
                         <ul class="list_cash_opt">
                             <?php if(isset($_SESSION['pay_error'])):?>
                             <p class="error">選択して下さい</p>
