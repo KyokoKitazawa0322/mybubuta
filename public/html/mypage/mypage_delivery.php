@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $myPageDelivery = new \Controllers\MyPageDeliveryAction();
 $myPageDelivery->execute();
 $customerDto = $myPageDelivery->getCustomerDto();
@@ -38,7 +40,7 @@ $('form#addr-update').submit(function(){
 });
 
 window.onload = function(){
-$(window).scrollTop(<?php echo @$_REQUEST['scroll_top']; ?>);
+$(window).scrollTop(<?php echo @$_REQUEST['scroll_top'];?>);
 }
     	//住所登録編集
 function updAddr(addrSeq){
@@ -70,19 +72,19 @@ function deleteAddr(addrSeq){
                     <h3 class="ttl_cmn">お客様会員住所</h3>
                     <div class="mypage_addr_box">
                         <div class="box_info">
-                            <input name="def_addr" type="radio" id="def_addr" data-value="def" <?php if($customerDto->getDeliveryFlag() == TRUE){ echo 'checked="checked"';}?>>
+                            <input name="def_addr" type="radio" id="def_addr" data-value="def" <?php if($customerDto->getDeliveryFlag()){ echo 'checked="checked"';}?>>
                             <label for="def_addr" class="input_radio_addr_01">
                                 <span class="txt_label">いつもの配送先</span>
                             </label>
                             <dl class="list_addr_info">
                                 <dt>名前 :</dt>
-                                <dd><?= $customerDto->getFullName();?></dd>
+                                <dd><?=Config::h($customerDto->getFullName());?></dd>
                                 <dt>郵便番号 :</dt>
-                                <dd><?= $customerDto->getPost();?></dd>
+                                <dd><?=Config::h($customerDto->getPost());?></dd>
                                 <dt>電話番号 :</dt>
-                                <dd><?= $customerDto->getTel();?></dd>
+                                <dd><?=Config::h($customerDto->getTel());?></dd>
                                 <dt>住所 :</dt>
-                                <dd><?= $customerDto->getAddress();?></dd>
+                                <dd><?=Config::h($customerDto->getAddress());?></dd>
                             </dl>
                         </div>
                         <div class="update_reg_link_wrap">
@@ -95,24 +97,24 @@ function deleteAddr(addrSeq){
                             <?php foreach($deliveryDto as $delivery): $i++;?>
                                 <div class="mypage_addr_box">
                                     <div class="box_info">
-                                        <input name="def_addr" type="radio" id="reg_addr<?= $i?>" data-value="<?= $delivery->getDeliveryId();?>" <?php if($delivery->getDeliveryFlag() == TRUE){ echo 'checked="checked"';}?>>
-                                        <label for= "reg_addr<?= $i?>" class="input_radio_addr_01">
+                                        <input name="def_addr" type="radio" id="reg_addr<?=$i?>" data-value="<?=Config::h($delivery->getDeliveryId());?>" <?php if($delivery->getDeliveryFlag()){ echo 'checked="checked"';}?>>
+                                        <label for= "reg_addr<?=$i?>" class="input_radio_addr_01">
                                             <span class="txt_label">いつもの配送先</span>
                                         </label>
                                         <dl class="list_addr_info">
                                             <dt>名前 :</dt>
-                                            <dd><?= $delivery->getFullName();?></dd>
+                                            <dd><?=Config::h($delivery->getFullName());?></dd>
                                             <dt>郵便番号 :</dt>
-                                            <dd><?= $delivery->getPost();?></dd>
+                                            <dd><?=Config::h($delivery->getPost());?></dd>
                                             <dt>電話番号 :</dt>
-                                            <dd><?= $delivery->getTel();?></dd>
+                                            <dd><?=Config::h($delivery->getTel());?></dd>
                                             <dt>住所 :</dt>
-                                            <dd><?= $delivery->getAddress();?></dd>
+                                            <dd><?=Config::h($delivery->getAddress());?></dd>
                                         </dl>
                                     </div>
                                     <div class="update_reg_link_wrap">   
-                                        <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" data-value="<?= $delivery->getDeliveryId();?>" onclick="updAddr(this)"> 
-                                        <input type="button" data-value="<?= $delivery->getDeliveryId();?>" class="btn_cmn_mid btn_cmn_01 btn_design_03" value="削除" onclick="deleteAddr(this)"> 
+                                        <input type="button" class="btn_cmn_mid btn_design_02" value="編集する" data-value="<?=Config::h($delivery->getDeliveryId());?>" onclick="updAddr(this)"> 
+                                        <input type="button" data-value="<?=Config::h($delivery->getDeliveryId());?>" class="btn_cmn_mid btn_cmn_01 btn_design_03" value="削除" onclick="deleteAddr(this)"> 
                                     </div>
                                 </div>
                             <?php endforeach;?>
@@ -120,7 +122,7 @@ function deleteAddr(addrSeq){
                             <div class="txt_wrapper">
                                 <p>登録はありません。</p>
                             </div>
-                        <?php endif; ?>
+                        <?php endif;?>
                     </div>
                     <div class="add_reg_link_wrap">
                         <a href="/html/mypage/mypage_delivery_add.php" class="add_reg_link btn_cmn_l btn_design_01">配送先を新しく追加する</a>

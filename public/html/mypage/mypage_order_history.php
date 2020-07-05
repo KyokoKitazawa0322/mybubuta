@@ -4,6 +4,8 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_cache_limiter('none');
 session_start();
 
+use \Config\Config;
+
 $mypageOrderHistory = new \Controllers\MyPageOrderHistoryAction();
 $mypageOrderHistory->execute();
 $orders = $mypageOrderHistory->getOrders();
@@ -39,17 +41,17 @@ $orders = $mypageOrderHistory->getOrders();
                                 <?php foreach($orders as $order):?>
                                     <div class="box_row">
                                         <span class="his_ttl-sp">ご注文日:</span>
-                                        <p class="box_col_date"><?= $order->getPurchaseDate();?></p>
+                                        <p class="box_col_date"><?=Config::h($order->getPurchaseDate());?></p>
                                         <span class="his_ttl-sp">ご注文番号:</span>
-                                        <p class="box_col_number"><?= $order->getOrderId(); ?></p>
+                                        <p class="box_col_number"><?=Config::h($order->getOrderId());?></p>
                                         <span class="his_ttl-sp">合計金額:</span>
-                                        <p class="box_col_price">&yen;<?= number_format($order->getTotalAmount());?></p>
+                                        <p class="box_col_price">&yen;<?=Config::h(number_format($order->getTotalAmount()));?></p>
                                         <span class="his_ttl-sp">決済方法:</span>
-                                        <p class="box_col_method"><?= $order->getPaymentTerm(); ?></p>
+                                        <p class="box_col_method"><?=Config::h($order->getPaymentTerm());?></p>
                                         <div class="detail_link_wrap">
                                             <form method="POST" action="mypage_order_detail.php">
                                                 <input type="submit" class="btn_cmn_01 btn_design_02" value="詳細を見る">
-                                                <input type="hidden" name="order_id" value="<?= $order->getOrderId();?>">
+                                                <input type="hidden" name="order_id" value="<?=Config::h($order->getOrderId());?>">
                                             </form>
                                         </div>
                                     </div>
@@ -60,11 +62,11 @@ $orders = $mypageOrderHistory->getOrders();
                     <div class="txt_wrapper">
                         <p class="none_txt">購入履歴はありません。</p>
                     </div>
-                    <?php endif; ?>
+                    <?php endif;?>
                 </div>
             </div>
         </div>
-     <?php require_once(__DIR__.'/mypage_common.php'); ?>
+     <?php require_once(__DIR__.'/mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
