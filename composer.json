@@ -2,7 +2,9 @@
 
     "require": {
 
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "aws/aws-sdk-php": "^3.140",
+        "vlucas/phpdotenv": "^5.0"
 
     },
     
