@@ -117,7 +117,7 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
                 $_SESSION['add_data'] = "complete"; 
-                header('Location:/html/mypage/mypage_delivery_add_confirm.php');
+                header('Location:/html/mypage/delivery/mypage_delivery_add_confirm.php');
                 exit();
             }else{
                 $_SESSION['add_data'] = "incomplete"; 

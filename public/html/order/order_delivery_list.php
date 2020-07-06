@@ -132,15 +132,15 @@ $deliveries = $orderDeliveryList->getDelivery();
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
     </div>
-    <form method="POST" id="base-addr-update" action="/html/mypage/mypage_update.php">
+    <form method="POST" id="base-addr-update" action="/html/mypage/update/mypage_update.php">
         <input type="hidden" name="cmd" value="from_order">
     </form>
-    <form method="POST" id="exist-addr-update" action="/html/mypage/mypage_delivery_entry.php">
+    <form method="POST" id="exist-addr-update" action="/html/mypage/delivery/mypage_delivery_entry.php">
         <input type="hidden" name="del_id" id="updId" value>
         <input type="hidden" name="cmd" value="from_order">
         <!--<input type="hidden" name="del_upd" value="">-->
     </form>
-    <form method="POST" id="add_addr" action="/html/mypage/mypage_delivery_add.php">
+    <form method="POST" id="add_addr" action="/html/mypage/delivery/mypage_delivery_add.php">
         <input type="hidden" name="cmd" value="from_order">
     </form>
     <form method="POST" id="exist-addr-delete" action="#">

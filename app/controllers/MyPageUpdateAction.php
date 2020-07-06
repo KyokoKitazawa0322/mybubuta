@@ -171,7 +171,7 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
 
             if($validator->getResult() && !($this->oldPasswordError)) {
                 $_SESSION['update_data'] = "complete";
-                header('Location:/html/mypage/mypage_update_confirm.php');
+                header('Location:/html/mypage/update/mypage_update_confirm.php');
                 exit();
             }else{
                 $_SESSION['update_data'] = "incomplete";

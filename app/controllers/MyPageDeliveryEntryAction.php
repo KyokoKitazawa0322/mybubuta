@@ -153,7 +153,7 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
                 $_SESSION['delivery_entry_data'] = "complete"; 
-                header('Location:/html/mypage/mypage_delivery_entry_confirm.php');
+                header('Location:/html/mypage/delivery/mypage_delivery_entry_confirm.php');
                 exit();
             }else{
                 $_SESSION['delivery_entry_data'] = "incomplete"; 

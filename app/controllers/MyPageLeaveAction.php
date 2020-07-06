@@ -46,7 +46,7 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
                     unset($_SESSION['customer_id']);
                     unset($_COOKIE['password']);
                     unset($_COOKIE['mail']);
-                    header('Location:/html/mypage/leave_complete.php');
+                    header('Location:/html/mypage/leave/leave_complete.php');
                     exit();
                 }
 
