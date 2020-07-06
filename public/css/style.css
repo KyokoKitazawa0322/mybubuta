@@ -960,7 +960,6 @@ body {
 
 .sort_item_wrapper {
     overflow: hidden;
-    height: 32px;
     padding-top: 6px;
     margin-bottom: 2px;
     box-sizing: content-box;
@@ -1003,6 +1002,7 @@ body {
     font-size: 1.5rem;
     display: inline-block;
     background: linear-gradient(transparent 50%, #FAEBD7 50%);
+    margin-bottom: 6px;
 }
 
 @media only screen and (max-width: 979px) {
