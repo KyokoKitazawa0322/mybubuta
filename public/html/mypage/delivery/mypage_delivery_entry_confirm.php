@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__ ."/../../../vendor/autoload.php");
+require_once (__DIR__ ."/../../../../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
@@ -22,7 +22,7 @@ $myPageDeliveryEntryConfirm->execute();
 
 <body class="mypage" id="mypage_delivery_entry_confirm">
 <div class="wrapper">
-    <?php require_once(__DIR__.'/../common/header_common.php')?>
+    <?php require_once(__DIR__.'/../../common/header_common.php');?>
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
@@ -91,9 +91,9 @@ $myPageDeliveryEntryConfirm->execute();
                         </div>
                         <div class="confirm_button_wrapper">
                             <div class="confirm_button_inner">
-                                <input class="btn_cmn_mid btn_design_03" type="button" onClick="location.href='/html/mypage/mypage_delivery_entry.php'" value="前の画面に戻る"/>
+                                <input class="btn_cmn_mid btn_design_03" type="button" onClick="location.href='/html/mypage/delivery/mypage_delivery_entry.php'" value="前の画面に戻る"/>
                             </div>
-                            <form action="/html/mypage/mypage_delivery_complete.php" method="POST">
+                            <form action="/html/mypage/delivery/mypage_delivery_complete.php" method="POST">
                                 <div class="confirm_button_inner">
                                     <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
                                 </div>
@@ -104,7 +104,7 @@ $myPageDeliveryEntryConfirm->execute();
                 </div>
             </div>
         </div>    
-    <?php require_once(__DIR__.'/mypage_common.php');?>
+    <?php require_once(__DIR__.'/../mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

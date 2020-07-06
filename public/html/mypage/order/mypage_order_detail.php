@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__ ."/../../../vendor/autoload.php");
+require_once (__DIR__ ."/../../../../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
@@ -25,7 +25,7 @@ $details = $mypageOrderDetail->getOrderDetailDto();
 
 <body class="mypage" id="history_detail">
 <div class="wrapper">
-    <?php require_once(__DIR__.'/../common/header_common.php');?>
+    <?php require_once(__DIR__.'/../../common/header_common.php');?>
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
@@ -113,13 +113,13 @@ $details = $mypageOrderDetail->getOrderDetailDto();
                             </div>
                         </div>
                         <div class="btn_link_wrap">
-                            <a href="/html/mypage/mypage_order_history.php" class="btn_cmn_01 btn_design_03">ご注文履歴に戻る</a>
+                            <a href="/html/mypage/order/mypage_order_history.php" class="btn_cmn_01 btn_design_03">ご注文履歴に戻る</a>
                         </div>
                     </div> 
                 </div>
             </div>
         </div>
-     <?php require_once(__DIR__.'/mypage_common.php');?>
+     <?php require_once(__DIR__.'/../mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

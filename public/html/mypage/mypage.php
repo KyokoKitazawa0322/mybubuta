@@ -46,7 +46,7 @@ $noticeDto = $mypage->getNoticeDto();
                         </div>
                     <?php endforeach;?>
                     <div class="notice_link_wrapper">
-                        <a href="/html/mypage/mypage_notice.php" class="notice_link btn_cmn_l btn_design_01">お知らせ一覧を見る</a>
+                        <a href="/html/mypage/notice/mypage_notice.php" class="notice_link btn_cmn_l btn_design_01">お知らせ一覧を見る</a>
                     </div>
                 </div>
             </div>

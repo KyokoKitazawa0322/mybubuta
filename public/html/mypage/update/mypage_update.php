@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__ ."/../../../vendor/autoload.php");
+require_once (__DIR__ ."/../../../../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
@@ -23,7 +23,7 @@ $customer = $myPageUpdate->getCustomerDto();
 </head>
 <body class="mypage update">
 <div class="wrapper">
-    <?php require_once(__DIR__.'/../common/header_common.php');?>
+    <?php require_once(__DIR__.'/../../common/header_common.php');?>
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
@@ -189,7 +189,7 @@ $customer = $myPageUpdate->getCustomerDto();
                 </div>
             </div>
         </div>
-    <?php require_once(__DIR__.'/mypage_common.php');?>
+    <?php require_once(__DIR__.'/../mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

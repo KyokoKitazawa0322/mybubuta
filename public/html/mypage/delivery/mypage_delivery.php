@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__ ."/../../../vendor/autoload.php");
+require_once (__DIR__ ."/../../../../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
@@ -61,7 +61,7 @@ function deleteAddr(addrSeq){
 
 <body class="mypage" id="mypage_deliver">
 <div class="wrapper">
-    <?php require_once(__DIR__.'/../common/header_common.php');?>
+    <?php require_once(__DIR__.'/../../common/header_common.php');?>
     <div class="container">
         <div class="main_wrapper">
             <div class="main_contents">
@@ -88,7 +88,7 @@ function deleteAddr(addrSeq){
                             </dl>
                         </div>
                         <div class="update_reg_link_wrap">
-                            <a href="/html/mypage/mypage_update.php" class="btn_cmn_mid btn_design_02">会員住所を変更する</a>
+                            <a href="/html/mypage/update/mypage_update.php" class="btn_cmn_mid btn_design_02">会員住所を変更する</a>
                         </div>
                     </div>
                     <div class="add_reg_wrap">
@@ -125,12 +125,12 @@ function deleteAddr(addrSeq){
                         <?php endif;?>
                     </div>
                     <div class="add_reg_link_wrap">
-                        <a href="/html/mypage/mypage_delivery_add.php" class="add_reg_link btn_cmn_l btn_design_01">配送先を新しく追加する</a>
+                        <a href="/html/mypage/delivery/mypage_delivery_add.php" class="add_reg_link btn_cmn_l btn_design_01">配送先を新しく追加する</a>
                     </div>
                 </div>
             </div>
         </div>
-        <?php require_once(__DIR__.'/mypage_common.php');?>
+    <?php require_once(__DIR__.'/../mypage_common.php');?>
     </div>
     <div id="footer">
         <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>

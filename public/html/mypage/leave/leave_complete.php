@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__ ."/../../../vendor/autoload.php");
+require_once (__DIR__ ."/../../../../vendor/autoload.php");
 
 session_cache_limiter('none');
 session_start();
@@ -18,7 +18,7 @@ session_start();
 
 <body class="mypage" id="leave_comp">
 <div class="wrapper">
-    <?php require_once(__DIR__.'/../common/header_common.php')?>
+    <?php require_once(__DIR__.'/../../common/header_common.php')?>
     <div class="container">
     <!-- メインコンテンツ -->
         <div class="main_wrapper">
