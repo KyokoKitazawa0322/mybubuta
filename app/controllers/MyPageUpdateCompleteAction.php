@@ -5,6 +5,7 @@ use \Models\CustomerDao;
 use \Models\CustomersDto;
 
 use \Models\CommonValidator;
+use \Models\CsrfValidator;
 use \Config\Config;
 
 use \Models\DBParamException;
@@ -27,10 +28,11 @@ class MyPageUpdateCompleteAction extends \Controllers\CommonMyPageAction{
          mypage_update_confirm.phpで「登録する」ボタンが押された時の処理
         =====================================================================*/
 
+        $token = filter_input(INPUT_POST, "token_update_complete");
+        $formName = "token_update_complete";
+        
         try{
-            $this->checkToken();
-            $this->checkValidationResult();
-            
+            CsrfValidator::checkToken($token, $formName);
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -73,38 +75,6 @@ class MyPageUpdateCompleteAction extends \Controllers\CommonMyPageAction{
             unset($_SESSION['from_order_flag']);
             header('Location:/html/order/order_delivery_list.php');
             exit();
-        }
-    }
-    
-    //---------------------------------------
-    
-    //バリデーションを通過してきたか確認
-    public function checkValidationResult(){
-        if(!isset($_SESSION['update_data']) || $_SESSION['update_data']!=="complete"){
-            if(!isset($_SESSION['update_data'])){
-                $updateData = "nothing";   
-            }else{
-                $updateData = $_SESSION['update_data'];
-            }
-           throw new InvalidParamException('Invalid param for update-complete:$_SESSION["update_data"]='.$updateData);
-        }
-    }
-        
-    //---------------------------------------
-    
-    //トークンをセッションから取得
-    public function checkToken(){
-        $tokenComplete = filter_input(INPUT_POST, "token_complete");
-        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
-        if(!isset($_SESSION['token']['update_complete']) || ($_SESSION['token']['update_complete'] != $tokenComplete)){
-            if(!isset($_SESSION['token']['update_complete'])){
-                $sessionTokenComplete = "nothing"; 
-            }else{
-                $sessionTokenComplete = $_SESSION['token']['update_complete'];   
-            }
-            throw new InvalidParamException('Invalid param for register_complete:$tokenComplete='.$tokenComplete.'/$_SESSION["token"]["update_complete"]='.$sessionTokenComplete);
-        }else{
-            unset($_SESSION['token']);   
         }
     }
 }

@@ -5,6 +5,7 @@ use \Models\DeliveryDao;
 use \Models\CustomerDao;    
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
@@ -25,9 +26,11 @@ class MyPageDeliveryCompleteAction extends \Controllers\CommonMyPageAction{
          mypage_delivery_entry_confirm.phpで「この内容で登録をする」ボタンが押された時の処理
          =====================================================================*/
         
+        $token = filter_input(INPUT_POST, "token_del_entry_complete");
+        $formName = "token_del_entry_complete";
+        
         try{
-            $this->checkToken();
-                
+            CsrfValidator::checkToken($token, $formName);
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -69,34 +72,6 @@ class MyPageDeliveryCompleteAction extends \Controllers\CommonMyPageAction{
             unset($_SESSION['from_order_flag']);
             header('Location:/html/order/order_delivery_list.php');
             exit();
-        }
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションから取得
-    public function checkToken(){
-        
-        $tokenEntryUpdateComplete = filter_input(INPUT_POST, "token_entry_update_complete");
-        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
-        
-        if(!isset($_SESSION['token']['entry_update_complete']) || ($_SESSION['token']['entry_update_complete'] != $tokenEntryUpdateComplete || !isset($_SESSION['delivery_entry_data']))){
-            
-            if(!isset($_SESSION['token']['entry_update_complete'])){
-                $sessionTokenEntryUpdateComplete = "nothing"; 
-            }else{
-                $sessionTokenEntryUpdateComplete = $_SESSION['token']['entry_update_complete'];   
-            
-            }
-            if(!isset($_SESSION['delivery_entry_data'])){
-                $deliveryEntryData = "nothing";   
-            }else{
-                $deliveryEntryData = $_SESSION['delivery_entry_data'];   
-            }
-            
-            throw new InvalidParamException('Invalid param for register_complete:$tokenEntryUpdateComplete='.$tokenEntryUpdateComplete.'/$_SESSION["token"]["entry_update_complete"]='.$sessiontokenEntryUpdateComplete.'/$_SESSION["delivery_entry_data"]='.$deliveryEntryData);
-        
-        }else{
-            unset($_SESSION['token']);   
         }
     }
 }

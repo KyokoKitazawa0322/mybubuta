@@ -4,6 +4,7 @@ namespace Controllers;
 use \Models\DeliveryDao;
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
@@ -24,9 +25,12 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
          mypage_delivery_add_confirm.phpで「この内容で登録をする」ボタンが押された時の処理
          =====================================================================*/
         
+
+        $token = filter_input(INPUT_POST, "token_del_update_complete");
+        $formName = "token_del_update_complete";
+        
         try{
-            $this->checkToken();
-                
+            CsrfValidator::checkToken($token, $formName);
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -62,28 +66,6 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
             unset($_SESSION['from_order_flag']);
             header('Location:/html/order/order_delivery_list.php');
             exit();
-        }
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションから取得
-    public function checkToken(){
-        $tokenDelAddComplete = filter_input(INPUT_POST, "token_del_add_complete");
-        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
-        if(!isset($_SESSION['token']['del_add_complete']) || ($_SESSION['token']['del_add_complete'] != $tokenDelAddComplete || !isset($_SESSION['add_data']))){
-            if(!isset($_SESSION['token']['del_add_complete'])){
-                $sessionTokenDelAddComplete = "nothing"; 
-            }else{
-                $sessionTokenDelAddComplete = $_SESSION['token']['del_add_complete'];   
-            }
-            if(!isset($_SESSION['add_data'])){
-                $addData = "nothing";   
-            }else{
-                $addData = $_SESSION['add_data'];   
-            }
-            throw new InvalidParamException('Invalid param for register_complete:$tokenDelAddComplete='.$tokenDelAddComplete.'/$_SESSION["token"]["del_add_complete"]='.$sessionTokenDelAddComplete.'/$_SESSION["add_data"]='.$addData);
-        }else{
-            unset($_SESSION['token']);   
         }
     }
 }

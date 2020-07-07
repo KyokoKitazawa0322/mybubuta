@@ -9,7 +9,6 @@ class RegisterConfirmAction{
         
         try{
             $this->checkValidationResult();
-            $this->setToken();
             
         }catch(InvalidParamException $e){
             $e->handler($e);   
@@ -32,12 +31,5 @@ class RegisterConfirmAction{
             }
             throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["register_data"]='.$registerData);
         }
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションにセット
-    public function setToken(){
-        $token = sha1(uniqid(mt_rand(), true));
-        $_SESSION['token']['complete'] = $token;
     }
 }

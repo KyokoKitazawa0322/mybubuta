@@ -16,7 +16,6 @@ class MyPageUpdateConfirmAction extends \Controllers\CommonMyPageAction{
         
         try{
             $this->checkValidationResult();
-            $this->setToken();
             
         }catch(InvalidParamException $e){
             $e->handler($e);   
@@ -39,14 +38,6 @@ class MyPageUpdateConfirmAction extends \Controllers\CommonMyPageAction{
             }
             throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["update_data"]='.$updateData);
         }
-    }
-    
-    /*---------------------------------------*/
-    
-    //トークンをセッションにセット
-    public function setToken(){
-        $token = sha1(uniqid(mt_rand(), true));
-        $_SESSION['token']['update_complete'] = $token;
     }
 }
 ?>

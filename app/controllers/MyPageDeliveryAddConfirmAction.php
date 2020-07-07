@@ -15,7 +15,6 @@ class MyPageDeliveryAddConfirmAction extends \Controllers\CommonMyPageAction{
         
         try{
             $this->checkValidationResult();
-            $this->setToken();
             
         }catch(InvalidParamException $e){
             $e->handler($e);   
@@ -39,13 +38,6 @@ class MyPageDeliveryAddConfirmAction extends \Controllers\CommonMyPageAction{
             }
             throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["add_data"]='.$addData);
         }
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションにセット
-    public function setToken(){
-        $token = sha1(uniqid(mt_rand(), true));
-        $_SESSION['token']['del_add_complete'] = $token;
     }
 }
 ?>
