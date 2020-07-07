@@ -4,6 +4,8 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
+
 $adminItemUpdate = new \Controllers\AdminItemUpdateAction();
 $adminItemUpdate->execute();
 $item = $adminItemUpdate->getItemDto();
@@ -132,6 +134,7 @@ $(function(){
                                     <input type="hidden" name="cmd" value="update_confirm">
                                 </tr>
                                 <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>"/>
+                                <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
                             </form>
                         </table>
                         <div class="update_btn_wrap">

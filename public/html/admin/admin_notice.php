@@ -3,6 +3,7 @@ require_once (__DIR__ ."/../../../vendor/autoload.php");
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 $adminNotice = new \Controllers\AdminNoticeAction();
 $adminNotice->execute();
@@ -96,6 +97,7 @@ $(function(){
         <form method="POST" id="deleteForm" action="#">
             <input type="hidden" id="notice_id" name="notice_id" value>
             <input type="hidden" name="cmd" value="delete">
+            <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
         </form>
     </div>
 </body>

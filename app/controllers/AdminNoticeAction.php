@@ -2,6 +2,9 @@
 namespace Controllers;
 use \Models\NoticeDao;
 use \Models\NoticeDto;
+
+use \Models\CsrfValidator;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
@@ -33,6 +36,14 @@ class AdminNoticeAction{
         $noticeDao = new NoticeDao();
         
         if($cmd == "delete"){
+            
+            $token = filter_input(INPUT_POST, "token");
+            try{
+                CsrfValidator::validate($token);
+            }catch(InvalidParamException $e){
+                $e->handler($e);   
+            
+            }
             try{
                 $noticeDao->deleteNoticeInfo($noticeId);
             } catch(MyPDOException $e){

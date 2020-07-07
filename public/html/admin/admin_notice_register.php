@@ -4,6 +4,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config; 
+use \Models\CsrfValidator;
 
 $AdminNoticeRegister = new \Controllers\AdminNoticeRegisterAction();
 $AdminNoticeRegister->execute();
@@ -51,6 +52,7 @@ $(function(){
                                     </td>
                                 </tr>
                                 <input type="hidden" name="cmd" value="admin_notice_register">
+                                <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
                             </form>
                         </table>
                         <div class="register_btn_wrap">

@@ -6,6 +6,7 @@ use \Models\ItemsDto;
 use \Models\UploadFileDao;
 
 use \Models\CommonValidator;
+use \Models\CsrfValidator;
 use \Config\Config;
 
 use \Models\InvalidParamException;
@@ -55,7 +56,14 @@ class AdminItemUpdateAction extends UploadFileDao{
          「更新する」ボタンが押された時の処理
         =====================================================================*/
         }elseif($cmd == "update_confirm"){
-
+            
+            $token = filter_input(INPUT_POST, "token");
+            try{
+                CsrfValidator::validate($token);
+            }catch(InvalidParamException $e){
+                $e->handler($e);   
+            }
+            
             $validator = new CommonValidator();
 
             $itemName = filter_input(INPUT_POST, 'item_name'); 

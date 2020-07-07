@@ -4,6 +4,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config; 
+use \Models\CsrfValidator;
 
 $adminItemRegister = new \Controllers\AdminItemRegisterAction();
 $adminItemRegister->execute();
@@ -119,6 +120,7 @@ $(function(){
                                         <?php endif;?>
                                     </td>
                                     <input type="hidden" name="cmd" value="admin_item_register">
+                                    <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
                                 </tr>
                             </form>
                         </table>

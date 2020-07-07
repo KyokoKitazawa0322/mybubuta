@@ -6,6 +6,7 @@ use \Models\ItemsDto;
 use \Models\UploadFileDao;
 
 use \Models\CommonValidator;
+use \Models\CsrfValidator;
 use \Config\Config;
 
 use \Models\InvalidParamException;
@@ -45,6 +46,12 @@ class AdminItemRegisterAction extends UploadFileDao{
         }
         
         if($cmd == "admin_item_register"){
+            $token = filter_input(INPUT_POST, "token");
+            try{
+                CsrfValidator::validate($token);
+            }catch(InvalidParamException $e){
+                $e->handler($e);   
+            }
             
             $validator = new CommonValidator();
             
