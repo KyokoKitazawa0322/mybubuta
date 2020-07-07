@@ -5,6 +5,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 $myPageDeliveryEntryConfirm = new \Controllers\MyPageDeliveryEntryConfirmAction();
 $myPageDeliveryEntryConfirm->execute();
@@ -97,7 +98,7 @@ $myPageDeliveryEntryConfirm->execute();
                                 <div class="confirm_button_inner">
                                     <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
                                 </div>
-                                <input type="hidden" name="token_entry_update_complete" value="<?=$_SESSION['token']['entry_update_complete'];?>">
+                                <input type="hidden" name="token_del_entry_complete" value="<?=CsrfValidator::maketoken("token_del_entry_complete")?>">
                             </form>
                         </div>  
                     </div>

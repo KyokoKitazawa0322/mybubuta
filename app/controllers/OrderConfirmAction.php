@@ -31,7 +31,7 @@ class OrderConfirmAction{
         if($cmd == "order_confirm"){
             try{
                 if(isset($_SESSION['cart']) && isset($_SESSION['availableForPurchase'])){
-                    $this->setToken();
+
                     $var = 1;
                     $totalPrice = 0; 
                     $totalAmount = 0;
@@ -230,13 +230,6 @@ class OrderConfirmAction{
             'address' => $customer->getAddress(),
             'tel' => $customer->getTel()
         );
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションにセット
-    public function setToken(){
-        $token = sha1(uniqid(mt_rand(), true));
-        $_SESSION['token']['order_complete'] = $token;
     }
 }
 

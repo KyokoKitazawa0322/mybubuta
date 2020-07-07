@@ -5,6 +5,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 $orderConfirm = new \Controllers\OrderConfirmAction();
 $orderConfirm->execute();
@@ -151,7 +152,7 @@ $orderConfirm->execute();
                         <?php if(!isset($_SESSION['purchase_error'])):?>
                             <form action="/html/order/order_complete.php" method="POST">
                                 <input type="submit" class="btn_cmn_l btn_design_01" value="注文を確定する"/>
-                                <input type="hidden" name="token_order_complete" value="<?=$_SESSION['token']['order_complete'];?>">
+                                <input type="hidden" name="token_order_complete" value="<?=CsrfValidator::maketoken("token_order_complete")?>">
                             </form>
                         <?php else:?>
                             <form action="/html/cart.php" method="POST">

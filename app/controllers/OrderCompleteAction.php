@@ -7,11 +7,14 @@ use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+
+use \Models\CsrfValidator;
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
 
 class OrderCompleteAction{
 
@@ -27,8 +30,11 @@ class OrderCompleteAction{
         /*====================================================================
         　register_confirm.phpで「注文を確定する」ボタンが押された時の処理
         =====================================================================*/
+        $token = filter_input(INPUT_POST, "token_order_complete");
+        $formName = "token_order_complete";
+        
         try{
-            $this->checkToken();
+            CsrfValidator::checkToken($token, $formName);
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -111,28 +117,6 @@ class OrderCompleteAction{
             $e->handler($e);   
         }
     }   
-    
-    /*---------------------------------------*/
-    //トークンをセッションから取得
-    public function checkToken(){
-        $tokenOrderComplete = filter_input(INPUT_POST, "token_order_complete");
-        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
-        if(!isset($_SESSION['token']['order_complete']) || ($_SESSION['token']['order_complete'] != $tokenOrderComplete) || !isset($_SESSION['order'])){
-            if(!isset($_SESSION['token']['order_complete'])){
-                $sessionTokenOrderComplete = "nothing"; 
-            }else{
-                $sessionTokenOrderComplete = $_SESSION['token']['order_complete'];   
-            }
-            if(isset($_SESSION['order'])){
-                $order = print_r($_SESSION['order'], true);
-            }else{
-                $order = "nothing";   
-            }
-            throw new InvalidParamException('Invalid param for register_complete:$tokenOrderComplete='.$tokenOrderComplete.'/$_SESSION["token"]["order_complete"]='.$sessionTokenOrderComplete.'/$_SESSION["order"]='.$order);
-        }else{
-            unset($_SESSION['token']);   
-        }
-    }
 }
 ?>    
 

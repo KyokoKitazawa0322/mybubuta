@@ -5,6 +5,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
 
 $myPageUpdateConfirm = new \Controllers\MyPageUpdateConfirmAction();
 $myPageUpdateConfirm->execute();
@@ -118,7 +119,7 @@ $myPageUpdateConfirm->execute();
                         <form action="/html/mypage/update/mypage_update_complete.php" method="POST">
                             <div class="confirm_button_inner">
                                 <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
-                                <input type="hidden" name="token_complete" value="<?=$_SESSION['token']['update_complete'];?>">
+                                <input type="hidden" name="token_update_complete" value="<?=CsrfValidator::maketoken("token_update_complete")?>">
                             </div>
                         </form>
                         </div>

@@ -5,6 +5,7 @@ session_cache_limiter('none');
 session_start();
 
 use \Config\Config;
+use \Models\CsrfValidator;
  
 $registerConfirm = new \Controllers\RegisterConfirmAction();
 $registerConfirm->execute();
@@ -122,7 +123,7 @@ $registerConfirm->execute();
                                 <div class="confirm_button_inner">
                                     <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
                                 </div>
-                                <input type="hidden" name="token_complete" value="<?=$_SESSION['token']['complete'];?>">
+                                <input type="hidden" name="token_register_complete" value="<?=CsrfValidator::maketoken("token_register_complete")?>">
                             </form>
                         </div>  
                     </div>
