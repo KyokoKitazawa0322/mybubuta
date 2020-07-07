@@ -2,11 +2,15 @@
 namespace Controllers;
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+
+use \Models\CsrfValidator;
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+
 
 class RegisterCompleteAction{
           
@@ -18,9 +22,11 @@ class RegisterCompleteAction{
         　register_confirm.phpで「この内容で登録をする」ボタンが押された時の処理
         =====================================================================*/
         
+        $token = filter_input(INPUT_POST, "token_register_complete");
+        $formName = "token_register_complete";
+        
         try{
-            $this->checkToken();
-                
+            CsrfValidator::checkToken($token, $formName);
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -48,26 +54,13 @@ class RegisterCompleteAction{
             $_SESSION['customer_id'] = $customerDto->getCustomerId();
             
             unset($_SESSION['register']); 
+            setcookie('mail','',time()-3600,'/');
+            setcookie('password','',time()-3600,'/');
+            setcookie('mail',$mail,time()+60*60*24*7);
+            setcookie('password',$password,time()+60*60*24*7);
 
         } catch(MyPDOException $e){
             $e->handler($e);
-        }
-    }
-    
-    /*---------------------------------------*/
-    //トークンをセッションから取得
-    public function checkToken(){
-        $tokenComplete = filter_input(INPUT_POST, "token_complete");
-        //セッションがないか生成したトークンと異なるトークンでPOSTされたときは不正アクセス
-        if(!isset($_SESSION['token']['complete']) || ($_SESSION['token']['complete'] != $tokenComplete)){
-            if(!isset($_SESSION['token']['complete'])){
-                $sessionTokenComplete = "nothing"; 
-            }else{
-                $sessionTokenComplete = $_SESSION['token']['complete'];   
-            }
-            throw new InvalidParamException('Invalid param for register_complete:$tokenComplete='.$tokenComplete.'/$_SESSION["token"]["complete"]='.$sessionTokenComplete);
-        }else{
-            unset($_SESSION['token']);   
         }
     }
 }
