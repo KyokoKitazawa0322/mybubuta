@@ -18,6 +18,16 @@ $order = $adminOrderDetail->getOrderHistory();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+<!--
+    $(function(){
+        history.pushState(null, null, null);
+        $(window).on("popstate", function (event) {
+            window.location.replace('/html/admin/admin_orders.php');
+        });
+    });
+// --> 
+</script>
 </head>
 <body class="admin" id="admin_customer_order_detail">
 	<div class="wrapper">

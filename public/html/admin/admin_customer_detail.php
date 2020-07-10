@@ -26,7 +26,13 @@ $(function(){
         $('form#orderHistoryForm').submit();
     });
 });
-    
+   
+$(function(){
+    history.pushState(null, null, null);
+    $(window).on("popstate", function (event) {
+        window.location.replace('/html/admin/admin_customers.php');
+    });
+});
 // --> 
 </script>
 </head>
