@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\NoticeDao;
 use \Models\NoticeDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminNoticeDetailAction{
     
@@ -27,22 +32,30 @@ class AdminNoticeDetailAction{
             exit();
         }
           
-        $noticeId = filter_input(INPUT_POST, 'notice_id');    
-        if($noticeId){
-            $_SESSION['notice_id'] = $noticeId;   
-        }
         if($_SESSION['notice_id']){
            $noticeId = $_SESSION['notice_id']; 
         }
-        $noticeDao = new NoticeDao();
+        $noticeId = filter_input(INPUT_POST, 'notice_id');   
         
         /*====================================================================
           admin_notice.phpで「詳細」ボタンが押された時の処理
         =====================================================================*/
-        if($cmd == "notice_detail" || $noticeId){
+        if($cmd == "notice_detail"){ 
+            if($noticeId){
+                $_SESSION['notice_id'] = $noticeId;   
+            }
+        }
+            
+        if($noticeId){
             try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $noticeDao = new NoticeDao($pdo);
                 $noticeDto = $noticeDao->getNoticeDetail($noticeId);
                 $this->noticeDto = $noticeDto;
+                
+           }catch(DBConnectionException $e){
+                $e->handler($e);   
 
             } catch(MyPDOException $e){
                 $e->handler($e);
@@ -50,6 +63,7 @@ class AdminNoticeDetailAction{
             }catch(DBParamException $e){
                 $e->handler($e);
             }
+                
         }else{
             header("Location:/html/admin/admin_login.php");
             exit();   

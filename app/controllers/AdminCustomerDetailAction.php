@@ -1,13 +1,18 @@
 <?php
 namespace Controllers;
+
 use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminCustomerDetailAction{
     
@@ -31,18 +36,23 @@ class AdminCustomerDetailAction{
         }
         
         if($cmd == "detail"){
-            
-            $customerDao = new CustomerDao();
-            $deliveryDao = new DeliveryDao();
             $customerId = filter_input(INPUT_POST, 'customer_id');
-            $_SESSION['order_customer_id'] = $customerId;
-            
+            $_SESSION['admin_customer_id'] = $customerId;
+        }
+        
+        if(isset($_SESSION['admin_customer_id'])){       
+            $customerId = $_SESSION['admin_customer_id'];
             try{
-                $customerDto = $customerDao->getCustomerById($customerId);
-                $customerDeliveryDto = $deliveryDao->getDeliveryInfo($customerId);
-                    
-                $this->customerDto = $customerDto;
-                $this->customerDeliveryDto = $customerDeliveryDto;
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $customerDao = new CustomerDao($pdo);
+                $deliveryDao = new DeliveryDao($pdo);
+
+                $this->customerDto = $customerDao->getCustomerById($customerId);
+                $this->customerDeliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
                 
             } catch(MyPDOException $e){
                 $e->handler($e);
