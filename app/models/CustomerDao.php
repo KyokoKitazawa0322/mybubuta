@@ -1,15 +1,21 @@
 <?php
 namespace Models;
+
 use \Models\CustomerDto;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+
     
-class CustomerDao extends \Models\Model{
+class CustomerDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
     
     /**
@@ -84,6 +90,34 @@ class CustomerDao extends \Models\Model{
             throw new MyPDOException($e->getMessage(), (int)$e->getCode());
         }
     }
+    
+    
+    //---------------------------------------
+    /**
+     * メールアドレス重複確認
+     * $mailをキーにカスタマー情報を取得できた場合は今回のメールと比較し他ユーザとの重複か確認
+     * @param string $mail　ユーザーのメールアドレス
+     * @return boolean TRUE(他ユーザとの重複あり) | boolean FALSE(他ユーザとの重複なし)
+     * @throws MyPDOException 
+     * @throws DBConnectionException 
+     */
+    public function checkMailExistsForUpdate($mail, $customerMail){
+        
+        try{
+            $mailExists = $this->checkMailExists($mail);
+            /*- カスタマー情報が取得でき、かつユーザ自身のアドレスでなかった場合はエラーとする。 -*/
+            if($mailExists){
+                if($customerDto && $customerDto->getMail() != $customerMail){
+                    return TRUE;
+                }
+            }else{
+                return FALSE;
+            }
+        }catch(MyPDOException $e){
+            throw $e;
+        }
+    }
+    
     
     /**
      * CustomerDtoにSQL取得値をセット
