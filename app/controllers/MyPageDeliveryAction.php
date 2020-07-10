@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\DeliveryDao;
 use \Models\CustomerDao;    
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
     
@@ -21,14 +26,26 @@ class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
         $this->checkLogin();
         $customerId = $_SESSION['customer_id'];   
 
-        $deliveryDao = new DeliveryDao();
-        $customerDao = new CustomerDao();
-        
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $deliveryDao = new DeliveryDao($pdo);
+            $customerDao = new CustomerDao($pdo);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+        }
         /*====================================================================
         　「削除」ボタンが押された時の処理
         =====================================================================*/
         
         if($cmd == "delete"){
+            try{
+                $model->beginTransaction();
+            } catch(MyPDOException $e){
+                $e->handler($e);
+            }
+            
             try{
                 $deliveryDao->deleteDeliveryInfo($customerId, $deliveryId);
 
@@ -37,10 +54,16 @@ class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
                 if(!$deliveryDto){
                     $customerDao->setDeliveryFlag($customerId);
                 }
+                $model->commit();
+                
             } catch(MyPDOException $e){
+                if ($pdo->inTransaction()){
+                    $pdo->rollback();
+                }
                 $e->handler($e);
 
             }catch(DBParamException $e){
+                $pdo->rollback();
                 $e->handler($e);
             }
         }
@@ -51,39 +74,58 @@ class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
         
         if($cmd=="update"){
             /*- 配送先情報があるか確認し、取得できた場合のみ更新処理。-*/
-            $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            try{
+                $deliveryDto = $deliveryDao->getDeliveryInfo($customerId);
+            } catch(MyPDOException $e){
+                $e->handler($e);
+            }
+            
             if($deliveryDto){
-                /*- customerテーブルの住所が選択された時の処理 -*/
+                try{
+                    $model->beginTransaction();
+                } catch(MyPDOException $e){
+                    $e->handler($e);
+                }
+                
                 if($deliveryId == "def"){
+                    /*- customerテーブルの住所が選択された時の処理 -*/
+                    /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
                     try{
-                        /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
                         $deliveryDao->releaseDeliveryFlag($customerId);
                         $customerDao->setDeliveryFlag($customerId);
+                        $model->commit();
                         
                     } catch(MyPDOException $e){
+                        if ($pdo->inTransaction()){
+                            $pdo->rollback();
+                        }
                         $e->handler($e);
 
                     }catch(DBParamException $e){
+                        $pdo->rollback();
                         $e->handler($e);
                     }
 
                 /*- deliveryテーブルの住所が選択された時の処理 -*/
                 }else{
+                    /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
                     try{
-                        /*- (値精査)「いつもの配送先住所」解除前にdelivery_idを確認し、取得できた場合のみ更新処理。なければgetDeliveryInfoByIdの中で例外発生-*/
-                        $deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
-                        if($deliveryDto){
-                            /*- 「いつもの配送先住所」解除(deliveryテーブルとcustomerテーブルを全てFALSEに更新) -*/
-                            $deliveryDao->releaseDeliveryFlag($customerId);
-                            $deliveryDao->setDeliveryFlag($customerId, $deliveryId);
-                        }
+                        $deliveryDao->releaseDeliveryFlag($customerId);
+                        $deliveryDao->setDeliveryFlag($customerId, $deliveryId);
+                        $model->commit();
+                            
                     } catch(MyPDOException $e){
+                        if ($pdo->inTransaction()){
+                            $pdo->rollback();
+                        }
                         $e->handler($e);
 
                     }catch(DBParamException $e){
+                        $pdo->rollback();
                         $e->handler($e);
                     }
                 }
+                
             }
         }
         

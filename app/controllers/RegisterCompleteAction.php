@@ -46,20 +46,35 @@ class RegisterCompleteAction{
         $password = $_SESSION['register']['password'];
 
         try{
-            $customerDao = new CustomerDao();
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
+            
+            try{
+                $model->beginTransaction();
+            } catch(MyPDOException $e){
+                $e->handler($e);
+            }
             
             $customerDao->insertCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $mail);
 
             $customerDto = $customerDao->getCustomerByMail($mail); 
             $_SESSION['customer_id'] = $customerDto->getCustomerId();
+            $model->commit();
             
             unset($_SESSION['register']); 
             setcookie('mail','',time()-3600,'/');
             setcookie('password','',time()-3600,'/');
             setcookie('mail',$mail,time()+60*60*24*7);
             setcookie('password',$password,time()+60*60*24*7);
-
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+            
         } catch(MyPDOException $e){
+            if ($pdo->inTransaction()){
+                $pdo->rollback();
+            }
             $e->handler($e);
         }
     }
