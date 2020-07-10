@@ -6,7 +6,7 @@ class OriginalException extends \Exception {
     
     /* @param string $userMessage */
     protected $userMessage;
-
+    protected $logMessage;
     /**
      * @param string $message
      * @param int $code
@@ -14,6 +14,21 @@ class OriginalException extends \Exception {
     
     public function __construct($message = "", $code = 0){
         parent::__construct($message, $code);
+        
+        date_default_timezone_set('Asia/Tokyo');
+        $datetime = date( "Y/m/d H:i:s");
+        
+        $message = "[ExceptionClass]=>".get_class($this)."\r\n[time]=>{$datetime}\r\n[ExceptionCode]=>{$this->code}\r\n[Message]=>{$this->message}\r\n[File/Line]=>{$this->file}/{$this->line}\r\n[Trace]=>{$this->getTraceAsString()}";
+        
+        $this->logMessage = $message;
+    }
+    
+    public function setUserMessage($userMessage) {
+        $this->userMessage = $userMessage;
+    }
+    
+    public function getUserMessage() {
+        return $this->userMessage;
     }
     
     /**
@@ -22,7 +37,7 @@ class OriginalException extends \Exception {
      */
     public function handler(\Exception $e){
         
-        Config::outputLog($e);
+        error_log($this->logMessage);
         
         /*- デェフォルトで例外がなげられるMyPDOExceptionとMyS3Exceptionは
             HTTPレスポンスステータスコード500をセット
@@ -44,21 +59,13 @@ class OriginalException extends \Exception {
      */
     public function handler_light(\Exception $e){
         
-        Config::outputLog($e);
+        error_log($this->logMessage);
         
         if($e instanceof \Models\MyPDOException　|| $e instanceof \Models\MyS3Exception) {
             header('HTTP', true, 500);
         }else{
             header('HTTP', true, $e->getCode());
         }
-    }
-    
-    public function setUserMessage($userMessage) {
-        $this->userMessage = $userMessage;
-    }
-    
-    public function getUserMessage() {
-        return $this->userMessage;
     }
 }
 
