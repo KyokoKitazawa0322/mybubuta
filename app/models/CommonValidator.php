@@ -1,5 +1,6 @@
 <?php 
 namespace Models;
+
 use \Models\CustomerDao;
 use \Config\Config;
     
@@ -43,24 +44,6 @@ class CommonValidator {
     }
 
     //---------------------------------------
-    //会員登録情報の変更用
-    public function mailExistEx($mail, $customerId){
-        $con = new Connection();
-        $pdo = $con->pdo();
-        $sql = "SELECT * FROM customers WHERE mail=?"; //LIMIT1
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindvalue(1, $mail);
-        $stmt->execute();
-        if($result = $stmt->fetch()){
-            if($result['customer_id'] != $customerId){
-                $error = "既に使用されているメールアドレスです。";
-            }
-        }
-        $this->result = FALSE;
-        return $error; 
-    }
-    
-    //---------------------------------------
     public function fullWidthValidation($key, $value) {
         $error = FALSE;
         if(empty($value)) {
@@ -100,32 +83,7 @@ class CommonValidator {
         }
         return $error;  
     }
-
-    /**
-     * メールアドレス重複確認
-     * $mailをキーにカスタマー情報を取得できた場合は今回のメールと比較し他ユーザとの重複か確認
-     * @param string $mail　ユーザーのメールアドレス
-     * @return CustomerDto | boolean FALSE
-     * @throws MyPDOException 
-     */
-    public function checkMail($mail, $customerMail){
-        
-        $error = FALSE;
-        $customerDao = new CustomerDao();
-        
-        try{
-            $customerDto = $customerDao->checkMailExists($mail);
-            
-            /*- カスタマー情報が取得でき、かつユーザ自身のアドレスでなかった場合はエラーとする。 -*/
-            if($customerDto && $customerDto->getMail() != $customerMail){
-                $error =  "既に使用されているメールアドレスです。";
-                $this->result = FALSE;     
-            }
-            return $error;
-        }catch(MyPDOException $e){
-            throw $e;
-        }
-    }
+    
     //---------------------------------------
     public function telValidation($key, $value) {
         $error = FALSE;
