@@ -21,7 +21,7 @@ class Model{
         $password = getenv('PASSWORD');
 
         try{
-            self::$pdo = new \PDO($dsn, $db_user, $db_pass, array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
+            self::$pdo = new \PDO($dsn, $user, $password, array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::ATTR_PERSISTENT => true));
 
         }catch(\PDOException $e){
             throw new DBConnectionException($e->getMessage(), (int)$e->getCode());
