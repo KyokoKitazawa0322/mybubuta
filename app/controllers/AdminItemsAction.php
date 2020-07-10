@@ -3,13 +3,15 @@ namespace Controllers;
 
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\Model;
+
+use \Config\Config;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-
-use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminItemsAction{
     
@@ -30,20 +32,32 @@ class AdminItemsAction{
             exit();
         }
         
+        unset($_SESSION['update_item_code']);
         $content = filter_input(INPUT_POST, 'content');
         $itemCode = filter_input(INPUT_POST, 'item_code');
-        $itemsDao = new ItemsDao();
+        
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $itemsDao = new ItemsDao($pdo);
+    
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+        }
         
         if($cmd == "delete"){
-            $itemsDao->deleteItem($itemCode);    
+            try{
+                $itemsDao->deleteItem($itemCode);
+            
+            } catch(MyPDOException $e){
+                $e->handler($e);
+
+            }catch(DBParamException $e){
+                $e->handler($e);
+            }
         }
          
-        if($cmd == "search"){
-            /*- 検索条件をリセットし以降の処理で更新 -*/
-            $_SESSION['admin_search'] = array();
-        }
-        
-        if($cmd == "reset"){
+        if($cmd == "search" || $cmd == "reset"){
             /*- 検索条件をリセット -*/
             $_SESSION['admin_search'] = array();
         }
@@ -56,31 +70,10 @@ class AdminItemsAction{
         $maxPrice = filter_input(INPUT_POST, 'search_maxprice');
         $content = filter_input(INPUT_POST, 'content');
         
-        //DBに格納する値を代入(現行はvalueと一致してるが念のため)
         if($status){
             try{
-                switch($status){
-                    case "1":
-                        $itemStatus = "1";//販売中   
-                        break;
-                    case "2":
-                        $itemStatus = "2";//入荷待ち
-                        break;
-                    case "3":
-                        $itemStatus = "3";//販売終了   
-                        break;
-                    case "4":
-                        $itemStatus = "4";//一時掲載停止  
-                        break;
-                    case "5":
-                        $itemStatus = "5";//在庫切れ
-                        break;
-                    case "6":
-                        $itemStatus = "6";//販売前待機中  
-                        break;
-                    default:
-                        throw new InvalidParamException("invalid param in name=search_status:{$status}");           
-                }
+                $itemStatus = $this->checkItemsStatus($status);
+    
             }catch(InvalidParamException $e){
                 $e->handler($e);
             }
@@ -88,80 +81,17 @@ class AdminItemsAction{
             $itemStatus = "";   
         }
             
-        if($itemCode){
-            $_SESSION['admin_search']['item_code'] = $itemCode;
-        }elseif(isset($_SESSION['admin_search']['item_code'])){
-            $itemCode = $_SESSION['admin_search']['item_code'];
-        }
-
-        if($keyword){
-            $_SESSION['admin_search']['keyword'] = $keyword;
-        }elseif(isset($_SESSION['admin_search']['keyword'])){
-            $keyword = $_SESSION['admin_search']['keyword'];
-        }
-
-        if($category){
-            $_SESSION['admin_search']['category'] = $category;
-        }elseif(isset($_SESSION['admin_search']['category'])){
-            $category = $_SESSION['admin_search']['category'];
-        }
-
-        if($status){
-            $_SESSION['admin_search']['status'] = $status;
-        }elseif(isset($_SESSION['admin_search']['status'])){
-            $status = $_SESSION['admin_search']['status'];
-        }
-
-        if($minPrice){
-            $_SESSION['admin_search']['min_price'] = $minPrice;
-        }elseif(isset($_SESSION['admin_search']['min_price'])){   
-            $minPrice = $_SESSION['admin_search']['min_price'];
-        }
-
-        if($maxPrice){
-            $_SESSION['admin_search']['max_price'] = $maxPrice;
-        }elseif(isset($_SESSION['admin_search']['max_price'])){   
-            $maxPrice = $_SESSION['admin_search']['max_price'];
-        }
+        $itemCode = $this->checkIssetValue($itemCode, "item_code");
+        $keyword = $this->checkIssetValue($keyword, "keyword");
+        $category = $this->checkIssetValue($category, "category");
+        $status = $this->checkIssetValue($status, "status");
+        $minPrice = $this->checkIssetValue($minPrice, "min_price");
+        $maxPrice = $this->checkIssetValue($minPrice, "max_price");
 
         if($content){
-            //findItemsForAdminメソッドで使用する値を代入(現行はvalueと一致してるが念のため)
-            //下記文字列を引数として、メソッド内で更に条件分岐で精査
             try{
-                switch($content){
-                    case "item_price_desc":
-                        $sortkey = "item_price_desc";
-                        break;
-                    case "item_stock_desc":
-                        $sortkey = "item_stock_desc";
-                        break;
-                    case "item_sales_desc":
-                        $sortkey = "item_sales_desc";
-                        break;
-                    case "item_insert_date_desc":
-                        $sortkey = "item_insert_date_desc";
-                        break;
-                    case "item_updated_date_desc":
-                        $sortkey = "item_updated_date_desc";
-                        break;
-                    case "item_price_asc":
-                        $sortkey = "item_price_asc";
-                        break;
-                    case "item_stock_asc":
-                        $sortkey = "item_stock_asc";
-                        break;
-                    case "item_sales_asc":
-                        $sortkey = "item_sales_asc";
-                        break;
-                    case "item_insert_date_asc":
-                        $sortkey = "item_insert_date_asc";
-                        break;
-                    case "item_updated_date_asc":
-                        $sortkey = "item_updated_date_asc";
-                        break;
-                    default:
-                        throw new InvalidParamException("invalid param in id=content:{$content}");           
-                }
+                $sortkey = $this->checkSortContent($content);   
+                
             }catch(InvalidParamException $e){
                 $e->handler($e);
             }
@@ -178,10 +108,96 @@ class AdminItemsAction{
         }
     }
 
+    /*---------------------------------------*/
     public function getItems(){
         return $this->itemsDto;   
     }
+
+    /**
+    * 下記文字列を引数として、メソッド内で更に条件分岐で精査
+    * itemsDAOのメソッドに引数として渡す値を代入(現行はvalueと一致してるが念のため)
+    * throw InvalidParamException
+    * return String $itemStatus
+    **/
+    public function checkItemsStatus($status){
+        switch($status){
+            case "1":
+                $itemStatus = "1";//販売中   
+                break;
+            case "2":
+                $itemStatus = "2";//入荷待ち
+                break;
+            case "3":
+                $itemStatus = "3";//販売終了   
+                break;
+            case "4":
+                $itemStatus = "4";//一時掲載停止  
+                break;
+            case "5":
+                $itemStatus = "5";//在庫切れ
+                break;
+            case "6":
+                $itemStatus = "6";//販売前待機中  
+                break;
+            default:
+                throw new InvalidParamException("invalid param in name=search_status:{$status}");           
+        }
+        return $itemStatus;
+    }
     
+    /**
+    * 下記文字列を引数として、メソッド内で更に条件分岐で精査
+    * itemsDAOのメソッドに引数として渡す値を代入(現行はvalueと一致してるが念のため)
+    * throw InvalidParamException
+    * return String $sortkey
+    **/
+    public function checkSortContent($content){   
+        switch($content){
+            case "item_price_desc":
+                $sortkey = "item_price_desc";
+                break;
+            case "item_stock_desc":
+                $sortkey = "item_stock_desc";
+                break;
+            case "item_sales_desc":
+                $sortkey = "item_sales_desc";
+                break;
+            case "item_insert_date_desc":
+                $sortkey = "item_insert_date_desc";
+                break;
+            case "item_updated_date_desc":
+                $sortkey = "item_updated_date_desc";
+                break;
+            case "item_price_asc":
+                $sortkey = "item_price_asc";
+                break;
+            case "item_stock_asc":
+                $sortkey = "item_stock_asc";
+                break;
+            case "item_sales_asc":
+                $sortkey = "item_sales_asc";
+                break;
+            case "item_insert_date_asc":
+                $sortkey = "item_insert_date_asc";
+                break;
+            case "item_updated_date_asc":
+                $sortkey = "item_updated_date_asc";
+                break;
+            default:
+                throw new InvalidParamException("invalid param in id=content:{$content}");           
+        }
+        return $sortkey;
+    }
+    
+    public function checkIssetValue($value, $key){
+        if($value){
+            $_SESSION['admin_search'][$key] = $value;
+        }elseif(isset($_SESSION['admin_search'][$key])){
+            $value = $_SESSION['admin_search'][$key];
+        }
+        return $value;
+    }
+
     public function checkSelectedStatus($value){
         if(isset($_SESSION['admin_search']['status']) && $_SESSION['admin_search']['status']==$value){ 
             echo "selected";
