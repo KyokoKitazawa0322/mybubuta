@@ -1,19 +1,24 @@
 <?php
 namespace Controllers;
+
 use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class OrderConfirmAction{
-        
+    
     public function execute(){        
 
         $cmd = filter_input(INPUT_POST, 'cmd');
@@ -21,79 +26,63 @@ class OrderConfirmAction{
         if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
         }
-
-        $customerDao = new CustomerDao();
-        $deliveryDao = new DeliveryDao();
         
         /*====================================================================
          cart.phpで「レジに進む」ボタンが押された時の処理
         =====================================================================*/
         if($cmd == "order_confirm"){
+            
             try{
-                if(isset($_SESSION['cart']) && isset($_SESSION['availableForPurchase'])){
+                $this->checkValidationResult();
 
-                    $var = 1;
-                    $totalPrice = 0; 
-                    $totalAmount = 0;
-                    $totalQuantity = 0;
-                    $tax = 0;
-
-                    /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
-                    for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
-                        
-                        $_SESSION["cart"][$i]['item_quantity'] = $_POST["cart{$var}"];
-                        
-                        /*- $_SESSION['order']に格納する値を計算-*/
-                        $totalQuantity += $_SESSION["cart"][$i]['item_quantity']; 
-                        $totalAmount += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_quantity'];
-                        $tax += $_SESSION["cart"][$i]['item_tax'] * $_SESSION["cart"][$i]['item_quantity'];
-                        
-                        $var++;
-                    }
-                    if($totalAmount >= Config::POSTAGEFREEPRICE){
-                        $postage = 0;
-                    }else{
-                        $postage = Config::POSTAGE;
-                    }
-
-                    /*- 注文処理で使用するセッション変数の初期化 -*/
-                    $_SESSION['pay_error'] = NULL;
-                    $_SESSION['pay_type'] = NULL;
-                    $_SESSION['payment_term'] = NULL;
-                    $_SESSION['def_addr'] = NULL;
-                    $_SESSION['delivery'] = NULL;
-
-                    $_SESSION['order'] = array(
-                        'total_quantity' => $totalQuantity,  
-                        'total_amount' => $totalAmount,
-                        'tax' => $tax,
-                        'postage' => $postage
-                    );
-                    
-                }else{
-                    if(isset($_SESSION['cart'])){
-                        $cart = print_r($_SESSION['cart'], true);
-                    }else{
-                        $cart = "nothing";   
-                    }
-                    if(isset($_SESSION['availableForPurchase'])){
-                        $availableForPurchase = $_SESSION['availableForPurchase'];
-                    }else{
-                        $availableForPurchase = "nothing";   
-                    }
-                    throw new InvalidParamException('Invalid param for order_confirm:$cart='.$cart.'/$_SESSION["availableForPurchase"]='.$availableForPurchase);
-                } 
-            } catch(InvalidParamException $e){
-                $e->handler($e);
+            }catch(InvalidParamException $e){
+                $e->handler($e);   
             }
+            
+            $var = 1;
+            $totalPrice = 0; 
+            $totalAmount = 0;
+            $totalQuantity = 0;
+            $tax = 0;
+
+            /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
+            for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
+
+                $_SESSION["cart"][$i]['item_quantity'] = $_POST["cart{$var}"];
+
+                /*- $_SESSION['order']に格納する値を計算-*/
+                $totalQuantity += $_SESSION["cart"][$i]['item_quantity']; 
+                $totalAmount += $_SESSION["cart"][$i]['item_price_with_tax'] * $_SESSION["cart"][$i]['item_quantity'];
+                $tax += $_SESSION["cart"][$i]['item_tax'] * $_SESSION["cart"][$i]['item_quantity'];
+
+                $var++;
+            }
+            if($totalAmount >= Config::POSTAGEFREEPRICE){
+                $postage = 0;
+            }else{
+                $postage = Config::POSTAGE;
+            }
+
+            /*- 注文処理で使用するセッション変数の初期化 -*/
+            $_SESSION['pay_error'] = NULL;
+            $_SESSION['pay_type'] = NULL;
+            $_SESSION['payment_term'] = NULL;
+            $_SESSION['def_addr'] = NULL;
+            $_SESSION['delivery'] = NULL;
+
+            $_SESSION['order'] = array(
+                'total_quantity' => $totalQuantity,  
+                'total_amount' => $totalAmount,
+                'tax' => $tax,
+                'postage' => $postage
+            );
         }
         
+        /*- それ以外で$_SESSION['order']の値がない訪問は例外発生 -*/
         try{
-            if(!isset($_SESSION['availableForPurchase'])){
-                throw new InvalidParamException('Invalid param for order_confirm_pay_list:$_SESSION["availableForPurchase"]=nothing');
-            }
-        } catch(InvalidParamException $e){
-            $e->handler($e);
+            $this->checkOrder();
+        }catch(InvalidParamException $e){
+            $e->handler($e);   
         }
         
         /*——————————————————————————————————————————————————————————————
@@ -108,62 +97,55 @@ class OrderConfirmAction{
             $customerId = $_SESSION['customer_id'];   
         }
         
-        if(!isset($_SESSION['order'])){
-            header('Location:/html/cart.php');
-            exit();
-        }
-        /*——————————————————————————————————————————————————————————————*/
-        
+        /*——————————————————————————————————————————————————————————————
+         //$_SESSION['order']の値がある場合の共通処理
+        ————————————————————————————————————————————————————————————————*/
         try{
-            $customer = $customerDao->getCustomerById($customerId);
-            if(!$customer->getDeliveryFlag()){    
-                /*- customerテーブルの住所が配送先のデフォルトでなければ
-                deliveryテーブルからデフォルト設定された住所を取得、セッションに格納 -*/
-                $delivery = $deliveryDao->getDefDeliveryInfo($customerId);
-                $this->saveDeliveryData($delivery);
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
+            $deliveryDao = new DeliveryDao($pdo);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+        }
 
+        try{
+        /*——————————————————————————————————————————————————————————————
+         「配送先確定」ボタンがおされたときの処理
+        ————————————————————————————————————————————————————————————————*/
+            if($cmd == "del_comp"){
+
+                $def_addr = filter_input(INPUT_POST, 'def_addr');
+                $_SESSION['def_addr'] = $def_addr;
+
+                if($def_addr != "customer") {
+                    $delivery  = $deliveryDao->getDeliveryInfoById($customerId, $def_addr);
+                    $this->saveDeliveryData($delivery);
+                }else{
+                    $customer = $customerDao->getCustomerById($customerId); 
+                    $this->saveCustomerData($customer);
+                }
             }else{
-                $this->saveCustomerData($customer);
-            }
+        /*——————————————————————————————————————————————————————————————
+         「配送先確定」ボタンがおされたとき以外の共通処理
+        ————————————————————————————————————————————————————————————————*/
+                $customer = $customerDao->getCustomerById($customerId);
+                if(!$customer->getDeliveryFlag()){    
+                    /*- customerテーブルの住所が配送先のデフォルトでなければ
+                    deliveryテーブルからデフォルト設定された住所を取得、セッションに格納 -*/
+                    $delivery = $deliveryDao->getDefDeliveryInfo($customerId);
+                    $this->saveDeliveryData($delivery);
+                }else{
+                    $this->saveCustomerData($customer);
+                }
 
-        } catch(MyPDOException $e){
+            }
+        }catch(MyPDOException $e){
             $e->handler($e);
 
         }catch(DBParamException $e){
             $e->handler($e);
-        }
-
-        /*——————————————————————————————————————————————————————————————
-         「配送先確定」ボタンがおされたときの処理
-        ————————————————————————————————————————————————————————————————*/
-        
-        if($cmd == "del_comp"){
-            $def_addr = filter_input(INPUT_POST, 'def_addr');
-            $_SESSION['def_addr'] = $def_addr;
-            
-            if($def_addr != "customer") {
-                try{
-                    $delivery  = $deliveryDao->getDeliveryInfoById($customerId, $def_addr);
-                    $this->saveDeliveryData($delivery);
-                    
-                } catch(MyPDOException $e){
-                    $e->handler($e);
-
-                }catch(DBParamException $e){
-                    $e->handler($e);
-                }
-            }else{
-                try{
-                    $customer = $customerDao->getCustomerById($customerId); 
-                    $this->saveCustomerData($customer);
-
-               } catch(MyPDOException $e){
-                $e->handler($e);
-
-                }catch(DBParamException $e){
-                    $e->handler($e);
-                }
-            }
         }
         
         /*——————————————————————————————————————————————————————————————
@@ -192,13 +174,14 @@ class OrderConfirmAction{
         }
         
         if(isset($_SESSION['purchase_error'])){
-
+            
             try{
+                $itemsDao = new ItemsDao($pdo);
+                
                 for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
                     //購入できない商品を特定し最新の商品ステータスに更新
                     if($_SESSION['purchase_error'] == $_SESSION["cart"][$i]['item_code']){
                         $itemCode = $_SESSION["cart"][$i]['item_code'];
-                        $itemsDao = new ItemsDao();
                         $itemsDto = $itemsDao->getItemByItemCode($itemCode);
                         $_SESSION["cart"][$i]['item_status'] = $itemsDto->getItemStatus();
                     }
@@ -210,7 +193,30 @@ class OrderConfirmAction{
                 $e->handler($e);
             }
         }
-        /*——————————————————————————————————————————————————————————————*/
+    }
+    
+    /*---------------------------------------*/
+    public function checkValidationResult(){
+        
+        if(!isset($_SESSION['cart']) || !isset($_SESSION['availableForPurchase'])){
+            if(isset($_SESSION['cart'])){
+                $cart = print_r($_SESSION['cart'], true);
+            }else{
+                $cart = "nothing";   
+            }
+            if(isset($_SESSION['availableForPurchase'])){
+                $availableForPurchase = "TRUE";
+            }else{
+                $availableForPurchase = "nothing";   
+            }
+            throw new InvalidParamException('Invalid param for order_confirm:$cart='.$cart.'/$_SESSION["availableForPurchase"]='.$availableForPurchase);
+        }
+    }
+    
+    public function checkOrder(){
+        if(!isset($_SESSION['order'])){
+            throw new InvalidParamException('Invalid param for order_confirm:$_SESSION["order"]="nothing"');
+        }
     }
     
     /*- DTOクラスで用意したgetterメソッド名は同じだが、念のためにcustomerテーブルとdeliveryテーブルとで分けて下記メソッドを用意。 -*/
