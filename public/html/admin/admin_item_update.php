@@ -100,22 +100,22 @@ $(function(){
                                <tr>
                                     <th>ステータス<br/></th>
                                     <td class="admin_item_status">
-                                        <input type="radio" name="item_status" id="status_1" value="1" <?=$adminItemUpdate->checkSelectedStatus("1")?>>
+                                        <input type="radio" name="item_status" id="status_1" value="1" <?=$adminItemUpdate->checkSelectedStatus("1", $item->getItemStatus())?>>
                                         <label for="status_1">販売中</label>
                                         
-                                        <input type="radio" name="item_status" id="status_2" value="2" <?=$adminItemUpdate->checkSelectedStatus("2")?>>
+                                        <input type="radio" name="item_status" id="status_2" value="2" <?=$adminItemUpdate->checkSelectedStatus("2", $item->getItemStatus())?>>
                                         <label for="status_2">入荷待ち</label>
                                         
-                                        <input type="radio" name="item_status" id="status_3" value="3" <?=$adminItemUpdate->checkSelectedStatus("3")?>>
+                                        <input type="radio" name="item_status" id="status_3" value="3" <?=$adminItemUpdate->checkSelectedStatus("3", $item->getItemStatus())?>>
                                         <label for="status_3">販売終了</label>
                                         
-                                        <input type="radio" name="item_status" id="status_4" value="4" <?=$adminItemUpdate->checkSelectedStatus("4")?>>
+                                        <input type="radio" name="item_status" id="status_4" value="4" <?=$adminItemUpdate->checkSelectedStatus("4", $item->getItemStatus())?>>
                                         <label for="status_4">一時掲載停止</label>
                                         
-                                        <input type="radio" name="item_status" id="status_5" value="5" <?=$adminItemUpdate->checkSelectedStatus("5")?>>
+                                        <input type="radio" name="item_status" id="status_5" value="5" <?=$adminItemUpdate->checkSelectedStatus("5", $item->getItemStatus())?>>
                                         <label for="status_5">在庫切れ</label>
                                         
-                                        <input type="radio" name="item_status" id="status_6" value="6" <?=$adminItemUpdate->checkSelectedStatus("6")?>>
+                                        <input type="radio" name="item_status" id="status_6" value="6" <?=$adminItemUpdate->checkSelectedStatus("6", $item->getItemStatus())?>>
                                         <label for="status_6">販売前待機中</label>
                                         <?php if($adminItemUpdate->getItemStatusError()):?>
                                             <p class="error_txt"><?=$adminItemUpdate->getItemStatusError();?></p>
