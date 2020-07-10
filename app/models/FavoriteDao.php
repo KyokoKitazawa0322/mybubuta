@@ -1,16 +1,21 @@
 <?php
 namespace Models;
+
 use \Models\FavoriteDto;
 use \Models\ItemsDao;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
 
-class FavoriteDao extends \Models\Model { 
+class FavoriteDao{ 
 
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
     
     /**

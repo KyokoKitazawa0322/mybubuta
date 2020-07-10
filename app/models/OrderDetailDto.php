@@ -1,7 +1,7 @@
 <?php
 namespace Models;
 
-class OrderDetailDto extends \Models\Model{
+class OrderDetailDto{
     private $detailId;
     private $orderId;
     private $itemCode;

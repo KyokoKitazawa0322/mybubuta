@@ -2,15 +2,20 @@
 namespace Models;
 
 use \Models\OrderHistoryDto;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+
     
-class OrderHistoryDao extends \Models\Model{
+class OrderHistoryDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
     
     /**

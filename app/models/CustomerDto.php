@@ -1,7 +1,7 @@
 <?php
 namespace Models;
 
-class CustomerDto extends \Models\Model {
+class CustomerDto {
 
     private $customerId;
     private $hashPassword;

@@ -1,7 +1,7 @@
 <?php
 namespace Models;
 
-class DeliveryDto extends \Models\Model {
+class DeliveryDto {
     private $deliveryId;
     private $customerId;
     private $lastName;

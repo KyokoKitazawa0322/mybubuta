@@ -1,7 +1,7 @@
 <?php
 namespace Models;
 
-class OrderHistoryDto extends \Models\Model{
+class OrderHistoryDto{
     private $orderId;
     private $customerId;
     private $totalAmount;

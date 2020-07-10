@@ -3,10 +3,12 @@ namespace Models;
 use \Models\AdminDto;
 use \Models\OriginalException;
     
-class AdminDao extends \Models\Model{
+class AdminDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
 
     /**

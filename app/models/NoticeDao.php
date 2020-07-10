@@ -2,15 +2,19 @@
 namespace Models;
 
 use \Models\NoticeDto;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
     
-class NoticeDao extends \Models\Model{
+class NoticeDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
     
     /**

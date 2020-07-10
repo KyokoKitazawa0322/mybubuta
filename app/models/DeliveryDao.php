@@ -6,12 +6,13 @@ use \Models\NoRecordException;
 use \Models\MyPDOException;
 use \Config\Config;
     
-class DeliveryDao extends \Models\Model{
+class DeliveryDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
-    
     
     /**
      * DeliveryDtoにSQL取得値をセット

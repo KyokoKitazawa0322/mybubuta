@@ -1,15 +1,21 @@
 <?php
 namespace Models;
+
 use \Models\OrderDetailDto;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+
     
-class OrderDetailDao extends \Models\Model{
+class OrderDetailDao{
     
-    public function __construct(){
-        parent::__construct();
+    private $pdo = NULL;
+    
+    public function __construct($pdo){
+        $this->pdo = $pdo;
     }
     
     

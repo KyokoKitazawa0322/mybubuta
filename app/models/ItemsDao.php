@@ -9,12 +9,13 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
 
-class ItemsDao extends \Models\Model { 
+class ItemsDao{ 
 
-    public function __construct(){
-        parent::__construct();
-    }
+    private $pdo = NULL;
     
+    public function __construct($pdo){
+        $this->pdo = $pdo;
+    }
     /**
      * select文共通処理
      * @return ItemsDto[] | boolean FALSE
