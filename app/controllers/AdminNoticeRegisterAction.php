@@ -10,7 +10,6 @@ use \Config\Config;
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
 use \Models\DBConnectionException;
     
 class AdminNoticeRegisterAction{
