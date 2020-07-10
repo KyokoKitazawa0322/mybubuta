@@ -1,11 +1,17 @@
 <?php
 namespace Controllers;
+
+use \Models\CustomerDao;
+use \Models\Model;
+
 use \Models\CommonValidator;
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+
 
 class RegisterAction{
     
@@ -101,20 +107,25 @@ class RegisterAction{
 
             $key="番地";
             $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
-            
-            $customerMail = "";
-            try{
-                $this->mailError = $validator->checkMail($mail, $customerMail);
-                
-            } catch(MyPDOException $e){
-                $e->handler($e);
 
-            }
-            
-            /*- 他者とのメールアドレスの重複がなければ続けてバリデーションチェック -*/
+            $key="メールアドレス";
+            $this->mailError = $validator->mailValidation($key, $mail);
+ 
             if(!$this->mailError){
-                $key="メールアドレス";
-                $this->mailError = $validator->mailValidation($key, $mail);
+                try{
+                    $model = Model::getInstance();
+                    $pdo = $model->getPdo();
+                    $customerDao = new CustomerDao($pdo);
+                    $mailExists = $customerDao->checkMailExists($mail);
+                    if($mailExists){
+                        $this->mailError = "既に使用されているメールアドレスです。";
+                    }
+                }catch(DBConnectionException $e){
+                    $e->handler($e);   
+
+                } catch(MyPDOException $e){
+                    $e->handler($e);
+                }
             }
                 
             $key="電話番号";
@@ -127,7 +138,7 @@ class RegisterAction{
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
             
-            if($validator->getResult()) {
+            if($validator->getResult() && !($this->mailError)) {
                 $_SESSION['register_data'] = "complete";
                 header('Location:/html/register/register_confirm.php');
                 exit();
@@ -138,6 +149,7 @@ class RegisterAction{
     }
     
     /*---------------------------------------*/
+
     public function getLastNameError(){
         return $this->lastNameError;   
     }
@@ -191,7 +203,7 @@ class RegisterAction{
     }
 
     public function checkSelectedPrefecture($value){
-        if(isset($_SESSION['admin_update']['prefecture']) && $_SESSION['admin_update']['prefecture']==$value){ 
+        if(isset($_SESSION['register']['prefecture']) && $_SESSION['register']['prefecture']==$value){ 
             return true;
         }
     }

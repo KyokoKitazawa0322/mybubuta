@@ -1,13 +1,18 @@
 <?php
 namespace Controllers;
+
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\CommonValidator;
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
 
@@ -46,8 +51,13 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
         /*—————————————————————————————————————————————————————————————— */
         
         try{
-            $customerDao = new CustomerDao();
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
             $this->customerDto = $customerDao->getCustomerById($customerId);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
             
         } catch(MyPDOException $e){
             $e->handler($e);
@@ -146,12 +156,17 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
             $this->mailError = $validator->mailValidation($key, $mail);
             
             if(!$this->mailError){
-                
-                $ExistingMail = $this->customerDto->getMail();
             
-                try{
-                    /*- 他ユーザとの重複確認 -*/
-                    $this->mailError = $validator->checkMail($mail, $ExistingMail);
+                $customerMail = $this->customerDto->getMail();
+            
+                try{    
+                    $mailExists = $customerDao->checkMailExistsForUpdate($mail, $customerMail);
+                    if($mailExists){
+                        $this->mailError = "既に使用されているメールアドレスです。";
+                    } 
+                }catch(DBConnectionException $e){
+                    $e->handler($e);   
+                
                 } catch(MyPDOException $e){
                     $e->handler($e);
                 }
@@ -160,16 +175,19 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
             $key="電話番号";
             $this->telError = $validator->telValidation($key, $tel);
             
-            //現在のパスワードの一致確認
-            $this->oldPasswordError = $this->checkPassword($this->customerDto, $oldPassword);
-            
+            //現在のパスワードの一致確認/
+            $hashPassword = $this->customerDto->getHashPassWord();
+            if(!password_verify($password, $hashPassword)){
+                $this->oldPasswordError = "パスワードが間違ってます。";
+            }
+
             $key="新しいパスワード";
             $this->passwordError = $validator->passValidation($key, $password);
 
             $key="新しいパスワード(再確認)";  
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
-            if($validator->getResult() && !($this->oldPasswordError)) {
+            if($validator->getResult() && !($this->mailError) && !($this->oldPasswordError)) {
                 $_SESSION['update_data'] = "complete";
                 header('Location:/html/mypage/update/mypage_update_confirm.php');
                 exit();
@@ -177,24 +195,6 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
                 $_SESSION['update_data'] = "incomplete";
             }
         }
-    }
-    
-
-    /*---------------------------------------*/
-    /**
-     * 現在のパスワード確認
-     * @throws MyPDOException 
-     * @throws DBParamException
-     */
-    public function checkPassword($customerDto, $password){
-        
-        $error = FALSE;
-        
-        $hashPassword = $customerDto->getHashPassWord();
-        if(!password_verify($password, $hashPassword)){
-            $error = "パスワードが間違ってます。";
-        }
-        return $error;
     }
         
     /*---------------------------------------*/
