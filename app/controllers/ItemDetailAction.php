@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class ItemDetailAction {
     
@@ -13,14 +18,18 @@ class ItemDetailAction {
     
     public function execute() {
         
-        $dao = new ItemsDao();
         $itemCode = filter_input(INPUT_GET, 'item_code');
-        
         $_SESSION['add_cart'] = 'undone';
         
         try{
-            $item = $dao->getItemByItemCodeForDetail($itemCode);
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $itemsdao = new ItemsDao($pdo);   
+            $item = $itemsdao->getItemByItemCodeForDetail($itemCode);
             $this->item = $item;
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
             
         }catch(MyPDOException $e){
             $e->hadler($e);

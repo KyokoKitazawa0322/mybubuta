@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class LoginAction{
     
@@ -30,10 +35,17 @@ class LoginAction{
             $mail = filter_input(INPUT_POST, 'mail');
             $password = filter_input(INPUT_POST, 'password');
             
-            $dao = new CustomerDao();
+            try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $customerDao = new CustomerDao($pdo);
+                
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
+            }
             
             try{
-                $customer = $dao->getCustomerByMail($mail);
+                $customer = $customerDao->getCustomerByMail($mail);
             } catch(MyPDOException $e){
                 $e->handler($e);
             }

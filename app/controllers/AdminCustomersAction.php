@@ -3,6 +3,7 @@ namespace Controllers;
 
 use \Models\CustomerDao;
 use \Models\CustomerDto;
+use \Models\Model;
 
 use \Config\Config;
 
@@ -10,7 +11,8 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-    
+use \Models\DBConnectionException;
+
 class AdminCustomersAction{
     
     private $customersDto;
@@ -31,8 +33,17 @@ class AdminCustomersAction{
             exit();
         }
         
+        unset($_SESSION['admin_customer_id']);
         $content = filter_input(INPUT_POST, 'content');
-        $customerDao = new CustomerDao();
+        
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);  
+        }
         
         if($cmd == "sort"){
             try{
@@ -57,9 +68,7 @@ class AdminCustomersAction{
             }catch(NoRecordException $e){
                 $e->handler($e);
             }
-            
         }else{
-            
             try{
                 $customersDto = $customerDao->getCustomersAll();
                 $this->customersDto = $customersDto;

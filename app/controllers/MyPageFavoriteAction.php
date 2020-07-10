@@ -4,12 +4,14 @@ namespace Controllers;
 use \Models\FavoriteDao;
 use \Models\ItemsDto;
 use \Models\ItemsDao;
+use \Models\Model;
 
 use \Config\Config;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
 
 class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
     
@@ -22,14 +24,21 @@ class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
         
         $this->checkLogoutRequest($cmd);
         
-        $favoriteDao = new FavoriteDao();
-        
         if(isset($_SESSION['customer_id'])){
             $customerId = $_SESSION['customer_id'];
         }else{
             $customerId = FALSE;   
         }
 
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $favoriteDao = new FavoriteDao($pdo);
+        
+        }catch(DBConnectionException $e){
+            $e->handler($e); 
+        }
+        
         /*========================================================
         item_detail.phpで「お気に入り保存」ボタンが押された時の処理
         =========================================================*/

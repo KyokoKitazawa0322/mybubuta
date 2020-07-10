@@ -5,11 +5,15 @@ use \Models\CustomerDao;
 use \Models\CustomerDto;
 use \Models\DeliveryDao;
 use \Models\DeliveryDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class OrderDeliveryListAction{
 
@@ -36,8 +40,15 @@ class OrderDeliveryListAction{
         $delId = filter_input(INPUT_POST, 'del_id');
         $cmd = filter_input(INPUT_POST, 'cmd');
         
-        $customerDao = new CustomerDao();
-        $deliveryDao = new DeliveryDao();
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
+            $deliveryDao = new DeliveryDao($pdo);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+        }
         
         /*====================================================================
          「削除」ボタンが押された時の処理

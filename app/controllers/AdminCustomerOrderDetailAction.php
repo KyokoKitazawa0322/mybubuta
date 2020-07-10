@@ -1,14 +1,19 @@
 <?php
 namespace Controllers;
+
 use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
-    
+use \Models\DBConnectionException;
+
 class AdminCustomerOrderDetailAction{
     
     private $orderDetailDto;
@@ -34,12 +39,18 @@ class AdminCustomerOrderDetailAction{
             $orderId = filter_input(INPUT_POST, 'order_id');
             $customerId = filter_input(INPUT_POST, 'customer_id');
 
-            $orderHistoryDao = new OrderHistoryDao();
-            $orderDetailDao = new OrderDetailDao();
-
             try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $orderHistoryDao = new OrderHistoryDao($pdo);
+                $orderDetailDao = new OrderDetailDao($pdo);
+
                 $this->orderHistoryDto = $orderHistoryDao->getOrderHistory($customerId, $orderId);
                 $this->orderDetailDto = $orderDetailDao->getOrderDetail($orderId);
+                
+            }catch(DBConnectionException $e){
+                $e->handler($e);  
+                
             } catch(MyPDOException $e){
                 $e->handler($e);
 

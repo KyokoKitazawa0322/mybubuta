@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\NoticeDao;
 use \Models\NoticeDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class MyPageNoticeAction extends \Controllers\CommonMyPageAction{
     
@@ -19,11 +24,15 @@ class MyPageNoticeAction extends \Controllers\CommonMyPageAction{
         $this->checkLogin();
         $customerId = $_SESSION['customer_id'];   
         
-        $noticeDao = new NoticeDao();
-        
         try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $noticeDao = new NoticeDao($pdo);
             $noticeDto = $noticeDao->getNoticeInfoAll();
             $this->noticeDto = $noticeDto;
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
             
         } catch(MyPDOException $e){
             $e->handler($e);

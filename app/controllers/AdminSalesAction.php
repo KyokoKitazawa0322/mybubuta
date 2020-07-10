@@ -5,6 +5,7 @@ use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
 use \Models\OrderDetailDao;
 use \Models\OrderDetailDto;
+use \Models\Model;
 
 use \Config\Config;
 
@@ -12,6 +13,7 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
     
 class AdminSalesAction{
     
@@ -52,10 +54,17 @@ class AdminSalesAction{
             if($day){
                 $day = sprintf('%02d', $day); 
             }
+            
+            try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $orderHistoryDao = new OrderHistoryDao($pdo);
+                $orderDetailDao = new OrderDetailDao($pdo);
+                                                     
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
+            }
 
-            $orderHistoryDao = new OrderHistoryDao();
-            $orderDetailDao = new OrderDetailDao();
-                
             switch($content){
                 case "month":
                     if(!$year||!$month){
@@ -66,10 +75,11 @@ class AdminSalesAction{
                                 $day = "01";
                                 $dateTime = new \DateTime($year.'-'.$month.'-'.$day);
                                 $month = $dateTime->format('Y-m');
+                                
                             }catch(\Exception $e){
                                 throw new InvalidParamException($e->getMessage());   
                             }
-
+                            
                             $this->result = $orderHistoryDao->getOrderHistoryByMonth($month);
                             $_SESSION['search_term'] = $dateTime->format('Y年n月');
 

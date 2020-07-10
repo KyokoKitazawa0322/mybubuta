@@ -2,10 +2,14 @@
 namespace Controllers;
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminCustomerOrderHistoryAction{
     
@@ -32,17 +36,22 @@ class AdminCustomerOrderHistoryAction{
             $customerId = filter_input(INPUT_POST, 'customer_id');
             $OrderId = filter_input(INPUT_POST, 'order_id');
 
-            $orderHistoryDao = new OrderHistoryDao();
-
             try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $orderHistoryDao = new OrderHistoryDao($pdo);
+
                 $orders = $orderHistoryDao->getAllOrderHistory($customerId);
                 $this->orders = $orders;
+                
+            }catch(DBConnectionException $e){
+                $e->handler($e);  
 
-                } catch(MyPDOException $e){
-                    $e->handler($e);
-                }
+            }catch(MyPDOException $e){
+                $e->handler($e);
             }
         }
+    }
     
     public function getOrders(){
         return $this->orders;   

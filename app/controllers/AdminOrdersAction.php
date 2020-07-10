@@ -3,10 +3,13 @@ namespace Controllers;
 
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
+use \Models\Model;
 
 use \Config\Config;
+
 use \Models\OriginalException;
-    
+use \Models\DBConnectionException;
+
 class AdminOrdersAction{
     
     private $orders = [];
@@ -27,8 +30,18 @@ class AdminOrdersAction{
             exit();
         }
         
+        unset($_SESSION['admin_order_id']);
+        unset($_SESSION['admin_customer_id']);
         $content = filter_input(INPUT_POST, 'content');
-        $orderHistoryDao = new OrderHistoryDao();
+    
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $orderHistoryDao = new OrderHistoryDao($pdo);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+        }
         
         if($cmd == "sort"){
             try{
@@ -54,8 +67,14 @@ class AdminOrdersAction{
                     default:
                         throw new InvalidParamException("Invalid param for sort:".$content);
                 } 
-            } catch(\PDOException $e){
- 
+            } catch(InvalidParamException $e){
+                $e->handler($e);
+                
+            } catch(MyPDOException $e){
+                $e->handler($e);
+
+            }catch(NoRecordException $e){
+                $e->handler($e);
             }
             
         }else{
@@ -63,20 +82,19 @@ class AdminOrdersAction{
                 $orders = $orderHistoryDao->getOrdersAll();
                 $this->orders = $orders;
                 
-                
-            } catch(\PDOException $e){
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-
-            }catch(OriginalException $e){
-
+            }catch(NoRecordException $e){
+                $e->handler($e);
             }
         }
     }
 
     
+    /*---------------------------------------*/
     public function getOrders(){
         return $this->orders;   
     }
-    
 }
 ?>

@@ -48,15 +48,20 @@ class MyPageDeliveryCompleteAction extends \Controllers\CommonMyPageAction{
         $tel = $_SESSION['del_update']['tel'];
 
         $deliveryId = $_SESSION['del_id'];
-        $deliveryDao = new DeliveryDao();
 
         try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $deliveryDao = new DeliveryDao($pdo);
             $deliveryDao->updateDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $customerId, $deliveryId);
 
             unset($_SESSION['delivery_entry_data']);
             unset($_SESSION['del_update']);
             unset($_SESSION['del_id']);
 
+        }catch(DBConnectionException $e){
+            $e->handler($e);  
+            
         } catch(MyPDOException $e){
             $e->handler($e);
 

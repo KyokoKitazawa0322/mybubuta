@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use \Models\DeliveryDao;
+use \Models\Model;
 
 use \Config\Config;
 use \Models\CsrfValidator;
@@ -10,6 +11,7 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
 
 class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
     
@@ -48,9 +50,14 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
         $tel = $_SESSION['del_add']['tel'];
 
         try{
-            $deliveryDao = new DeliveryDao();
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();    
+            $deliveryDao = new DeliveryDao($pdo);
             $deliveryDao->insertDeliveryInfo($lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $customerId);
-
+        
+        }catch(DBConnectionException $e){
+            $e->handler($e);       
+            
         } catch(MyPDOException $e){
             $e->handler($e);
         }

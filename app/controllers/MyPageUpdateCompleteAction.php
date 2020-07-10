@@ -3,6 +3,7 @@ namespace Controllers;
 
 use \Models\CustomerDao;
 use \Models\CustomersDto;
+use \Models\Model;
 
 use \Models\CommonValidator;
 use \Models\CsrfValidator;
@@ -12,6 +13,7 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
 
 class MyPageUpdateCompleteAction extends \Controllers\CommonMyPageAction{
 
@@ -51,8 +53,10 @@ class MyPageUpdateCompleteAction extends \Controllers\CommonMyPageAction{
         $tel = $_SESSION['update']['tel'];
         $mail = $_SESSION['update']['mail'];
 
-        try {
-            $customerDao = new CustomerDao();
+        try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $customerDao = new CustomerDao($pdo);
 
             $customerDao->updateCustomerInfo($password, $lastName, $firstName, $rubyLastName, $rubyFirstName, $zipCode01, $zipCode02, $prefecture, $city, $blockNumber, $buildingName, $tel, $mail, $customerId);
 

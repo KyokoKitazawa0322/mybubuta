@@ -4,6 +4,7 @@ namespace Controllers;
 use \Models\ItemsDao;
 use \Models\ItemsDto;
 use \Models\UploadFileDao;
+use \Models\Model;
 
 use \Models\CommonValidator;
 use \Models\CsrfValidator;
@@ -15,6 +16,7 @@ use \Models\DBParamException;
 use \Models\MyPDOException;
 use \Models\MyS3Exception;
 use \Models\UploadException;
+use \Models\DBConnectionException;
     
 class AdminItemRegisterAction extends UploadFileDao{
     
@@ -141,12 +143,17 @@ class AdminItemRegisterAction extends UploadFileDao{
                 try{
                     $result = $this->uploadImage($itemImageName, $itemOriginImageName);
                     $itemImagePath = $result;
-
-                    $itemsDao = new ItemsDao();
+                    
+                    $model = Model::getInstance();
+                    $pdo = $model->getPdo();
+                    $itemsDao = new ItemsDao($pdo);
                     $itemDto = $itemsDao->insertItemInfo($itemCode, $itemName, $itemPrice, $itemCategory, $itemImageName, $itemImagePath, $itemDetail, $itemStock, $itemStatus);
                     
                     unset($_SESSION['admin_register']);
                     
+                }catch(DBConnectionException $e){
+                    $e->handler($e);   
+
                 } catch(MyS3Exception $e){
                     $e->handler($e);
 

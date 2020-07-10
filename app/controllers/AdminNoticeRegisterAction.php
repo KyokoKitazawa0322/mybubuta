@@ -2,13 +2,16 @@
 namespace Controllers;
 use \Models\NoticeDao;
 use \Models\NoticeDto;
+use \Models\Model;
 
 use \Models\CsrfValidator;
+use \Config\Config;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
 use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminNoticeRegisterAction{
     
@@ -43,9 +46,14 @@ class AdminNoticeRegisterAction{
             $mainText = filter_input(INPUT_POST, 'main_text', FILTER_SANITIZE_STRING); 
                 
             try{
-                $noticeDao = new NoticeDao();
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $noticeDao = new NoticeDao($pdo);
                 $noticeDto = $noticeDao->insertNoticeInfo($title, $mainText);
 
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
+                
             } catch(MyPDOException $e){
                 $e->handler($e);
             }

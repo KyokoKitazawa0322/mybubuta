@@ -3,13 +3,14 @@ namespace Controllers;
 
 use \Models\ItemsDao;
 use \Models\ItemsDto;
+use \Models\Model;
 
 use \Config\Config;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-
+use \Models\DBConnectionException;
 
 class ItemListAction {
     private $items;
@@ -78,14 +79,17 @@ class ItemListAction {
         if(!$sortKey){
             $sortKey = "04";/*- "ORDER BY item_insert_date desc" -*/
         }
-
         
-        $itemsDao = new ItemsDao();
-
         try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $itemsDao = new ItemsDao($pdo);
             $this->items = $itemsDao->findItems($categories, $keyWord, $minPrice, $maxPrice, $sortKey);
             $this->topItems = $itemsDao->getItemsInfoRankByWeek();
-       
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
+            
         } catch(MyPDOException $e){
             $e->handler($e);
         }

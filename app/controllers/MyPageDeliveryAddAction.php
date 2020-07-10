@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use \Models\DeliveryDao;
+use \Models\Model;
 
 use \Models\CommonValidator;
 use \Config\Config;
@@ -10,6 +11,7 @@ use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
 
 class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
     

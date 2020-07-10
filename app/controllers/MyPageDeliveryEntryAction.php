@@ -2,12 +2,17 @@
 namespace Controllers;
 
 use \Models\DeliveryDao;
+use \Models\DeliveryDTo;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\CommonValidator;
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\InvalidParamException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
     
@@ -67,12 +72,15 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
         /*=============================================================*/
 
         $deliveryId = $_SESSION['del_id'];
-    
-        $deliveryDao = new DeliveryDao();
-        $validator = new CommonValidator();
-        
+      
         try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $deliveryDao = new DeliveryDao($pdo);
             $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
+            
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
             
         } catch(MyPDOException $e){
             $e->handler($e);
@@ -111,6 +119,8 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
                  'building_name' => $buildingName,
                  'tel' => $tel
            );
+            
+            $validator = new CommonValidator();
 
             $key = "氏名(性)";
             $this->lastNameError = $validator->fullWidthValidation($key, $lastName);

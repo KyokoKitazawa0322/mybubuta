@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\AdminDao;
 use \Models\AdminDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
     
 class AdminLoginAction{
     
@@ -30,9 +35,14 @@ class AdminLoginAction{
             $adminId = filter_input(INPUT_POST, 'admin_id');
             $adminPassword = filter_input(INPUT_POST, 'admin_password');
             
-                $admindao = new AdminDao();
             try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $admindao = new AdminDao($pdo);
                 $admin = $admindao->adminLogin($adminId, $adminPassword);
+                
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
                 
             } catch(MyPDOException $e){
                 $e->handler($e);

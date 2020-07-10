@@ -3,12 +3,14 @@ namespace Controllers;
 
 use \Models\DeliveryDao;
 use \Models\CustomerDao;    
+use \Models\Model;
 
 use \Config\Config;
 
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
+use \Models\DBConnectionException;
 
 class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
     
@@ -29,7 +31,9 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
             $memPwd = filter_input(INPUT_POST, 'memPwd');
             
             try{
-                $customerDao = new CustomerDao();
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $customerDao = new CustomerDao($pdo);
                 
                 $customerDto = $customerDao->getCustomerById($customerId);
                 $hashPassword = $customerDto->getHashPassword();
@@ -38,7 +42,7 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
                     echo 'パスワードが正しくありません。';
                     
                 }else{
-                    $deliveryDao = new DeliveryDao();
+                    $deliveryDao = new DeliveryDao($pdo);
                     
                     $customerDao->deleteCustomerInfo($customerId);
                     $deliveryDao->deleteAllDeliveryInfo($customerId);
@@ -50,6 +54,9 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
                     exit();
                 }
 
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
+                
             } catch(MyPDOException $e){
                 $e->handler($e);
 

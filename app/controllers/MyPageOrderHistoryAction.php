@@ -1,11 +1,16 @@
 <?php
 namespace Controllers;
+
 use \Models\OrderHistoryDao;
 use \Models\OrderHistoryDto;
+use \Models\Model;
+
+use \Config\Config;
+
 use \Models\DBParamException;
 use \Models\NoRecordException;
 use \Models\MyPDOException;
-use \Config\Config;
+use \Models\DBConnectionException;
 
 class MyPageOrderHistoryAction {
 
@@ -27,10 +32,15 @@ class MyPageOrderHistoryAction {
         }
         
         unset($_SESSION['order_id']);
-        $orderHistoryDao = new OrderHistoryDao();
         
         try{
+            $model = Model::getInstance();
+            $pdo = $model->getPdo();
+            $orderHistoryDao = new OrderHistoryDao($pdo);
             $this->orders = $orderHistoryDao->getAllOrderHistory($customerId);
+        
+        }catch(DBConnectionException $e){
+            $e->handler($e);   
        
         } catch(MyPDOException $e){
             $e->handler($e);
