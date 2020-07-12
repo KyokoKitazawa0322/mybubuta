@@ -41,7 +41,7 @@ $notice = $adminNoticeDetail->getNotice();
                             </tr>
                             <tr>
                                 <th>本文</th>
-                                <td><?=$notice->getMainText();?></td>
+                                <td class="admin_notice_main_text"><?=Config::h($notice->getMainText());?></td>
                             </tr>
                         </table>
 		            </div>
