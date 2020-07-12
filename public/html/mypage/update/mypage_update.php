@@ -40,13 +40,13 @@ $customer = $myPageUpdate->getCustomerDto();
                                 <p class="name_label">名</p>
                                 <div class="name_input_wrapper">
                                     <input class="form_input_item <?php if($myPageUpdate->getFirstNameError()){echo "error_box";}?>" type="text" maxlength="20" name="first_name" value="<?=Config::h($myPageUpdate->echoValue("first_name", $customer->getFirstName()))?>"/>
-                                    <?php if($myPageUpdate->getLastNameError()):?>
-                                        <p class="error_txt error_cmn"><?=$myPageUpdate->getFirstNameError();?></p>
-                                    <?php endif;?>
-                                    <?php if($myPageUpdate->getFirstNameError()):?>
-                                        <p class="error_txt error_cmn clear"><?=$myPageUpdate->getFirstNameError();?></p>
-                                    <?php endif;?>
                                 </div>
+                               <?php if($myPageUpdate->getLastNameError()):?>
+                                    <p class="error_txt error_cmn"><?=$myPageUpdate->getLastNameError();?></p>
+                                <?php endif;?>
+                                <?php if($myPageUpdate->getFirstNameError()):?>
+                                    <p class="error_txt error_cmn clear"><?=$myPageUpdate->getFirstNameError();?></p>
+                                <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">フリガナ(カタカナ)</p>
