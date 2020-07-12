@@ -50,9 +50,7 @@ $item = $itemDetail->getItem();
                         </h3>
                         <p class="price">&yen;<?=Config::h(number_format($item->getItemPriceWithTax()))?><span>(税込)</span>
                         </p>
-                        <p class="item_detail_txt">
-                            <?=Config::h($item->getItemDetail());?>
-                        </p>
+                        <div class="item_detail_txt"><?=$item->getItemDetail();?></div>
                         <div class="detail_form_wrap">
                             <form action="/html/cart.php" method="POST" class="item_num_form">
                                 <div class="select_wrap">
