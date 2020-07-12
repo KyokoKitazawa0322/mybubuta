@@ -107,7 +107,7 @@ class CustomerDao{
             $mailExists = $this->checkMailExists($mail);
             /*- カスタマー情報が取得でき、かつユーザ自身のアドレスでなかった場合はエラーとする。 -*/
             if($mailExists){
-                if($customerDto && $customerDto->getMail() != $customerMail){
+                if($mailExists->getMail() != $customerMail){
                     return TRUE;
                 }
             }else{
