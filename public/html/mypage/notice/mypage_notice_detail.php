@@ -22,7 +22,7 @@ $noticeDto = $mypageNoticeDetail->getNoticeDto();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
-<body class="mypage" id="mypage_notice">
+<body class="mypage" id="mypage_notice_detail">
 <div class="wrapper">
     <?php require_once(__DIR__.'/../../common/header_common.php')?>
     <div class="container">
@@ -37,7 +37,7 @@ $noticeDto = $mypageNoticeDetail->getNoticeDto();
                         <div class="box_info">
                             <p class="notice_date"><?=Config::h($noticeDto->getInsertDate());?></p>
                             <h4><?=Config::h($noticeDto->getTitle());?></h4>
-                            <p class="notice_text"><?=$noticeDto->getMainText();?></p>
+                            <p class="notice_text"><?=Config::h($noticeDto->getMainText());?></p>
                         </div>
                     </div>
                 </div>
