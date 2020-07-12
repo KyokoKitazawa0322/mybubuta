@@ -1112,6 +1112,7 @@ body {
 
 .item_detail_txt{
     margin-bottom: 20px;
+    white-space: pre-wrap;
 }
 
 .price {
@@ -1295,6 +1296,13 @@ body {
 #mypage_notice h4 {
     font-weight: bold;
     margin-bottom: 20px;
+}
+
+/**--------------------------------------------------------
+        mypage_notice_detail.php
+----------------------------------------------------------*/
+#mypage_notice_detail .notice_text {
+    white-space: pre-wrap;
 }
 
 /**--------------------------------------------------------
@@ -3375,6 +3383,10 @@ body {
 #admin_notice_detail td, #admin_notice_register td {
     width: 90%;   
     text-align: left;
+}
+
+#admin_notice_detail .admin_notice_main_text {
+    white-space: pre-wrap;   
 }
 
 /**--------------------------------------------------------
