@@ -28,9 +28,6 @@ class CsrfValidator {
         }
     }
 
-    /**
-    * throw InvalidParamException
-    **/
     public static function maketoken($formname){
        
         $token = sha1(uniqid(mt_rand(), true));
@@ -42,13 +39,10 @@ class CsrfValidator {
     * throw InvalidParamException
     **/
     public static function checkToken($token, $formName){
-        if(!$token){
+        if(!$token || !isset($_SESSION[$formName])){
             throw new InvalidParamException('CSRF validation failed. -no token found');
         }
         
-        if(!isset($_SESSION[$formName])){
-            throw new InvalidParamException('CSRF validation failed. -no token found');
-        }
         $key = $_SESSION[$formName];
            
         if($key !== $token ){
@@ -56,7 +50,6 @@ class CsrfValidator {
         }
         unset($_SESSION[$formName]);   
     }
-
 }
 
 ?>
