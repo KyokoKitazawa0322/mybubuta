@@ -223,7 +223,7 @@ class NoticeDao{
                 $dto = $this->setDto($res);
                 return $dto;
             }else{
-                $result=preg_replace("/id=\?/", 'id='.$customerId, $sql);
+                $result=preg_replace("/id=\?/", 'id='.$noticeId, $sql);
                 throw new DBParamException("invalid param error".$result);
             }
         }catch(\PDOException $e){
