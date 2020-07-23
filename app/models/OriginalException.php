@@ -42,7 +42,7 @@ class OriginalException extends \Exception {
         /*- デェフォルトで例外がなげられるMyPDOExceptionとMyS3Exceptionは
             HTTPレスポンスステータスコード500をセット
             (コンストラクのCodeはそのまま受け取り出力するため)-*/
-        if($e instanceof \Models\MyPDOException　|| $e instanceof \Models\MyS3Exception) {
+        if($e instanceof \Models\MyPDOException　|| $e instanceof \Models\MyS3Exception || $e instanceof \Models\DBConnectionException) {
             header('Content-Type: text/plain; charset=UTF-8', true, 500);
             die($e->getUserMessage());
         }else{
