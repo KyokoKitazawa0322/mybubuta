@@ -24,7 +24,7 @@ class AdminOrderDetailAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -34,21 +34,9 @@ class AdminOrderDetailAction{
             header("Location:/html/admin/admin_login.php");
             exit();
         }
-        
-        if($cmd == "admin_order_detail"){            
-            $orderId = filter_input(INPUT_POST, 'order_id');
-            $customerId = filter_input(INPUT_POST, 'customer_id');
-            
-            $_SESSION['admin_order_id'] = $orderId;
-            $_SESSION['admin_customer_id'] = $customerId;
-        }
-        
-        if(isset($_SESSION['admin_order_id'])){
-            $orderId = $_SESSION['admin_order_id'];   
-        }
-        if(isset($_SESSION['admin_customer_id'])){
-            $customerId = $_SESSION['admin_customer_id'];   
-        }
+           
+        $orderId = Config::getGET("order_id");
+        $customerId = Config::getGET("customer_id");
         
         if($orderId && $customerId){
             try{

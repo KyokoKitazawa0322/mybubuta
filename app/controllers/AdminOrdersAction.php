@@ -9,6 +9,7 @@ use \Config\Config;
 
 use \Models\OriginalException;
 use \Models\DBConnectionException;
+use \Models\InvalidParamException;
 
 class AdminOrdersAction{
     
@@ -19,7 +20,7 @@ class AdminOrdersAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -30,9 +31,7 @@ class AdminOrdersAction{
             exit();
         }
         
-        unset($_SESSION['admin_order_id']);
-        unset($_SESSION['admin_customer_id']);
-        $content = filter_input(INPUT_POST, 'content');
+        $content = Config::getPOST('content');
     
         try{
             $model = Model::getInstance();
@@ -52,7 +51,7 @@ class AdminOrdersAction{
                     case "sortby_total_amount_asc":
                         $this->orders = $orderHistoryDao->getOrdersAllSortByTotalAmountASC();
                         break;  
-                    case "sortby_total_quntity_asc":
+                    case "sortby_total_quantity_asc":
                         $this->orders = $orderHistoryDao->getOrdersAllSortByTotalQuantityASC();
                         break;  
                     case "sortby_purchase_date_desc":
@@ -61,9 +60,9 @@ class AdminOrdersAction{
                     case "sortby_total_amount_desc":
                         $this->orders = $orderHistoryDao->getOrdersAllSortByTotalAmountDESC();
                         break;  
-                    case "sortby_total_quntity_desc":
+                    case "sortby_total_quantity_desc":
                         $this->orders = $orderHistoryDao->getOrdersAllSortByTotalQuantityDESC();
-                        break;  
+                        break;
                     default:
                         throw new InvalidParamException("Invalid param for sort:".$content);
                 } 
