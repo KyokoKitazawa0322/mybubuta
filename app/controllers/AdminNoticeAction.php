@@ -21,7 +21,7 @@ class AdminNoticeAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -32,8 +32,8 @@ class AdminNoticeAction{
             exit();
         }
         
-        $noticeId = filter_input(INPUT_POST, 'notice_id');
-        $content = filter_input(INPUT_POST, 'content');
+        $noticeId = Config::getPOST('notice_id');
+        $content = Config::getPOST('content');
         
        try{
             $model = Model::getInstance();
@@ -42,61 +42,58 @@ class AdminNoticeAction{
         
        }catch(DBConnectionException $e){
             $e->handler($e);   
+       }
+        
+        if($cmd == "delete"){
+            $token = Config::getPOST( "token");
+            try{
+                CsrfValidator::validate($token);
+                $noticeDao->deleteNoticeInfo($noticeId);
+
+            }catch(InvalidParamException $e){
+                $e->handler($e);   
+
+            } catch(MyPDOException $e){
+                $e->handler($e);
+
+            }catch(DBParamException $e){
+                $e->handler($e);
+            }
         }
         
-        switch($cmd){
-            case "delete":
-            
-                $token = filter_input(INPUT_POST, "token");
-                try{
-                    CsrfValidator::validate($token);
-                }catch(InvalidParamException $e){
-                    $e->handler($e);   
-
+        if($cmd == "sort"){
+            try{
+                switch($content) {
+                    case "sortby_id_desc":
+                        $noticeDto = $noticeDao->getNoticeAllSortByIdDesc();
+                        $this->noticeDto = $noticeDto;      
+                        break;
+                    case "sortby_id_asc":
+                        $noticeDto = $noticeDao->getNoticeAllSortByIdAsc();
+                        $this->noticeDto = $noticeDto;      
+                    default:
+                        throw new InvalidParamException("Invalid param for sort:".$content);
                 }
-                try{
-                    $noticeDao->deleteNoticeInfo($noticeId);
-                } catch(MyPDOException $e){
-                    $e->handler($e);
+            } catch(InvalidParamException $e){
+                $e->handler($e);
+                
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-                }catch(DBParamException $e){
-                    $e->handler($e);
-                }
-                break;
-        
-            case "sort":
-                try{
-                    switch($content) {
-                        case "sortby_id_desc":
-                            $noticeDto = $noticeDao->getNoticeAllSortByIdDesc();
-                            $this->noticeDto = $noticeDto;      
-                            break;
-                        case "sortby_id_asc":
-                            $noticeDto = $noticeDao->getNoticeAllSortByIdAsc();
-                            $this->noticeDto = $noticeDto;      
-                            break;
-                        default:
-                    }
-                } catch(MyPDOException $e){
-                    $e->handler($e);
+            }catch(NoRecordException $e){
+                $e->handler($e);
+            }
+        }else{
+            try{
+                $noticeDto = $noticeDao->getNoticeInfoAll();
+                $this->noticeDto = $noticeDto;
 
-                }catch(NoRecordException $e){
-                    $e->handler($e);
-                }
-                break;
-        
-            default:
-                try{
-                    $noticeDto = $noticeDao->getNoticeInfoAll();
-                    $this->noticeDto = $noticeDto;
+            } catch(MyPDOException $e){
+                $e->handler($e);
 
-                } catch(MyPDOException $e){
-                    $e->handler($e);
-
-                }catch(NoRecordException $e){
-                    $e->handler($e);
-                }
-                break;
+            }catch(NoRecordException $e){
+                $e->handler($e);
+            }
         }
     }
     
