@@ -21,7 +21,8 @@ class AdminNoticeDetailAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
+        $getCmd = Config::getGET('cmd');
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -31,21 +32,8 @@ class AdminNoticeDetailAction{
             header("Location:/html/admin/admin_login.php");
             exit();
         }
-          
-        if($_SESSION['notice_id']){
-           $noticeId = $_SESSION['notice_id']; 
-        }
-        $noticeId = filter_input(INPUT_POST, 'notice_id');   
-        
-        /*====================================================================
-          admin_notice.phpで「詳細」ボタンが押された時の処理
-        =====================================================================*/
-        if($cmd == "notice_detail"){ 
-            if($noticeId){
-                $_SESSION['notice_id'] = $noticeId;   
-            }
-        }
-            
+
+        $noticeId = Config::getGET('notice_id');   
         if($noticeId){
             try{
                 $model = Model::getInstance();
