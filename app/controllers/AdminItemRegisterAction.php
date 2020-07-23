@@ -31,12 +31,16 @@ class AdminItemRegisterAction extends UploadFileDao{
     private $itemDetailError;
     private $itemImageError;
     
+    private $sessionKey;
+    
+    private $errorMessage = "none";
+    
     public function execute(){
         
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -46,26 +50,29 @@ class AdminItemRegisterAction extends UploadFileDao{
             header("Location:/html/admin/admin_login.php");
             exit();
         }
+    
+        $sessionKey = "admin_item_register-".rand(5,10);
+        $this->sessionKey = $sessionKey;
+        
+        $password = Config::getPOST("password");
         
         if($cmd == "admin_item_register"){
-            $token = filter_input(INPUT_POST, "token");
+            $token = Config::getPOST( "token");
             try{
                 CsrfValidator::validate($token);
             }catch(InvalidParamException $e){
                 $e->handler($e);   
             }
             
-            $validator = new CommonValidator();
+            $itemCode = Config::getPOST('item_code');
+            $itemName = Config::getPOST('item_name'); 
+            $itemPrice = Config::getPOSTWithFilter('item_price', FILTER_SANITIZE_NUMBER_INT);
+            $itemCategory = Config::getPOST('item_category');  
+            $itemStock = Config::getPOSTWithFilter('item_stock', FILTER_SANITIZE_NUMBER_INT);
+            $itemStatus = Config::getPOST('item_status');
+            $itemDetail = Config::getPOST('item_detail'); 
             
-            $itemCode = filter_input(INPUT_POST, 'item_code');
-            $itemName = filter_input(INPUT_POST, 'item_name'); 
-            $itemPrice = filter_input(INPUT_POST, 'item_price', FILTER_SANITIZE_NUMBER_INT);
-            $itemCategory = filter_input(INPUT_POST, 'item_category');  
-            $itemStock = filter_input(INPUT_POST, 'item_stock', FILTER_SANITIZE_NUMBER_INT);
-            $itemStatus = filter_input(INPUT_POST, 'item_status');
-            $itemDetail = filter_input(INPUT_POST, 'item_detail'); 
-            
-            $_SESSION['admin_register'] = array (
+            $_SESSION[$sessionKey] = array (
                 'item_name' => $itemName, 
                 'item_code' => $itemCode,  
                 'item_price' => $itemPrice,  
@@ -89,26 +96,48 @@ class AdminItemRegisterAction extends UploadFileDao{
 
             }catch(InvalidParamException $e){
                 $e->handler($e);
+                
             }catch(UploadException $e){
                 $e->handler_light($e);
                 $this->itemImageError = $e->getUserMessage();
             }
             
-            $key = "商品コード";
-            $this->itemCodeError = $validator->requireCheck($key, $itemCode);    
+            $validator = new CommonValidator();
             
             $key = "商品名";
-            $this->itemNameError = $validator->requireCheck($key, $itemName);    
-
+            $limit = 30;
+            $this->itemNameError = $validator->fullWidthValidation($key, $itemName, $limit); 
+            
+            try{
+                $model = Model::getInstance();
+                $pdo = $model->getPdo();
+                $itemsDao = new ItemsDao($pdo);
+                $itemsDto = $itemsDao->getItemByItemCode($itemCode);
+                
+                if($itemsDto){
+                    $this->itemCodeError = "商品コードはすでに使用されてます。";   
+                }else{
+                    $key = "商品コード";
+                    $this->itemCodeError = $validator->itemCodeValidation($key, $itemCode);   
+                }
+            }catch(DBConnectionException $e){
+                $e->handler($e);   
+                
+            } catch(DBParamException $e){
+                //
+            }
+            
             $key = "商品価格";
-            $result = $validator->priceValidation($key, $itemPrice);
+            $limit = 999999;
+            $result = $validator->priceValidation($key, $itemPrice, $limit);
             $this->itemPriceError = $result;
 
             $key = "商品カテゴリー";
             $this->itemCategoryError = $validator->requireCheck($key, $itemCategory);    
             
             $key = "在庫";
-            $this->itemStockError = $validator->priceValidation($key, $itemStock);
+            $limit = 999999;
+            $this->itemStockError = $validator->stockValidation($key, $itemStock, $limit);
             
             $key = "ステータス";
             $this->itemStatusError = $validator->requireCheck($key, $itemStatus);
@@ -118,50 +147,73 @@ class AdminItemRegisterAction extends UploadFileDao{
             }
             
             $key = "商品詳細";
-            $this->itemDetailError = $validator->requireCheckForTextarea($key, $itemDetail);
+            $limit = 500;
+            $this->itemDetailError = $validator->textAreaValidation($key, $itemDetail, $limit);
           
             if(!$this->getItemStatusError()){
         
                 try{
-                    //DBに格納する値を代入
-                    if($itemStatus == "1"){
-                        $itemStatus = "1";//販売中     
-                    }elseif($itemStatus == "2"){
-                        $itemStatus = "2";//入荷待ち  
-                    }elseif($itemStatus == "3"){
-                        $itemStatus = "6";//販売前待機中
-                    }else{
-                        throw new InvalidParamException("invalid param in input-radio:{$itemStatus}");  
-                    }
+                    $itemStatus = $this->checkItemStatus($itemStatus);
                 } catch(InvalidParamException $e){
                     $e->handler($e);
                 }
             }
 
             if($validator->getResult() && !$this->getItemImageError()) {
-                    /*- バリデーション通過した時の処理 -*/
-                try{
-                    $result = $this->uploadImage($itemImageName, $itemOriginImageName);
-                    $itemImagePath = $result;
-                    
-                    $model = Model::getInstance();
-                    $pdo = $model->getPdo();
-                    $itemsDao = new ItemsDao($pdo);
-                    $itemDto = $itemsDao->insertItemInfo($itemCode, $itemName, $itemPrice, $itemCategory, $itemImageName, $itemImagePath, $itemDetail, $itemStock, $itemStatus);
-                    
-                    unset($_SESSION['admin_register']);
-                    
-                }catch(DBConnectionException $e){
-                    $e->handler($e);   
+                    /*- バリデーション通過した時の処理 -*/ 
+                $confirmPassword = getenv('CONFIRM_PASSWORD');
+                
+                if($password !== $confirmPassword){
+                    try{
+                        $result = $this->uploadImage($itemImageName, $itemOriginImageName);
+                        $itemImagePath = $result;
 
-                } catch(MyS3Exception $e){
-                    $e->handler($e);
+                        $model = Model::getInstance();
+                        $pdo = $model->getPdo();
+                        $itemsDao = new ItemsDao($pdo);
+                        $itemDto = $itemsDao->insertItemInfo($itemCode, $itemName, $itemPrice, $itemCategory, $itemImageName, $itemImagePath, $itemDetail, $itemStock, $itemStatus);
 
-                } catch(MyPDOException $e){
-                    $e->handler($e);
+                        unset($_SESSION[$sessionKey]);
+
+                    }catch(DBConnectionException $e){
+                        $e->handler($e);   
+
+                    } catch(MyS3Exception $e){
+                        $e->handler($e);
+
+                    } catch(MyPDOException $e){
+                        $e->handler($e);
+                    }
+                }else{
+                    $this->errorMessage = "デモ画面のため、実際の登録はできません。";
                 }
             }
         }
+    }
+    
+    /*---------------------------------------*/
+    
+    /**
+    * 下記文字列を引数として、メソッド内で更に条件分岐で精査
+    * itemsDAOのメソッドに引数として渡す値を代入
+    * throw InvalidParamException
+    * return String $itemStatus
+    **/
+    public function checkItemStatus($status){
+        switch($status){
+            case "1":
+                $itemStatus = "1";//販売中   
+                break;
+            case "2":
+                $itemStatus = "2";//入荷待ち
+                break;
+            case "3":
+                $itemStatus = "6";//販売前待機中
+                break;
+            default:
+                throw new InvalidParamException('invalid param in $_POST["item_status"]:'.$status);           
+        }
+        return $itemStatus;
     }
     
     public function getItem(){
@@ -200,21 +252,28 @@ class AdminItemRegisterAction extends UploadFileDao{
         return $this->itemImageError;   
     }
     
+    public function getErrorMessage(){
+        return $this->errorMessage;   
+    }
+    
     public function checkSelectedStatus($value){
-        if(isset($_SESSION['admin_register']['status']) && $_SESSION['admin_register']['status']==$value){ 
-            echo "selected";
+        $sessionKey = $this->sessionKey;
+        if(isset($_SESSION[$sessionKey]['item_status']) && $_SESSION[$sessionKey]['item_status']==$value){ 
+            echo "checked";
         }
     }
     
     public function echoValue($value){
-        if(isset($_SESSION['admin_register'][$value])){
-            echo $_SESSION['admin_register'][$value];
+        $sessionKey = $this->sessionKey;
+        if(isset($_SESSION[$sessionKey][$value])){
+            echo $_SESSION[$sessionKey][$value];
         }
     }
     
     public function checkSelectedCategory($value){
-        if(isset($_SESSION['admin_register']['category']) && $_SESSION['admin_register']['category']==$value){ 
-            echo "selected";
+        $sessionKey = $this->sessionKey;
+        if(isset($_SESSION[$sessionKey]['item_category']) && $_SESSION[$sessionKey]['item_category']==$value){ 
+            echo "checked";
         }
     }
 }
