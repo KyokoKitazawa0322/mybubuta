@@ -219,9 +219,9 @@ class DeliveryDao{
      * @throws MyPDOException 
      * @throws DBParamException
      */
-    public function deleteDeliveryInfo($customerId){
+    public function deleteDeliveryInfo($customerId, $deliveryId){
         try{
-            $sql = "DELETE FROM delivery WHERE customer_id= && delivery_id=?";
+            $sql = "DELETE FROM delivery WHERE customer_id=? && delivery_id=?";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $customerId, \PDO::PARAM_INT);
