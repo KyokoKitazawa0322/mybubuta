@@ -24,7 +24,7 @@ class AdminCustomerDetailAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -34,14 +34,10 @@ class AdminCustomerDetailAction{
             header("Location:/html/admin/admin_login.php");
             exit();
         }
+
+        $customerId = Config::getGET("customer_id");
         
-        if($cmd == "detail"){
-            $customerId = filter_input(INPUT_POST, 'customer_id');
-            $_SESSION['admin_customer_id'] = $customerId;
-        }
-        
-        if(isset($_SESSION['admin_customer_id'])){       
-            $customerId = $_SESSION['admin_customer_id'];
+        if($customerId){
             try{
                 $model = Model::getInstance();
                 $pdo = $model->getPdo();
@@ -53,10 +49,10 @@ class AdminCustomerDetailAction{
 
             }catch(DBConnectionException $e){
                 $e->handler($e);   
-                
+
             } catch(MyPDOException $e){
                 $e->handler($e);
-                
+
             } catch(DBParamException $e){
                 $e->handler($e);
             }

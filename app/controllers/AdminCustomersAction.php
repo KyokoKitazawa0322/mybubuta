@@ -22,7 +22,7 @@ class AdminCustomersAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -32,9 +32,8 @@ class AdminCustomersAction{
             header("Location:/html/admin/admin_login.php");
             exit();
         }
-        
-        unset($_SESSION['admin_customer_id']);
-        $content = filter_input(INPUT_POST, 'content');
+
+        $content = Config::getPOST('content');
         
         try{
             $model = Model::getInstance();

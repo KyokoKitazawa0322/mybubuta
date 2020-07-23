@@ -18,13 +18,14 @@ class AdminCustomerOrderDetailAction{
     
     private $orderDetailDto;
     private $orderHistoryDto;
+    private $customerId;
         
     public function execute(){
         
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -35,10 +36,11 @@ class AdminCustomerOrderDetailAction{
             exit();
         }
         
-        if($cmd == "admin_order_detail"){            
-            $orderId = filter_input(INPUT_POST, 'order_id');
-            $customerId = filter_input(INPUT_POST, 'customer_id');
-
+        $customerId = Config::getGET("customer_id");
+        $orderId = Config::getGET("order_id");
+        $this->customerId = $customerId;
+        
+        if($customerId && $orderId){
             try{
                 $model = Model::getInstance();
                 $pdo = $model->getPdo();
@@ -57,6 +59,9 @@ class AdminCustomerOrderDetailAction{
             } catch(DBParamException $e){
                 $e->handler($e);
             }
+        }else{
+            header("Location:/html/admin/admin_login.php");
+            exit();
         }
     }
     
@@ -67,5 +72,9 @@ class AdminCustomerOrderDetailAction{
     public function getOrderDetail(){
         return $this->orderDetailDto;   
     }  
+    
+    public function getCustomerId(){
+        return $this->customerId;   
+    }
 }
 ?>

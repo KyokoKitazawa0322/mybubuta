@@ -14,13 +14,14 @@ use \Models\DBConnectionException;
 class AdminCustomerOrderHistoryAction{
     
     private $orders = [];
-        
+    private $customerId;
+    
     public function execute(){
         
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -31,11 +32,10 @@ class AdminCustomerOrderHistoryAction{
             exit();
         }
         
-        if($cmd == "order_history"){
-            
-            $customerId = filter_input(INPUT_POST, 'customer_id');
-            $OrderId = filter_input(INPUT_POST, 'order_id');
-
+        $customerId = Config::getGET("customer_id");
+        $this->customerId = $customerId;
+        
+        if($customerId){
             try{
                 $model = Model::getInstance();
                 $pdo = $model->getPdo();
@@ -43,18 +43,25 @@ class AdminCustomerOrderHistoryAction{
 
                 $orders = $orderHistoryDao->getAllOrderHistory($customerId);
                 $this->orders = $orders;
-                
+
             }catch(DBConnectionException $e){
                 $e->handler($e);  
 
             }catch(MyPDOException $e){
                 $e->handler($e);
             }
+        }else{
+            header("Location:/html/admin/admin_login.php");
+            exit();
         }
     }
     
     public function getOrders(){
         return $this->orders;   
     }  
+    
+    public function getCustomerId(){
+        return $this->customerId;   
+    }
 }
 ?>
