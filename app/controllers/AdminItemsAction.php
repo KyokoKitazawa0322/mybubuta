@@ -21,7 +21,7 @@ class AdminItemsAction{
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "admin_logout"){
             unset($_SESSION['admin_id']);    
@@ -33,8 +33,9 @@ class AdminItemsAction{
         }
         
         unset($_SESSION['update_item_code']);
-        $content = filter_input(INPUT_POST, 'content');
-        $itemCode = filter_input(INPUT_POST, 'item_code');
+        unset($_SESSION['admin_register']);
+        $content = Config::getPOST('content');
+        $itemCode = Config::getPOST('item_code');
         
         try{
             $model = Model::getInstance();
@@ -44,31 +45,19 @@ class AdminItemsAction{
         }catch(DBConnectionException $e){
             $e->handler($e);   
         }
-        
-        if($cmd == "delete"){
-            try{
-                $itemsDao->deleteItem($itemCode);
-            
-            } catch(MyPDOException $e){
-                $e->handler($e);
-
-            }catch(DBParamException $e){
-                $e->handler($e);
-            }
-        }
          
         if($cmd == "search" || $cmd == "reset"){
             /*- 検索条件をリセット -*/
             $_SESSION['admin_search'] = array();
         }
         
-        $itemCode = filter_input(INPUT_POST, 'search_item_code');
-        $keyword = filter_input(INPUT_POST, 'search_keyword');
-        $category = filter_input(INPUT_POST, 'search_category');
-        $status = filter_input(INPUT_POST, 'search_status');
-        $minPrice = filter_input(INPUT_POST, 'search_minprice');
-        $maxPrice = filter_input(INPUT_POST, 'search_maxprice');
-        $content = filter_input(INPUT_POST, 'content');
+        $itemCode = Config::getPOST('search_item_code');
+        $keyword = Config::getPOST('search_keyword');
+        $category = Config::getPOST('search_category');
+        $status = Config::getPOST('search_status');
+        $minPrice = Config::getPOST('search_minprice');
+        $maxPrice = Config::getPOST('search_maxprice');
+        $content = Config::getPOST('content');
         
         if($status){
             try{
