@@ -31,39 +31,61 @@ class CommonValidator {
         }
         return $error; 
     }
-    
+
     //---------------------------------------
-    public function requireCheckForTextarea($key, $value) {
+    public function checkLength($key, $value, $limit){
+        if(!preg_match("/\A[\s\S]{1,{$limit}}\z/u",$value)){
+            $error = $key.'は'.$limit.'文字以内で入力して下さい';
+            return $error;
+        }
+    }
+
+    //---------------------------------------
+    public function textAreaValidation($key, $value, $limit) {
         $error = FALSE;
         $value_trim = trim($value);
+        
         if($value_trim == "") {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
+            
+        }elseif($error = $this->checkLength($key, $value, $limit)){
+            $this->result = FALSE;
+        }
+        return $error; 
+    }
+    
+    //---------------------------------------
+    public function fullWidthValidation($key, $value, $limit) {
+        $error = FALSE;
+    
+        if(empty($value)){
+            $error = $key.'は必須入力です。';
+            $this->result = FALSE;
+    
+        }elseif($error = $this->checkLength($key, $value, $limit)){
+            $this->result = FALSE;
+                
+        }elseif(!preg_match("/\A([０-９Ａ-Ｚぁ-んァ-ヶー―－々〇〻\x{3400}-\x{9FFF}\x{F900}-\x{FAFF}\x{20000}-\x{2FFFF}])+\z/u", $value)){
+                $error = $key.'は全角文字で入力して下さい。';
+                $this->result = FALSE;
         }
         return $error; 
     }
 
     //---------------------------------------
-    public function fullWidthValidation($key, $value) {
+
+    public function rubyValidation($key, $value, $limit) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^[ぁ-んァ-ヶー一-龠 　\r\n\t]+$/u',$value)){
-            $error = $key.'は全角文字で入力して下さい。';
+            
+        }elseif($error = $this->checkLength($key, $value, $limit)){
             $this->result = FALSE;
-        }
-        return $error; 
-    }
-
-    //---------------------------------------
-
-    public function rubyValidation($key, $value) {
-        $error = FALSE;
-        if(empty($value)) {
-            $error = $key.'は必須入力です。';
-            $this->result = FALSE;
-        }elseif(!preg_match('/^[ア-ン゛゜ァ-ォャ-ョー「」、]+$/u',$value)) {
+            
+        }elseif(!preg_match('/\A[ア-ン゛゜ァ-ォャ-ョー「」、]+\z/u',$value)) {
             $error = $key.'は全角カタカナで入力して下さい。';
             $this->result = FALSE;
         }
@@ -74,10 +96,15 @@ class CommonValidator {
 
     public function mailValidation($key, $value) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/',$value)) {
+            
+        }elseif($error = $this->checkLength($key, $value, 255)){
+            $this->result = FALSE;
+            
+        }elseif(!preg_match('/\A([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+\z/',$value)){
             $error = $key.'を正しく入力して下さい。';
             $this->result = FALSE;
         }
@@ -87,10 +114,12 @@ class CommonValidator {
     //---------------------------------------
     public function telValidation($key, $value) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^(0{1}\d{9,10})$/',$value)) {
+        
+        }elseif(!preg_match('/\A(0{1}\d{9,10})\z/',$value)) {
             $error = $key.'は半角数字で市外局番から正しく入力してください。';
             $this->result = FALSE;
         }
@@ -100,10 +129,12 @@ class CommonValidator {
     //---------------------------------------
     public function firstZipCodeValidation($key, $value) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^\d{3}$/',$value)) {
+        
+        }elseif(!preg_match('/\A\d{3}\z/',$value)) {
             $error = $key.'を正しく入力して下さい。';
             $this->result = FALSE;
         }
@@ -113,10 +144,12 @@ class CommonValidator {
     //---------------------------------------
     public function lastZipCodeValidation($key, $value) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^\d{4}$/',$value)) {
+        
+        }elseif(!preg_match('/\A\d{4}\z/',$value)) {
             $error = $key.'を正しく入力して下さい。';
             $this->result = FALSE;
         }
@@ -147,10 +180,12 @@ class CommonValidator {
       //パスワードチェック
     public function passValidation($key, $value) {
         $error = FALSE;
+        
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match("/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,20}$/", $value)){
+        
+        }elseif(!preg_match("/\A(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,20}\z/", $value)){
             $error = $key.'は英字・数字を含め8～20文字で入力してください。';
             $this->result = FALSE;
         }
@@ -160,9 +195,11 @@ class CommonValidator {
     //パスワード(再確認)チェック
     public function passConfirmValidation($key, $value, $confirm) {
         $error = FALSE;
+       
         if(empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
+        
         }elseif($value != $confirm){
             $error = $key.'が一致しません。';
             $this->result = FALSE;
@@ -171,12 +208,18 @@ class CommonValidator {
     }
     
     //---------------------------------------
-    public function priceValidation($key, $value) {
+    public function priceValidation($key, $value, $limit) {
         $error = FALSE;
-        if(empty($value)) {
+            
+        if(empty($value)){
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^(0|[1-9]\d*)$/',$value)) {
+        
+        }elseif($value >= $limit){
+            $error = $key.'の上限金額は'.number_format($limit).'円です。';
+            return $error;
+            
+        }elseif(!preg_match('/\A([1-9][0-9]*)\z/',$value)) {
             $error = $key.'を正しく入力して下さい。';
             $this->result = FALSE;
         }
@@ -184,18 +227,54 @@ class CommonValidator {
     }
     
     //---------------------------------------
-    public function numberValidation($key, $value) {
+    /*- 0も許容 -*/
+    public function stockValidation($key, $value, $limit) {
         $error = FALSE;
+        
         if(!$value==0 && empty($value)) {
             $error = $key.'は必須入力です。';
             $this->result = FALSE;
-        }elseif(!preg_match('/^\d{0,7}$/',$value)) {
+            
+        }elseif($value >= $limit){
+            $error = $key.'の上限は'.number_format($limit).'個です。';
+            return $error;
+        
+        }elseif(!preg_match('/\A(0|[1-9][0-9]*)\z/',$value)) {
             $error = $key.'を正しく入力して下さい。';
             $this->result = FALSE;
         }
         return $error; 
     }
-
+    
+    //---------------------------------------
+    public function itemCodeValidation($key, $value){
+        $error = FALSE;
+       
+        if(empty($value)) {
+            $error = $key.'は必須入力です。';
+            $this->result = FALSE;
+        
+        }elseif(!preg_match("/\A([A-Z]-[0-9]{4})\z/", $value)){
+            $error = $key.'を正しく入力して下さい。';
+            $this->result = FALSE;
+        }
+        return $error; 
+    }
+    
+    //---------------------------------------
+    public function stringValidation($key, $value, $limit){
+        $error = FALSE;
+       
+        if(empty($value)) {
+            $error = $key.'は必須入力です。';
+            $this->result = FALSE;
+        
+        }elseif($error = $this->checkLength($key, $value, $limit)){
+            $this->result = FALSE;
+        }
+        return $error; 
+    }
+    
     public function getResult(){
         return $this->result;
     }
