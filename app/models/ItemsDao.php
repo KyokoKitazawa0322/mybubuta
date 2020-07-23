@@ -396,38 +396,36 @@ class ItemsDao{
     /**
      * 商品情報更新
      * @param string $itemName　商品名
-     * @param string $itemCode 商品コード
      * @param int $itemPrice 商品価格(税抜き)
      * @param int $itemStock 在庫数
      * @param string $itemStatus 商品ステータス
      * @param string $itemDetail 商品説明
-     * @param string $itemCode 既存の商品コード
+     * @param string $itemCode 商品コード
      * @throws MyPDOException
      * @throws DBParamException
      */
-    public function updateItemInfo($itemName, $updateItemCode, $itemPrice, $itemStock, $itemStatus, $itemDetail, $itemCode){
+    public function updateItemInfo($itemName, $itemPrice, $itemStock, $itemStatus, $itemDetail, $itemCode){
         
         $itemTax = $itemPrice * Config::TAXRATE;
         $itemUpdatedDate = Config::getDateTime();
         
         try{
             
-            $sql ="UPDATE items SET item_name=?, item_code=?, item_price=?, item_tax=?, item_stock=?, item_status=?, item_detail=?, item_updated_date=? WHERE item_code=?";
+            $sql ="UPDATE items SET item_name=?, item_price=?, item_tax=?, item_stock=?, item_status=?, item_detail=?, item_updated_date=? WHERE item_code=?";
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindvalue(1, $itemName, \PDO::PARAM_STR);
-            $stmt->bindvalue(2, $updateItemCode, \PDO::PARAM_STR);
-            $stmt->bindvalue(3, $itemPrice, \PDO::PARAM_INT);
-            $stmt->bindvalue(4, $itemTax, \PDO::PARAM_INT);
-            $stmt->bindvalue(5, $itemStock, \PDO::PARAM_INT);
-            $stmt->bindvalue(6, $itemStatus, \PDO::PARAM_STR);
-            $stmt->bindvalue(7, $itemDetail, \PDO::PARAM_STR);
-            $stmt->bindvalue(8, $itemUpdatedDate, \PDO::PARAM_STR);
-            $stmt->bindvalue(9, $itemCode, \PDO::PARAM_STR);
+            $stmt->bindvalue(2, $itemPrice, \PDO::PARAM_INT);
+            $stmt->bindvalue(3, $itemTax, \PDO::PARAM_INT);
+            $stmt->bindvalue(4, $itemStock, \PDO::PARAM_INT);
+            $stmt->bindvalue(5, $itemStatus, \PDO::PARAM_STR);
+            $stmt->bindvalue(6, $itemDetail, \PDO::PARAM_STR);
+            $stmt->bindvalue(7, $itemUpdatedDate, \PDO::PARAM_STR);
+            $stmt->bindvalue(8, $itemCode, \PDO::PARAM_STR);
             $stmt->execute();
             $count = $stmt->rowCount();
             if($count<1){
-                $pattern=array("/item_name=\?/", "/item_code=\?/", "/item_price=\?/", "/item_tax=\?/", "/item_stock=\?/", "/item_status=\?/","/item_detail=\?/",  "/item_updated_date=\?/", "/item_code=\?/");
-                $replace=array('item_name='.$itemName, 'item_code='.$updateItemCode, 'item_price='.$itemPrice, 'item_tax='.$itemTax, 'item_stock='.$itemStock, 'item_status='.$itemStatus, 'item_detail='.$itemDetail, 'item_updated_date='.$itemUpdatedDate, 'item_code='.$itemCode);
+                $pattern=array("/item_name=\?/", "/item_price=\?/", "/item_tax=\?/", "/item_stock=\?/", "/item_status=\?/","/item_detail=\?/",  "/item_updated_date=\?/", "/item_code=\?/");
+                $replace=array('item_name='.$itemName, 'item_price='.$itemPrice, 'item_tax='.$itemTax, 'item_stock='.$itemStock, 'item_status='.$itemStatus, 'item_detail='.$itemDetail, 'item_updated_date='.$itemUpdatedDate, 'item_code='.$itemCode);
                 $result=preg_replace($pattern, $replace, $sql);
                 throw new DBParamException("invalid param error".$result);
             }
