@@ -46,7 +46,7 @@ class Model{
     }
     
     /**
-     * @throws DBConnectionException 
+     * @throws MyPDOException 
      */
     public function beginTransaction(){
         try{
@@ -57,7 +57,7 @@ class Model{
     }
     
     /**
-     * @throws DBConnectionException 
+     * @throws MyPDOException 
      */
     public function commit(){
         try{
