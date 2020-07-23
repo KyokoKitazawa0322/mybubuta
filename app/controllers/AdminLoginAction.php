@@ -24,7 +24,7 @@ class AdminLoginAction{
             exit();
         }
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
 
         /*====================================================================
         　ログイン認証
@@ -32,8 +32,8 @@ class AdminLoginAction{
         
         if($cmd == "admin_do_login"){
             $_SESSION['admin_login_error'] = null;
-            $adminId = filter_input(INPUT_POST, 'admin_id');
-            $adminPassword = filter_input(INPUT_POST, 'admin_password');
+            $adminId = Config::getPOST('admin_id');
+            $adminPassword = Config::getPOST('admin_password');
             
             try{
                 $model = Model::getInstance();
@@ -72,11 +72,29 @@ class AdminLoginAction{
         }
     }
     
-    public function echoValue($value){
-        if(isset($_POST[$value])){
-            echo $_POST[$value];
-        }elseif(isset($_COOKIE[$value])){
-            echo $_COOKIE[$value];
+    public function echoID(){
+        $adminId = Config::getPOST('admin_id');
+        $cookieId = Config::getCookie('admin_id');
+        if($adminId){
+            echo $mail;
+        }elseif($cookieId){
+            echo $cookieId;
+        }else{
+            //公開用
+            echo "idforpublic";   
+        }
+    }
+    
+    public function echoPassword(){
+        $adminPassword = Config::getPOST('admin_password');
+        $cookiePassword = Config::getCookie('admin_password');
+        if($adminPassword){
+            echo $password;
+        }elseif($cookiePassword){
+            echo $cookiePassword;
+        }else{
+            //公開用
+            echo "password1234";   
         }
     }
     
