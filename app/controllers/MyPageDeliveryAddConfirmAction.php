@@ -7,7 +7,7 @@ class MyPageDeliveryAddConfirmAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){
         
-        $cmd = filter_input(INPUT_GET, 'cmd');
+        $cmd = Config::getGET('cmd');
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
@@ -30,13 +30,19 @@ class MyPageDeliveryAddConfirmAction extends \Controllers\CommonMyPageAction{
     **/
     public function checkValidationResult(){
         
-        if(!isset($_SESSION['add_data']) || $_SESSION['add_data'] != "complete"){
-            if(!isset($_SESSION['add_data'])){
+        if(!isset($_SESSION['del_add']['add_data']) || $_SESSION['del_add']['add_data'] != "complete"){
+            if(!isset($_SESSION['del_add']['add_data'])){
                 $addData = "nothing";
             }else{
-                $addData = $_SESSION['add_data'];   
+                $addData = $_SESSION['del_add']['add_data'];   
             }
-            throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["add_data"]='.$addData);
+            throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["del_add"]["add_data"]='.$addData);
+        }
+    }
+    
+    public function echoValue($value){
+        if(isset($_SESSION['del_add'][$value])){
+            echo $_SESSION['del_add'][$value];
         }
     }
 }
