@@ -17,7 +17,7 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){
         
-        $cmd = filter_input(INPUT_GET, 'cmd');
+        $cmd = Config::getGET('cmd');
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
@@ -28,7 +28,7 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
          =====================================================================*/
         
 
-        $token = filter_input(INPUT_POST, "token_del_update_complete");
+        $token = Config::getPOST( "token_del_update_complete");
         $formName = "token_del_update_complete";
         
         try{
@@ -62,15 +62,14 @@ class MyPageDeliveryAddCompleteAction extends \Controllers\CommonMyPageAction{
             $e->handler($e);
         }
 
-        unset($_SESSION['add_data']);
         unset($_SESSION['del_add']);
 
         /*——————————————————————————————————————————————————————————————
             order_delivery_listからきた場合
         ————————————————————————————————————————————————————————————————*/
 
-        if(isset($_SESSION['from_order_flag'])){
-            unset($_SESSION['from_order_flag']);
+        if(isset($_SESSION['track_for_order']) && $_SESSION['track_for_order']=="order_delivery_list"){
+            unset($_SESSION['track_for_order']);
             header('Location:/html/order/order_delivery_list.php');
             exit();
         }
