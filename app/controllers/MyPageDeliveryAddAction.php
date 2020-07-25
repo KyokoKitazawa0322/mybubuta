@@ -26,11 +26,12 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
     private $prefectureError = false;
     private $cityError = false;
     private $blockNumberError = false;
+    private $buildingNameError = false;
     private $telError = false;   
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
@@ -41,7 +42,7 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
         =====================================================================*/
 
         if($cmd == "from_order"){
-            $_SESSION['from_order_flag'] = TRUE;   
+            $_SESSION['track_for_order'] = "order_delivery_list";   
         }
         
         /*====================================================================
@@ -50,17 +51,17 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
 
         if($cmd == 'add'){
             
-            $lastName = filter_input(INPUT_POST, 'last_name');
-            $firstName = filter_input(INPUT_POST, 'first_name');
-            $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
-            $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
-            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
-            $prefecture = filter_input(INPUT_POST, 'prefecture');
-            $city = filter_input(INPUT_POST, 'city');
-            $blockNumber = filter_input(INPUT_POST, 'block_number');
-            $buildingName = filter_input(INPUT_POST, 'building_name');
-            $tel = filter_input(INPUT_POST, 'tel');
+            $lastName = Config::getPOST('last_name');
+            $firstName = Config::getPOST('first_name');
+            $rubyLastName = Config::getPOST('ruby_last_name');
+            $rubyFirstName = Config::getPOST('ruby_first_name');
+            $zipCode01 = Config::getPOST('zip_code_01');
+            $zipCode02 = Config::getPOST('zip_code_02');
+            $prefecture = Config::getPOST('prefecture');
+            $city = Config::getPOST('city');
+            $blockNumber = Config::getPOST('block_number');
+            $buildingName = Config::getPOST('building_name');
+            $tel = Config::getPOST('tel');
             
             $_SESSION['del_add'] = array(
             'last_name' => $lastName,
@@ -79,16 +80,20 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
             $validator = new CommonValidator();
 
             $key = "氏名(性)";
-            $this->lastNameError = $validator->fullWidthValidation($key, $lastName);
+            $limit = 20;
+            $this->lastNameError = $validator->fullWidthValidation($key, $lastName, $limit);
 
             $key = "氏名(名)";
-            $this->firstNameError = $validator->fullWidthValidation($key, $firstName);
+            $limit = 20;
+            $this->firstNameError = $validator->fullWidthValidation($key, $firstName, $limit);
 
             $key = "氏名(セイ)";
-            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName);
+            $limit = 20;
+            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName, $limit);
 
             $key = "氏名(メイ)";
-            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
+            $limit = 20;
+            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName, $limit);
 
             $key = "郵便番号(3ケタ)";
             $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
@@ -108,21 +113,27 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
             }
 
             $key="市区町村";
-            $this->cityError = $validator->requireCheck($key, $city);
+            $limi = 30;
+            $this->cityError = $validator->fullWidthValidation($key, $city, $limit);
 
             $key="番地";
-            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
+            $limit = 30;
+            $this->blockNumberError = $validator->fullWidthValidation($key, $blockNumber, $limit);
+            
+            $key="建物名等";
+            $limit = 30;
+            $this->buildingNameError = $validator->fullWidthValidation($key, $buildingName, $limit);
 
             $key="電話番号";
             $this->telError = $validator->telValidation($key, $tel);
 
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
-                $_SESSION['add_data'] = "complete"; 
+                $_SESSION['del_add']['add_data'] = "complete"; 
                 header('Location:/html/mypage/delivery/mypage_delivery_add_confirm.php');
                 exit();
             }else{
-                $_SESSION['add_data'] = "incomplete"; 
+                $_SESSION['del_add']['add_data'] = "incomplete"; 
             }
         }
     }
@@ -166,6 +177,10 @@ class MyPageDeliveryAddAction extends \Controllers\CommonMyPageAction{
     
     public function getBlockNumberError(){
         return $this->blockNumberError;   
+    }
+    
+    public function getBuildingNameError(){
+        return $this->buildingNameError;   
     }
     
     public function getTelError(){
