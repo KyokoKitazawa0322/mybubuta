@@ -19,6 +19,9 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
     private $customerDto; 
     private $deliveryDto;
     
+    private $keyForUpdate;
+    private $delId;
+    
     private $lastNameError = false;
     private $firstNameError = false;
     private $rubyLastNameError = false;
@@ -28,56 +31,47 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
     private $prefectureError = false;
     private $cityError = false;
     private $blockNumberError = false;
+    private $buildingNameError = false;
     private $telError = false;   
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
-        $delId = filter_input(INPUT_POST, 'del_id');
+        $postCmd = Config::getPOST('cmd');
+        $getCmd = Config::getGET('cmd');
+        $delId = Config::getGET('del_id');
         
-        $this->checkLogoutRequest($cmd);
+        $this->checkLogoutRequest($postCmd);
         $this->checkLogin();
         $customerId = $_SESSION['customer_id'];   
         
-        /*=============================================================
-    　　　　mypage_delivery.phpで「配送先の編集」ボタンがおされたときの処理
-        =============================================================*/
-        
-        if($cmd == "del_update"){
-            unset($_SESSION['del_update']);
-            $_SESSION['del_id'] = $delId;
-        }
-        
+        $keyForUpdate = "del_update-".$delId;
+        $this->keyForUpdate = $keyForUpdate;
         /*==============================================================
         　order_delivery_list.phpで「配送先の編集」ボタンがおされたときの処理
         ==============================================================*/
-        elseif($cmd == "from_order"){
-            $_SESSION['from_order_flag'] = TRUE;  
-            unset($_SESSION['del_update']);
-            $_SESSION['del_id'] = $delId;
+        if($getCmd == "from_order"){
+            $_SESSION['track_for_order'] = "order_delivery_list";  
         }
-        
-        
-        /*==============================================================
-        　上記以外の訪問
-        ==============================================================*/
+    
         try{
-            if(!isset($_SESSION['del_id'])){
-                throw new InvalidParamException('Invalid param for delivery_complete:$_SESSION["del_id"]=nothing');
+            //GET通信でdelivery_idをもちまわる仕様のため(複数ウィンドウでの同時処理対応)、無い場合は例外処理
+            if(!$delId){
+                throw new InvalidParamException('Invalid param : $delId = nothing');
+            }else{
+                $this->delId = $delId;   
+                
+                
             }
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
 
-        /*=============================================================*/
-
-        $deliveryId = $_SESSION['del_id'];
-      
+        /*=============================================================*/      
         try{
             $model = Model::getInstance();
             $pdo = $model->getPdo();
             $deliveryDao = new DeliveryDao($pdo);
-            $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $deliveryId);
+            $this->deliveryDto = $deliveryDao->getDeliveryInfoById($customerId, $delId);
             
         }catch(DBConnectionException $e){
             $e->handler($e);   
@@ -92,21 +86,21 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
         /*====================================================================
         　「配送先の保存」ボタンが押された時の処理
         =====================================================================*/
-        if($cmd == 'register_del'){
+        if($postCmd == 'register_del'){
 
-            $lastName = filter_input(INPUT_POST, 'last_name');
-            $firstName = filter_input(INPUT_POST, 'first_name');
-            $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
-            $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
-            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
-            $prefecture = filter_input(INPUT_POST, 'prefecture');
-            $city = filter_input(INPUT_POST, 'city');
-            $blockNumber = filter_input(INPUT_POST, 'block_number');
-            $buildingName = filter_input(INPUT_POST, 'building_name');
-            $tel = filter_input(INPUT_POST, 'tel');
+            $lastName = Config::getPOST('last_name');
+            $firstName = Config::getPOST('first_name');
+            $rubyLastName = Config::getPOST('ruby_last_name');
+            $rubyFirstName = Config::getPOST('ruby_first_name');
+            $zipCode01 = Config::getPOST('zip_code_01');
+            $zipCode02 = Config::getPOST('zip_code_02');
+            $prefecture = Config::getPOST('prefecture');
+            $city = Config::getPOST('city');
+            $blockNumber = Config::getPOST('block_number');
+            $buildingName = Config::getPOST('building_name');
+            $tel = Config::getPOST('tel');
             
-            $_SESSION['del_update'] = array(
+            $_SESSION[$keyForUpdate] = array(
                  'last_name' => $lastName,
                  'first_name' => $firstName,
                  'ruby_last_name' => $rubyLastName,
@@ -123,16 +117,20 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
             $validator = new CommonValidator();
 
             $key = "氏名(性)";
-            $this->lastNameError = $validator->fullWidthValidation($key, $lastName);
+            $limit = 20;
+            $this->lastNameError = $validator->fullWidthValidation($key, $lastName, $limit);
 
             $key = "氏名(名)";
-            $this->firstNameError = $validator->fullWidthValidation($key, $firstName);
+            $limit = 20;
+            $this->firstNameError = $validator->fullWidthValidation($key, $firstName, $limit);
 
             $key = "氏名(セイ)";
-            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName);
+            $limit = 20;
+            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName, $limit);
 
             $key = "氏名(メイ)";
-            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
+            $limit = 20;
+            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName, $limit);
 
             $key = "郵便番号(3ケタ)";
             $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
@@ -152,22 +150,29 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
             }
 
             $key="市区町村";
-            $this->cityError = $validator->requireCheck($key, $city);
+            $limi = 30;
+            $this->cityError = $validator->fullWidthValidation($key, $city, $limit);
 
             $key="番地";
-            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
+            $limit = 30;
+            $this->blockNumberError = $validator->fullWidthValidation($key, $blockNumber, $limit);
+            
+            $key="建物名等";
+            $limit = 30;
+            $this->buildingNameError = $validator->fullWidthValidation($key, $buildingName, $limit);
 
             $key="電話番号";
             $this->telError = $validator->telValidation($key, $tel);
 
             if($validator->getResult()) {
                 /*- バリデーションを全て通過したときの処理 -*/
-                $_SESSION['delivery_entry_data'] = "complete"; 
-                header('Location:/html/mypage/delivery/mypage_delivery_entry_confirm.php');
+                $_SESSION[$keyForUpdate]['delivery_entry_data'] = "complete"; 
+                header("Location:/html/mypage/delivery/mypage_delivery_entry_confirm.php?del_id={$delId}");
                 exit();
             }else{
-                $_SESSION['delivery_entry_data'] = "incomplete"; 
+                $_SESSION[$keyForUpdate]['delivery_entry_data'] = "incomplete"; 
             }
+                        var_dump($_SESSION[$keyForUpdate]);
         }
     }
 
@@ -216,13 +221,22 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
         return $this->blockNumberError;   
     }
     
+    public function getBuildingNameError(){
+        return $this->buildingNameError;   
+    }
+    
     public function getTelError(){
         return $this->telError;   
     }
     
+    public function getDelId(){
+        return $this->delId;   
+    }
+    
     public function checkSelectedPrefecture($value, $customerData){
-        if(isset($_SESSION['update']['prefecture'])){
-            if($_SESSION['update']['prefecture']==$value){ 
+        $keyForUpdate = $this->keyForUpdate;
+        if(isset($_SESSION[$keyForUpdate]['prefecture'])){
+            if($_SESSION[$keyForUpdate]['prefecture']==$value){ 
                 return true;
             }
         }elseif($customerData==$value){
@@ -231,8 +245,9 @@ class MyPageDeliveryEntryAction extends \Controllers\CommonMyPageAction{
     }
     
     public function echoValue($value, $customerDate){
-        if(isset($_SESSION['del_update'][$value])){
-            echo $_SESSION['del_update'][$value];
+        $keyForUpdate = $this->keyForUpdate;
+        if(isset($_SESSION[$keyForUpdate][$value])){
+            echo $_SESSION[$keyForUpdate][$value];
         }else{
             echo $customerDate;
         }
