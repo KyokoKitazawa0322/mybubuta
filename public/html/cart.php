@@ -40,17 +40,19 @@ $(function() {
         var price = [];
         var quantity = [];
         var tax = [];
-        for(var i = 0; i < $(".buy_itemu_menu").length; i++){
-            var item_price = $(".buy_itemu_menu").eq(i).data("price");
-            var item_tax = $(".buy_itemu_menu").eq(i).data("tax");
-            var item_select = $(".buy_itemu_menu").eq(i).next(".select_wrap").children("select").find("option:selected").data("num");
+        for(var i = 0; i < $(".buy_item_menu").length; i++){
+            var item_price = $(".buy_item_menu").eq(i).data("price");
+            var item_tax = $(".buy_item_menu").eq(i).data("tax");
+            var item_select = $(".cart_item_txt").eq(i).children(".select_wrap").children("select").find("option:selected").data("num");
             //商品毎合計金額
-            var item_total = '\xA5'+ separate(item_price * item_select) + "(税込)"; 
-            $(".item_price").eq(i).html(item_total);
-            //全商品分加算(合計金額/消費税額/商品点数) 
-            price.push(item_price * item_select);
-            quantity.push(item_select);
-            tax.push(item_tax * item_select);
+            if(item_select){
+                var item_total = '\xA5'+ separate(item_price * item_select) + "(税込)"; 
+                $(".item_price").eq(i).html(item_total);
+                //全商品分加算(合計金額/消費税額/商品点数) 
+                price.push(item_price * item_select);
+                quantity.push(item_select);
+                tax.push(item_tax * item_select);
+            }
         } 
         
         //合計金額
@@ -137,53 +139,84 @@ function separate(num){
                         <?php foreach($_SESSION["cart"] as $cartItem):?>
                             <?php 
                                 $var++;
-                                $item_total_amount = $cartItem['item_price_with_tax']*$cartItem['item_quantity'];
-                                $total_amount += $cartItem['item_price_with_tax']*$cartItem['item_quantity'];
-                                $total_tax += $cartItem['item_tax']*$cartItem['item_quantity'];
-                                $total_quantity += $cartItem['item_quantity']; 
+                                $itemQuantity = $cartItem['item_quantity'];
+                                $itemStock = $cartItem['item_stock'];
+                                $itemStatus = $cartItem["item_status"];
+                                $itemName = $cartItem['item_name'];
+                                $itemCode = $cartItem['item_code'];
+                                $itemTax = $cartItem['item_tax'];
+                                $itemImagePath = $cartItem["item_image_path"];
+                                $itemPriceWithTax = $cartItem['item_price_with_tax'];
+                                $item_total_amount = $itemPriceWithTax * $itemQuantity;
+                                $total_amount += $itemPriceWithTax * $itemQuantity;
+                                $total_tax += $cartItem['item_tax'] * $itemQuantity;
+                                $total_quantity += $itemQuantity; 
                             ?>
                             <div class="cart_item">
                                 <div class="cart_item_img">
-                                    <a href="/html/item_detail.php?item_code=<?=Config::h($cartItem["item_code"])?>">
-                                        <img src="<?=Config::h($cartItem["item_image_path"])?>"/>
+                                    <a href="/html/item_detail.php?item_code=<?=Config::h($itemCode)?>">
+                                        <img src="<?=Config::h($itemImagePath)?>"/>
                                     </a>
                                 </div>
                                 <div class="cart_item_txt">
-                                    <p><a class="product_link" href="/html/item_detail.php?item_code=<?=Config::h($cartItem["item_code"])?>"><?=Config::h($cartItem["item_name"]);?></a></p>
-                                    <dl class="buy_itemu_menu mod_order_info" data-price="<?=Config::h($cartItem['item_price_with_tax'])?>" data-tax="<?=Config::h($cartItem['item_tax'])?>">
+                                    <p><a class="product_link" href="/html/item_detail.php?item_code=<?=Config::h($itemCode)?>"><?=Config::h($itemName);?></a></p>
+                                    <dl class="buy_item_menu mod_order_info" data-price="<?=Config::h($itemPriceWithTax)?>" data-tax="<?=Config::h($itemTax)?>">
                                         <dt>価格:</dt>
-                                        <dd>&yen;<?=Config::h(number_format($cartItem["item_price_with_tax"]))?>(税込)</dd>
+                                        <dd>&yen;<?=Config::h(number_format($itemPriceWithTax))?>(税込)</dd>
                                     </dl>
-                                    <div class="select_wrap">
-                                        <select name="cart<?=$var?>" class="item_quantity">
-                                        <?php for($i=1; $i<=10; $i++):?>
-                                            <?php if($cartItem['item_quantity'] == $i):?>
-                                                <option data-num="<?=$i?>" value="<?=$i?>" selected><?=$i?></option>
+                                    <?php if($itemStatus == 1):?>
+                                        <?php if($cart->alertStock($itemStock)):?>
+                                            <span class="status_text">在庫残り<?=Config::h($itemStock)?>点</span>
+                                        <?php endif;?>
+                                        <div class="select_wrap">
+                                            <select name="cart<?=$var?>" class="item_quantity">
+                                            <?php if($cart->alertStock($itemStock)):?>
+                                                <?php  for($i=1; $i<=$itemStock; $i++):?>
+                                                <?php if($itemQuantity>$itemStock):?>
+                                                    <?php if($itemStock == $i):?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>" selected><?=$i?></option>
+                                                    <?php else:?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>"><?=$i?></option>
+                                                    <?php endif;?>
+                                                <?php else:?>
+                                                    <?php if($itemQuantity == $i):?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>" selected><?=$i?></option>
+                                                    <?php else:?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>"><?=$i?></option>
+                                                    <?php endif;?>
+                                                <?php endif;?>
+                                                <?php endfor;?>
                                             <?php else:?>
-                                                <option data-num="<?=$i?>" value="<?=$i?>"><?=$i?></option>
+                                                <?php for($i=1; $i<=10; $i++):?>
+                                                    <?php if($itemQuantity == $i):?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>" selected><?=$i?></option>
+                                                    <?php else:?>
+                                                        <option data-num="<?=$i?>" value="<?=$i?>"><?=$i?></option>
+                                                    <?php endif;?>
+                                                <?php endfor;?>
                                             <?php endif;?>
-                                        <?php endfor;?>
-                                        </select>
-                                    </div>
-                                    <span>個</span>
-                                    <dl class="mod_order_info mod_order_total">
-                                        <dt>小計:</dt>
-                                        <dd class="item_price">&yen;<?=number_format($item_total_amount)?>(税込)</dd>
-                                    </dl>
+                                            </select>
+                                        </div>
+                                        <span>個</span>
+                                        <dl class="mod_order_info mod_order_total">
+                                            <dt>小計:</dt>
+                                            <dd class="item_price">&yen;<?=number_format($item_total_amount)?>(税込)</dd>
+                                        </dl>
+                                    <?php endif;?>
                                     <div class="cart_btn_wrap">
-                                        <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?=Config::h($cartItem["item_code"])?>">あとで買う<br/>
+                                        <a href="javascript:void(0);" id="move_fav" class="btn_cmn_mid btn_design_02" data-num="<?=Config::h($itemCode)?>">あとで買う<br/>
                                             <span>(お気に入りへ)</span>
                                         </a>
-                                        <a class="btn_cmn_01 btn_design_03" href="/html/cart.php?cmd=del&item_code=<?=Config::h($cartItem["item_code"]);?>">削除</a>
+                                        <a class="btn_cmn_01 btn_design_03" href="/html/cart.php?cmd=del&item_code=<?=Config::h($itemCode);?>">削除</a>
                                     </div>
                                 </div>
-                                <?php if($cartItem["item_status"]=="2"):?>
+                                <?php if($itemStatus=="2"):?>
                                     <p class="status_text">この商品は現在、入荷待ちです。</p>
-                                <?php elseif($cartItem["item_status"]=="3"):?>
+                                <?php elseif($itemStatus=="3"):?>
                                     <p class="status_text">この商品は販売終了しました。</p>
-                                <?php elseif($cartItem["item_status"]=="4"):?>
+                                <?php elseif($itemStatus=="4"):?>
                                     <p class="status_text">この商品は現在、一時掲載を停止してます。</p>
-                                <?php elseif($cartItem["item_status"]=="5"):?>
+                                <?php elseif($itemStatus=="5"):?>
                                     <p class="status_text">この商品は現在、品切れ中です(入荷未定)。</p>
                                 <?php endif;?>
                             </div>
