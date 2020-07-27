@@ -18,6 +18,8 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
 
     private $customerDto;
     
+    private $message;
+    
     private $lastNameError = false;
     private $firstNameError = false;
     private $rubyLastNameError = false;
@@ -27,6 +29,7 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
     private $prefectureError = false;
     private $cityError = false;
     private $blockNumberError = false;
+    private $buildingNameError = false;
     private $telError = false;
     private $mailError = false;
     private $oldPasswordError = false;
@@ -35,18 +38,18 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){
 
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
         $customerId = $_SESSION['customer_id'];   
         
         /*——————————————————————————————————————————————————————————————
-        　order_deliver_list.phpからの訪問
+        　order_delivery_list.phpからの訪問
         ————————————————————————————————————————————————————————————————*/
         
         if($cmd == "from_order"){
-            $_SESSION['from_order_flag'] = TRUE;   
+            $_SESSION['track_for_order'] = "order_delivery_list";  
         }
         /*—————————————————————————————————————————————————————————————— */
         
@@ -65,41 +68,52 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
         }catch(DBParamException $e){
             $e->handler($e);
         }
+       
+        $customerMail = $this->customerDto->getMail();
 
-        /*====================================================================
+        //デモ用アカウントのためパスワードとメールアドレスを変更できない趣旨のメッセージを出力
+        if($customerMail == "hanako@yahoo.co.jp"){
+            $this->message = "このアカウントはデモ用のためパスワード及びメールアドレスの変更はできません。";
+        }else{
+            $this->message = "none";   
+        }        /*====================================================================
          「変更内容を確認する」ボタンが押された時の処理
         =====================================================================*/
         if($cmd=="confirm"){
+            $_SESSION['mypage_update'] = array();
+                
+            $lastName = Config::getPOST('last_name');
+            $firstName = Config::getPOST('first_name');
+            $rubyLastName = Config::getPOST('ruby_last_name');
+            $rubyFirstName = Config::getPOST('ruby_first_name');
+            $zipCode01 = Config::getPOST('zip_code_01');
+            $zipCode02 = Config::getPOST('zip_code_02');
+            $prefecture = Config::getPOST('prefecture');
+            $city = Config::getPOST('city');
+            $blockNumber = Config::getPOST('block_number');
+            $buildingName = Config::getPOST('building_name');
+            $tel = Config::getPOST('tel');
+            $mail = Config::getPOST('mail');
+            $oldPassword = Config::getPOST('old_password');
+            $password = Config::getPOST('password');
+            $passwordConfirm = Config::getPOST('password_confirm');
             
-            $lastName = filter_input(INPUT_POST, 'last_name');
-            $firstName = filter_input(INPUT_POST, 'first_name');
-            $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
-            $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
-            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
-            $prefecture = filter_input(INPUT_POST, 'prefecture');
-            $city = filter_input(INPUT_POST, 'city');
-            $blockNumber = filter_input(INPUT_POST, 'block_number');
-            $buildingName = filter_input(INPUT_POST, 'building_name');
-            $tel = filter_input(INPUT_POST, 'tel');
-            $mail = filter_input(INPUT_POST, 'mail');
-            $oldPassword = filter_input(INPUT_POST, 'oldPassword');
-            $password = filter_input(INPUT_POST, 'password');
-            $passwordConfirm = filter_input(INPUT_POST, 'password_confirm');
-
             /*- パスワード、パスワード確認ともに入力がなければ、
             ログイン時にセットしたクッキー値を格納しバリデーションを通す。(変更なしとみなす) -*/
-            if(!$password && !$passwordConfirm){
+            //デモ用アカウントのため変更しない
+            if(!$password && !$passwordConfirm || $oldPassword == "hanako875"){
                 $oldPassword = $_COOKIE['password'];
                 $password = $_COOKIE['password'];
                 $passwordConfirm = $_COOKIE['password'];
+                $_SESSION['mypage_update']['password_input'] = FALSE; 
+    
             }else{
-                $_SESSION['password_input'] = "is";
+                $_SESSION['mypage_update']['password_input'] = TRUE; 
             }
             
             $validator = new CommonValidator();
             
-            $_SESSION['update'] = array(
+            $_SESSION['mypage_update'] += array(
              'last_name' => $lastName,
              'first_name' => $firstName,
              'ruby_last_name' => $rubyLastName,
@@ -112,22 +126,33 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
              'building_name' => $buildingName,
              'tel' => $tel,
              'mail' => $mail,
-             'oldPassword' => $oldPassword,
+             'old_password' => $oldPassword,
              'password' => $password,
              'password_confirm' => $passwordConfirm
             );
+            
+            $customerMail = $this->customerDto->getMail();
+            
+            //デモ用アカウントのため変更しない
+            if($customerMail == "hanako@yahoo.co.jp"){
+                $_SESSION['mypage_update']['mail'] = $customerMail;
+            }
 
             $key = "氏名(性)";
-            $this->lastNameError = $validator->fullWidthValidation($key, $lastName);
+            $limit = 20;
+            $this->lastNameError = $validator->fullWidthValidation($key, $lastName, $limit);
 
             $key = "氏名(名)";
-            $this->firstNameError = $validator->fullWidthValidation($key, $firstName);
+            $limit = 20;
+            $this->firstNameError = $validator->fullWidthValidation($key, $firstName, $limit);
 
             $key = "氏名(セイ)";
-            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName);
+            $limit = 20;
+            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName, $limit);
 
             $key = "氏名(メイ)";
-            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
+            $limit = 20;
+            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName, $limit);
 
             $key = "郵便番号(3ケタ)";
             $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
@@ -147,10 +172,16 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
             }
 
             $key="市区町村";
-            $this->cityError = $validator->requireCheck($key, $city);
+            $limi = 30;
+            $this->cityError = $validator->fullWidthValidation($key, $city, $limit);
 
             $key="番地";
-            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
+            $limit = 30;
+            $this->blockNumberError = $validator->fullWidthValidation($key, $blockNumber, $limit);
+            
+            $key="建物名等";
+            $limit = 30;
+            $this->buildingNameError = $validator->fullWidthValidation($key, $buildingName, $limit);
 
             $key="メールアドレス";
             $this->mailError = $validator->mailValidation($key, $mail);
@@ -177,7 +208,7 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
             
             //現在のパスワードの一致確認/
             $hashPassword = $this->customerDto->getHashPassWord();
-            if(!password_verify($password, $hashPassword)){
+            if(!password_verify($oldPassword, $hashPassword)){
                 $this->oldPasswordError = "パスワードが間違ってます。";
             }
 
@@ -188,16 +219,20 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
             $this->passwordConfirmError = $validator->passConfirmValidation($key, $passwordConfirm, $password);
 
             if($validator->getResult() && !($this->mailError) && !($this->oldPasswordError)) {
-                $_SESSION['update_data'] = "complete";
+                $_SESSION['mypage_update']['status'] = "complete";
                 header('Location:/html/mypage/update/mypage_update_confirm.php');
                 exit();
             }else{
-                $_SESSION['update_data'] = "incomplete";
+                $_SESSION['mypage_update']['status'] = "incomplete";
             }
         }
     }
         
     /*---------------------------------------*/
+    public function getMessage(){
+        return $this->message;    
+    }
+    
     public function getLastNameError(){
         return $this->lastNameError;   
     }
@@ -234,6 +269,10 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
         return $this->blockNumberError;   
     }
     
+    public function getBuildingNameError(){
+        return $this->buildingNameError;   
+    }
+    
     public function getTelError(){
         return $this->telError;   
     }
@@ -259,8 +298,8 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
     }
     
     public function checkSelectedPrefecture($value, $customerData){
-        if(isset($_SESSION['update']['prefecture'])){
-            if($_SESSION['update']['prefecture']==$value){ 
+        if(isset($_SESSION['mypage_update']['prefecture'])){
+            if($_SESSION['mypage_update']['prefecture']==$value){ 
                 return true;
             }
         }elseif($customerData==$value){
@@ -269,10 +308,20 @@ class MyPageUpdateAction extends \Controllers\CommonMyPageAction{
     }
     
     public function echoValue($value, $customerData){
-        if(isset($_SESSION['update'][$value])){
-            echo $_SESSION['update'][$value];
+        if(isset($_SESSION['mypage_update'][$value])){
+            echo $_SESSION['mypage_update'][$value];
         }else{
             echo $customerData;
+        }
+    }
+    
+    public function echoValueForPassWord($value, $customerData){
+        if(isset($_SESSION['mypage_update']['password_input']) && $_SESSION['mypage_update']['password_input']){
+            if(isset($_SESSION['mypage_update'][$value])){
+                echo $_SESSION['mypage_update'][$value];
+            }else{
+                echo $customerData;
+            }
         }
     }
 }
