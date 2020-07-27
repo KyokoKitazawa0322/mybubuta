@@ -18,6 +18,7 @@ $items = $adminItems->getItems();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 <!--
+    
 $(function(){
     $('.sort').click(function(){ 
         var content = $(this).data("value");
@@ -31,15 +32,6 @@ $(function(){
         var itemCode = $(this).data("item");
         $('input#item_code').val(itemCode);
         $('form#updateForm').submit();
-    });
-});
-    
-    
-$(function(){
-    $('.admin_delete').click(function(){ 
-        var itemCode = $(this).data("item");
-        $('input#item_code').val(itemCode);
-        $('form#deleteForm').submit();
     });
 });
     
@@ -143,7 +135,6 @@ $(function(){
                                             <?php endif;?>
                                         </td>
                                         <td class="admin_button_area">
-                                            <input type="button" class="btn_cmn_01 btn_design_03 admin_delete" value="削除" data-item="<?=Config::h($item->getItemCode());?>">
                                             <input type="button" class="btn_cmn_01 btn_design_02 admin_update" value="更新" data-item="<?=Config::h($item->getItemCode());?>">
                                         </td>
                                     </tr>
@@ -164,13 +155,9 @@ $(function(){
             <input type="hidden" id="content" name="content" value>
             <input type="hidden" name="cmd" value="sort">
         </form>
-        <form method="POST" id="updateForm" action="/html/admin/admin_item_update.php">
+        <form method="GET" id="updateForm" action="/html/admin/admin_item_update.php">
             <input type="hidden" id="item_code" name="item_code" value>
             <input type="hidden" name="cmd" value="update">
-        </form>
-        <form method="POST" id="deleteForm" action="#">
-            <input type="hidden" id="item_code" name="item_code" value>
-            <input type="hidden" name="cmd" value="delete">
         </form>
         <form method="POST" id="resetForm" action="#">
             <input type="hidden" name="cmd" value="reset">
