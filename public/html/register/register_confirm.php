@@ -42,22 +42,22 @@ $registerConfirm->execute();
                                 <p class="register_form_title">氏名</p>
                                 <p class="name_label">姓:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['last_name']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('last_name'));?></p>
                                 </div>
                                 <p class="name_label">名:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['first_name']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('first_name'));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">フリガナ(カタカナ)</p>
                                 <p class="name_label">セイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['ruby_last_name']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('ruby_last_name'));?></p>
                                 </div>
                                 <p class="name_label">メイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['ruby_first_name']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('ruby_first_name'));?></p>
                                 </div>
                             </div>
                         </div>  
@@ -65,42 +65,42 @@ $registerConfirm->execute();
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号</p>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['zip_code_01']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('zip_code_01'));?></p>
                                 </div>
                                 <span class="txt_dash">－</span>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['register']['zip_code_02']);?></p>
+                                    <p><?=Config::h($registerConfirm->echoValue('zip_code_02'));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県</p>
                                 <div class="add_list_wrapper">
-                                   <p><?=Config::h($_SESSION['register']['prefecture']);?></p>
+                                   <p><?=Config::h($registerConfirm->echoValue('prefecture'));?></p>
                                 </div>		
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村</p>
-                                <p><?=Config::h($_SESSION['register']['city']);?></p>
+                                <p><?=Config::h($registerConfirm->echoValue('city'));?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地</p>
-                                <p><?=Config::h($_SESSION['register']['block_number']);?></p>
+                                <p><?=Config::h($registerConfirm->echoValue('block_number'));?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <p><?=Config::h($_SESSION['register']['building_name']);?></p>
+                                <p><?=Config::h($registerConfirm->echoValue('building_name'));?></p>
                             </div>
                         </div>                     
                         <div class="register_field tel_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">電話番号</p>
-                                <p><?=Config::h($_SESSION['register']['tel']);?></p>
+                                <p><?=Config::h($registerConfirm->echoValue('tel'));?></p>
                             </div>
                         </div>
                         <div class="register_field mail_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">メール</p>
-                                <p><?=Config::h($_SESSION['register']['mail']);?></p>
+                                <p><?=Config::h($registerConfirm->echoValue('mail'));?></p>
                             </div>
                         </div>
                     <div class="register_field pass_field">
@@ -108,7 +108,7 @@ $registerConfirm->execute();
                                 <p class="register_form_title">パスワード</p>
                                 <div class="pass_icon">
                                     <p>
-                                        <?php for($i = 0; $i < strlen($_SESSION['register']['password']); $i++):?> 
+                                        <?php for($i = 0; $i < strlen($registerConfirm->echoValue('password')); $i++):?> 
                                         ●
                                         <?php endfor;?>
                                     </p>

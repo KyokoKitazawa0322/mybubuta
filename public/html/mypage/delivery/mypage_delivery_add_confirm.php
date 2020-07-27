@@ -7,7 +7,7 @@ session_start();
 use \Config\Config;
 use \Models\CsrfValidator;
 
-$myPageDeliveryAddConfirm = new \Controllers\MyPageDeliveryAddConfirmAction();
+$myPageDeliveryAddConfirm = new \Controllers\myPageDeliveryAddConfirmAction();
 $myPageDeliveryAddConfirm->execute();
 ?>
 <!DOCTYPE html>
@@ -35,22 +35,22 @@ $myPageDeliveryAddConfirm->execute();
                                 <p class="register_form_title">氏名</p>
                                 <p class="name_label">姓:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['last_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("last_name"));?></p>
                                 </div>
                                 <p class="name_label">名:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['first_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("first_name"));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">フリガナ(カタカナ)</p>
                                 <p class="name_label">セイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['ruby_last_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("ruby_last_name"));?></p>
                                 </div>
                                 <p class="name_label">メイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['ruby_first_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("ruby_first_name"));?></p>
                                 </div>
                             </div>
                         </div>  
@@ -58,22 +58,22 @@ $myPageDeliveryAddConfirm->execute();
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号</p>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['zip_code_01']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("zip_code_01"));?></p>
                                 </div>
                                 <span class="txt_dash">－</span>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_add']['zip_code_02']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("zip_code_02"));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県</p>
                                 <div class="add_list_wrapper">
-                                   <p><?=Config::h($_SESSION['del_add']['prefecture']);?></p>
+                                    <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("prefecture"));?></p>
                                 </div>		
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村</p>
-                                <p><?=Config::h($_SESSION['del_add']['city']);?></p>
+                                <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("city"));?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地</p>
@@ -81,13 +81,13 @@ $myPageDeliveryAddConfirm->execute();
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <p><?=Config::h($_SESSION['del_add']['building_name']);?></p>
+                                <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("block_number"));?></p>
                             </div>
                         </div>                     
                         <div class="register_field tel_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">電話番号</p>
-                                <p><?=Config::h($_SESSION['del_add']['tel']);?></p>
+                                <p><?=Config::h($myPageDeliveryAddConfirm->echoValue("building_name"));?></p>
                             </div>
                         </div>
                         <div class="confirm_button_wrapper">
