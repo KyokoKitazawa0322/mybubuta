@@ -9,6 +9,7 @@ use \Config\Config;
 $myPageUpdate = new \Controllers\MyPageUpdateAction();
 $myPageUpdate->execute();
 $customer = $myPageUpdate->getCustomerDto();
+$message = $myPageUpdate->getMessage();
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +20,18 @@ $customer = $myPageUpdate->getCustomerDto();
 <meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
 <title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+<!--
+    
+$(function(){
+    var message = "<?=$message?>";
+    if(message !== "none"){
+       alert(message);
+    }
+});  
+// --> 
+</script>
 </head>
 <body class="mypage update">
 <div class="wrapper">
@@ -103,14 +115,14 @@ $customer = $myPageUpdate->getCustomerDto();
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city" value="<?=Config::h($myPageUpdate->echoValue("city", $customer->getCity()))?>"/>
+                                <input class="form_input_item <?php if($myPageUpdate->getCityError()){echo "error_box";}?>" type="text" maxlength="30" id="add04" name="city" value="<?=Config::h($myPageUpdate->echoValue("city", $customer->getCity()))?>"/>
                                 <?php if($myPageUpdate->getCityError()):?>
                                     <p class="error_txt memo"><?=$myPageUpdate->getCityError();?></p>
                                 <?php endif;?>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?=Config::h($myPageUpdate->echoValue("block_number", $customer->getBlockNumber()))?>"/>
+                                <input class="form_input_item <?php if($myPageUpdate->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="30" id="add05" name="block_number" value="<?=Config::h($myPageUpdate->echoValue("block_number", $customer->getBlockNumber()))?>"/>
                                 <div class="memo_wrapper">
                                     <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>
                                     <?php if($myPageUpdate->getBlockNumberError()):?>
@@ -120,10 +132,12 @@ $customer = $myPageUpdate->getCustomerDto();
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <input class="form_input_item" type="text" maxlength="100" id="add06" name="building_name" value="<?=Config::h($myPageUpdate->echoValue("building_name", $customer->getBuildingName()))?>"/>
+                                <input class="form_input_item" type="text" maxlength="30" id="add06" name="building_name" value="<?=Config::h($myPageUpdate->echoValue("building_name", $customer->getBuildingName()))?>"/>
                                 <div class="memo_wrapper">
                                     <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
-
+                                    <?php if($myPageUpdate->getBuildingNameError()):?>
+                                        <p class="error_txt memo"><?=$myPageUpdate->getBuildingNameError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +156,7 @@ $customer = $myPageUpdate->getCustomerDto();
                         <div class="register_field mail_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">メール</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getMailError()){echo "error_box";}?>" type="text" maxlength="100" name="mail" id="mail"  value="<?=Config::h($myPageUpdate->echoValue("mail", $customer->getMail()))?>"/>
+                                <input class="form_input_item <?php if($myPageUpdate->getMailError()){echo "error_box";}?>" type="text" maxlength="256" name="mail" id="mail"  value="<?=Config::h($myPageUpdate->echoValue("mail", $customer->getMail()))?>"/>
                                 <div class="memo_wrapper">
                                     <p class="memo">※お間違いがないか必ずご確認下さい。</p>
                                     <?php if($myPageUpdate->getMailError()):?>
@@ -155,7 +169,7 @@ $customer = $myPageUpdate->getCustomerDto();
                             <p class="pass_field_text">※パスワードの変更がある場合のみ、下記の項目を入力してください。</p>
                             <div class="register_form_row">
                                 <p class="register_form_title">現在のパスワード</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getOldPasswordError()){echo "error_box";}?>" type="password" placeholder="" name="oldPassword" maxlength="20" id="oldPassword">
+                                <input class="form_input_item <?php if($myPageUpdate->getOldPasswordError()){echo "error_box";}?>" type="password" placeholder="" name="old_password" maxlength="20" id="oldPassword" value="<?=Config::h($myPageUpdate->echoValueForPassWord("old_password", ""))?>"/>
                                 <div class="memo_wrapper">
                                     <p class="memo">※半角英数字の組み合わせ8〜20文字</p>
                                     <?php if($myPageUpdate->getOldPasswordError()):?>
@@ -165,7 +179,7 @@ $customer = $myPageUpdate->getCustomerDto();
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">新しいパスワード</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getPasswordError()){echo "error_box";}?>" type="password" placeholder="" name="password" maxlength="20" id="password">
+                                <input class="form_input_item <?php if($myPageUpdate->getPasswordError()){echo "error_box";}?>" type="password" placeholder="" name="password" maxlength="20" id="password" value="<?=Config::h($myPageUpdate->echoValueForPassWord("password", ""))?>"/>
                                 <div class="memo_wrapper">
                                     <p class="memo">※半角英数字の組み合わせ8〜20文字</p>
                                     <?php if($myPageUpdate->getPasswordError()):?>
@@ -175,7 +189,7 @@ $customer = $myPageUpdate->getCustomerDto();
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title new_password_conf_title">新しいパスワード<br/>(再確認)</p>
-                                <input class="form_input_item <?php if($myPageUpdate->getPasswordConfirmError()){echo "error_box";}?>" type="password" placeholder="" name="password_confirm" maxlength="20" id="confirm">
+                                <input class="form_input_item <?php if($myPageUpdate->getPasswordConfirmError()){echo "error_box";}?>" type="password" placeholder="" name="password_confirm" maxlength="20" id="confirm" value="<?=Config::h($myPageUpdate->echoValueForPassWord("password_confirm", ""))?>"/>
                                 <?php if($myPageUpdate->getPasswordConfirmError()):?>
                                     <p class="error_txt memo"><?=$myPageUpdate->getPasswordConfirmError();?></p>
                                 <?php endif;?>
