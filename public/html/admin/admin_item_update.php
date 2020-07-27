@@ -9,6 +9,7 @@ use \Models\CsrfValidator;
 $adminItemUpdate = new \Controllers\AdminItemUpdateAction();
 $adminItemUpdate->execute();
 $item = $adminItemUpdate->getItemDto();
+$errorMessage = $adminItemUpdate->getErrorMessage();
 ?>
 
 <!DOCTYPE html>
@@ -21,18 +22,58 @@ $item = $adminItemUpdate->getItemDto();
 <script type="text/javascript">
 <!--
 $(function(){
-    $('#update_confirm').click(function(){ 
-        $('form#itemDataForm').submit();
-    });
-});
-    
-$(function(){
     history.pushState(null, null, null);
     $(window).on("popstate", function (event) {
         window.location.replace('/html/admin/admin_items.php');
     });
 });
-
+    
+$(function(){
+    var errorMessage = "<?=$errorMessage?>";
+    if(errorMessage !== "none"){
+       alert(errorMessage);
+    }
+});
+ 
+    
+$(function(){
+    $('#update_confirm').click(function(){ 
+        if(confirm("商品情報を更新しますか?")){
+            var password = prompt("パスワードを入力してください");
+            $('#update_password').val(password);
+            $('form#itemDataForm').submit();
+        }else{
+            alert('キャンセルされました');
+            e.preventDefault();
+        }
+    });
+});
+        
+$(function(){
+    $('#image_update_confirm').click(function(){ 
+        if(confirm("商品画像を更新しますか?")){
+            var password = prompt("パスワードを入力してください");
+            $('#image_update_password').val(password);
+            $('form#ImageUpDataForm').submit();
+        }else{
+            alert('キャンセルされました');
+            e.preventDefault();
+        }
+    });
+});
+        
+$(function(){
+    $('#delete_confirm').click(function(){ 
+        if(confirm("この商品を削除しますか?")){
+            var password = prompt("パスワードを入力してください");
+            $('#delete_password').val(password);
+            $('form#itemDeleteForm').submit();
+        }else{
+            alert('キャンセルされました');
+            e.preventDefault();
+        }
+    });
+});
 // --> 
 </script>
 </head>
@@ -46,25 +87,31 @@ $(function(){
                         <h2><a href="/html/admin/admin_items.php">商品管理画面</a></h2>
                     </div>
 		            <div class="main_contents_inner">
+                        <a href="/html/admin/admin_items.php" class="admin_link">商品一覧へ戻る</a>
                         <table class="admin_item_list_wrapper">
                             <tr>
                                 <th>画像</th>
                                 <td class="admin_item_image">
                                     <img src="<?=Config::h($item->getItemImagePath())?>" alt="" />
-                                    <form method="post" action="#" enctype="multipart/form-data">
+                                    <form method="post" action="#" enctype="multipart/form-data" id="imageUpdateForm">
                                         <input type="hidden" name="max_file_size" value="5000000"/>
                                         <input class="item_image_upfile" type="file" name="image" size="50"/>
                                         <input type="hidden" name="cmd" value="upload_file"/>
                                         <input type="hidden" name="item_code" value="<?=Config::h($adminItemUpdate->echoValue("item_code", $item->getItemCode()))?>"/>
-                                        <input type="submit" value="画像を更新する"/>
+                                        <input type="hidden" name="password" id="image_update_password" value>
+                                        <input type="submit" value="画像を更新する" id="image_update_confirm"/>
+                                        <?php if($adminItemUpdate->getItemImageError()):?>
+                                            <p class="error_txt"><?=$adminItemUpdate->getItemImageError();?></p>
+                                        <?php endif;?>
                                     </form>
                                 </td>
                             </tr>
                             <form method="post" action="#" id="itemDataForm" enctype="multipart/form-data">
                                 <tr>
-                                    <th>商品名</th>
+                                    <th>商品名(全角)</th>
                                     <td class="admin_item_name">
-                                        <input type="text" name="item_name" value="<?=Config::h($adminItemUpdate->echoValue("item_name", $item->getItemName()))?>"/>
+                                        <p>30文字以内</p>
+                                        <input type="text" name="item_name" value="<?=Config::h($adminItemUpdate->echoValue("item_name", $item->getItemName()))?>" maxlength="30"/>
                                         <?php if($adminItemUpdate->getItemNameError()):?>
                                             <p class="error_txt"><?=$adminItemUpdate->getItemNameError();?></p>
                                         <?php endif;?>
@@ -73,15 +120,13 @@ $(function(){
                                 <tr>
                                     <th>商品コード<br/></th>
                                     <td class="admin_item_code">
-                                        <input type="text" name="update_item_code" value="<?=Config::h($adminItemUpdate->echoValue("item_code", $item->getItemCode()))?>"/>
-                                        <?php if($adminItemUpdate->getItemCodeError()):?>
-                                            <p class="error_txt"><?=$adminItemUpdate->getItemCodeError();?></p>
-                                        <?php endif;?>
+                                        <p><?=Config::h($adminItemUpdate->echoValue("item_code", $item->getItemCode()))?></p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>売価<br/></th>
+                                    <th>売価(半角数字)<br/></th>
                                     <td class="admin_item_price">
+                                        <p>上限額:999,999円</p>
                                         <input type="text" maxlength="6" oninput="value = value.replace(/[^0-9]+/i,'');" name="item_price" value="<?=Config::h($adminItemUpdate->echoValue("item_price", $item->getItemPrice()))?>"/>&nbsp;円(税抜き)
                                         <?php if($adminItemUpdate->getItemPriceError()):?>
                                             <p class="error_txt"><?=$adminItemUpdate->getItemPriceError();?></p>
@@ -89,9 +134,10 @@ $(function(){
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>在庫<br/></th>
+                                    <th>在庫(半角数字)<br/></th>
                                     <td class="admin_item_stock">
-                                        <input type="text" maxlength="10" oninput="value = value.replace(/[^0-9]+/i,'');" name="item_stock" value="<?=Config::h($adminItemUpdate->echoValue("item_stock", $item->getItemStock()))?>"/>&nbsp;個
+                                        <p>上限:999,999個</p>
+                                        <input type="text" maxlength="6" oninput="value = value.replace(/[^0-9]+/i,'');" name="item_stock" value="<?=Config::h($adminItemUpdate->echoValue("item_stock", $item->getItemStock()))?>"/>&nbsp;個
                                         <?php if($adminItemUpdate->getItemStockError()):?>
                                             <p class="error_txt"><?=$adminItemUpdate->getItemStockError();?></p>
                                         <?php endif;?>
@@ -125,20 +171,31 @@ $(function(){
                                 <tr>
                                     <th>説明文<br/></th>
                                     <td class="admin_item_detail">
-                                        <textarea rows="4" wrap="soft" name="item_detail"><?=Config::h($adminItemUpdate->echoValue("item_detail", $item->getItemDetail()))?></textarea>
+                                        <p>500文字以内</p>
+                                        <textarea rows="4" wrap="soft" name="item_detail" maxlength="500"><?=Config::h($adminItemUpdate->echoValue("item_detail", $item->getItemDetail()))?></textarea>
                                         <?php if($adminItemUpdate->getItemDetailError()):?>
                                             <p class="error_txt"><?=$adminItemUpdate->getItemDetailError();?></p>
                                         <?php endif;?>
                                     </td>
-                                    <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>"/>
-                                    <input type="hidden" name="cmd" value="update_confirm">
                                 </tr>
                                 <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>"/>
+                                <input type="hidden" name="cmd" value="update_confirm">
+                                <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>"/>
                                 <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
+                                <input type="hidden" name="password" id="update_password" value>
                             </form>
                         </table>
                         <div class="update_btn_wrap">
-                            <input type="button" id="update_confirm" class="btn_cmn_l btn_design_01" value="更新する">
+                            <input type="button" class="btn_cmn_l btn_design_01" id="update_confirm" value="更新する">
+                        </div>
+                        <div class="update_btn_wrap">
+                            <form method="post" action="#" id="itemDeleteForm">
+                                <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>"/>
+                                <input type="button" class="btn_cmn_l btn_design_03" id="delete_confirm" value="削除する">
+                                <input type="hidden" name="cmd" value="delete_confirm"/>
+                                <input type="hidden" name="token" value="<?=CsrfValidator::generate()?>">
+                                <input type="hidden" name="password" id="delete_password" value>
+                            </form>
                         </div>
 		            </div>
 		        </div>
