@@ -27,5 +27,60 @@ class Config{
         $dateTime = date("Y/m/d H:i:s");
         return $dateTime;
     }
+    
+    public static function getGET($name){
+        $ret = filter_input(INPUT_GET, $name);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+        return '';
+    }
+ 
+    public static function getPOST($name){
+        $ret = filter_input(INPUT_POST, $name);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+         return '';
+    }
+ 
+    public static function getCookie($name){
+        $ret = filter_input(INPUT_COOKIE, $name);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+         return '';
+    }
+    
+    public static function getGETWithFilter($name, $filter){
+        $ret = filter_input(INPUT_GET, $name, $filter);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+        return '';
+    }
+ 
+    public static function getPOSTWithFilter($name, $filter){
+        $ret = filter_input(INPUT_POST, $name, $filter);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+         return '';
+    }
+ 
+    public static function getCookieWithFilter($name, $filter){
+        $ret = filter_input(INPUT_COOKIE, $name, $filter);
+        if($ret){
+            $ret =str_replace("\0", "", $ret);//Nullバイト攻撃対策
+            return $ret;
+        }
+         return '';
+    }
 }
+
 ?>
