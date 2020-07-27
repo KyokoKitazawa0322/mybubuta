@@ -19,8 +19,8 @@ class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
         
     public function execute(){
             
-        $cmd = filter_input(INPUT_POST, 'cmd');
-        $itemCode = filter_input(INPUT_POST, 'item_code');
+        $cmd = Config::getPOST("cmd");
+        $itemCode = Config::getPOST('item_code');
         
         $this->checkLogoutRequest($cmd);
         
@@ -43,13 +43,15 @@ class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
         item_detail.phpで「お気に入り保存」ボタンが押された時の処理
         =========================================================*/
         
-        if($cmd == "add_favorite" ){
+        if($cmd == "add_favorite"){
             
             /*- 非ログイン状態の場合はフラグをたててログイン画面へ -*/
             if(!$customerId){    
                 
-                $_SESSION['fav_flug'] = "is";
-                $_SESSION['add_item_code'] = $itemCode;
+                $_SESSION['trace_for_login'] = array(
+                    "from" => "item_detail",
+                    "item_code" => $itemCode
+                );
                 
                 header('Location:/html/login.php');
                 exit();
@@ -76,20 +78,26 @@ class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
         　item_detail.phpで「お気に入り保存」ボタンが押され、その後ログインをはさんだ場合の処理
         ================================================================*/
         
-        if(isset($_SESSION['fav_flug']) && $_SESSION['fav_flug'] == "is"){
-            $addItemCode = $_SESSION['add_item_code'];
+        if(isset($_SESSION['trace_for_login'])){
             
-            try{
-                $favoriteDao->insertIntoFavorite($addItemCode, $customerId);
-                
-            } catch(MyPDOException $e){
-                $e->handler($e);
+            $trackItem = $_SESSION['trace_for_login'];    
+            $from = $trackItem['from'];
+            $itemCode = $trackItem['item_code'];
+            
+            if($from == "item_detail"){    
+                try{
+                    $favoriteDao->insertIntoFavorite($itemCode, $customerId);
 
-            }catch(DBParamException $e){
-                $e->handler($e);
+                } catch(MyPDOException $e){
+                    unset($_SESSION['trace_for_login']);
+                    $e->handler($e);
+
+                }catch(DBParamException $e){
+                     unset($_SESSION['trace_for_login']);
+                    $e->handler($e);
+                }
+                unset($_SESSION['trace_for_login']);
             }
-                unset($_SESSION['fav_flug']);
-                unset($_SESSION['add_item_code']);
         }
 
         /*===============================================================
@@ -97,8 +105,10 @@ class MyPageFavoriteAction extends \Controllers\CommonMyPageAction{
         ================================================================*/
         if($cmd == "add_cart"){
             
-            $_SESSION['add_cart_from_fav'] = "undone";
-            $_SESSION['item_code'] = $itemCode;
+            $_SESSION['add_cart'] = array(
+                "item_code" => $itemCode,
+                "item_quantity" => 1
+            );
             
             header('Location:/html/cart.php');
             exit();
