@@ -30,7 +30,7 @@ $adminLogin->execute();
                                 <div class="account-label">
                                     <label for="admin_id">ID</label>
                                 </div>
-                                <input class="login_form_input" type="text" placeholder="" name="admin_id" value="<?=Config::h($adminLogin->echoValue("admin_id"))?>">
+                                <input class="login_form_input" type="text" placeholder="" name="admin_id" value="<?=Config::h($adminLogin->echoID())?>">
 
                             </div>
                             <div class="account_field">
@@ -38,7 +38,7 @@ $adminLogin->execute();
                                     <label for="admin_password">パスワード</label>
                                 </div>
                                 <div class="login_form_input_wrapper">
-                                    <input class="login_form_input" name="admin_password" type="password" placeholder="" value="<?=Config::h($adminLogin->echoValue("admin_password"))?>">
+                                    <input class="login_form_input" name="admin_password" type="password" placeholder="" value="<?=Config::h($adminLogin->echoPassword())?>">
                                 </div>
                                 <?php if($adminLogin->checkLoginError()):?>
                                     <p class="login_error_txt">ログインできませんでした。ID、パスワードをご確認ください。</p>
