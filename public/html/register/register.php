@@ -74,7 +74,7 @@ $register->execute();
                         </div>                                         
                         <div class="register_field">
                             <div class="register_form_row">
-                                <p class="register_form_title">郵便番号*</p>
+                                <p class="register_form_title">郵便番号(半角数字)*</p>
                                 <div class="addr01_input_wrapper">
                                     <input class="form_input_item <?php if($register->getZipCode01Error()){echo "error_box";}?>" type="tel" name="zip_code_01" maxlength="3" oninput="value = value.replace(/[^0-9]+/i,'');" id="add01" value="<?=Config::h($register->echoValue("zip_code_01"))?>">
                                 </div>
@@ -108,28 +108,30 @@ $register->execute();
                             <?php endif;?>
                             </div>
                             <div class="register_form_row">
-                                <p class="register_form_title">市区町村*</p>
+                                <p class="register_form_title">市区町村(全角)*</p>
                                 <input class="form_input_item <?php if($register->getCityError()){echo "error_box";}?>" type="text" maxlength="50" id="add04" name="city" value="<?=Config::h($register->echoValue("city"))?>">
                                 <?php if($register->getCityError()):?>
                                     <p class="error_txt memo"><?=$register->getCityError();?></p>
                                 <?php endif;?>
                             </div>
                             <div class="register_form_row">
-                                <p class="register_form_title">番地*</p>
+                                <p class="register_form_title">番地(全角)*</p>
                                 <input class="form_input_item <?php if($register->getBlockNumberError()){echo "error_box";}?>" type="text" maxlength="50" id="add05" name="block_number" value="<?=Config::h($register->echoValue("block_number"))?>">
                                 <div class="memo_wrapper">
-                                    <p class="memo">※番地漏れがないようにご注意下さい。(例)○△1-19-23</p>	
+                                    <p class="memo">(例)○△１－１９－６２</p>	
                                     <?php if($register->getBlockNumberError()):?>
                                         <p class="error_txt memo"><?=$register->getBlockNumberError();?></p>
                                     <?php endif;?>
                                 </div>
                             </div>
                             <div class="register_form_row">
-                                <p class="register_form_title">建物名</p>
+                                <p class="register_form_title">建物名等(全角)</p>
                                 <input class="form_input_item" type="text" maxlength="100" name="building_name" id="add06" value="<?=Config::h($register->echoValue("building_name"))?>">
                                 <div class="memo_wrapper">
-                                    <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
-
+                                    <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション２０５</p>
+                                    <?php if($register->getBuildingNameError()):?>
+                                        <p class="error_txt memo"><?=$register->getBuildingNameError();?></p>
+                                    <?php endif;?>
                                 </div>
                             </div>
                         </div>
