@@ -124,7 +124,9 @@ $deliveryDto = $myPageDeliveryEntry->getDeliveryDto();
                             <input class="form_input_item" type="text" maxlength="100" id="add06" name="building_name" value="<?=Config::h($myPageDeliveryEntry->echoValue("building_name", $deliveryDto->getBuildingName()))?>"/>
                             <div class="memo_wrapper">
                                 <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
-
+                                <?php if($myPageDeliveryEntry->getBuildingNameError()):?>
+                                    <p class="error_txt memo"><?=$myPageDeliveryEntry->getBuildingNameError();?></p>
+                                <?php endif;?>
                             </div>
                         </div>
                     </div>  
@@ -141,7 +143,7 @@ $deliveryDto = $myPageDeliveryEntry->getDeliveryDto();
                         </div>
                     </div>
                     <div class="register_button_wrapper">
-                        <input class="btn_cmn_l btn_design_01" type="submit" value="配送先を保存する" name="cmd">
+                        <input class="btn_cmn_l btn_design_01" type="submit" value="配送先を保存する">
                         <input type="hidden" name="cmd" value="register_del">
                     </div> 
                 </form>

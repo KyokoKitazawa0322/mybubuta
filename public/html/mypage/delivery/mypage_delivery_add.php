@@ -123,7 +123,9 @@ $myPageDeliveryAdd->execute();
                             <input class="form_input_item" type="text" maxlength="100" id="add06" name="building_name" value="<?=Config::h($myPageDeliveryAdd->echoValue("building_name"))?>">
                             <div class="memo_wrapper">
                                 <p class="memo">※部屋番号まで記載して下さい。(例)○△マンション205</p>
-
+                                <?php if($myPageDeliveryAdd->getBuildingNameError()):?>
+                                    <p class="error_txt memo"><?=$myPageDeliveryAdd->getBuildingNameError();?></p>
+                                <?php endif;?>
                             </div>
                         </div>
                     </div>
