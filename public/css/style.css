@@ -4,143 +4,6 @@
 /**--------------------------------------------------------
         タグ基本設定
 ----------------------------------------------------------*/
-
-@media only screen and (min-width: 980px) {
-    .drawer_btn_wrap {
-        display: none;
-    }
-    
-    .drawer_btn_wrap.open {
-        display: block;
-    }
-}
-
-.drawer_btn_wrap {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    z-index: 1001;
-}
-
-.drawer_button {
-  display: inline-block;
-  padding: 0;
-  width: 40px;
-  height: 26px;
-  position: relative;
-  background: none;
-  border: none;
-  text-align: center;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  outline: none;
-}
-
-.drawer_button .drawer_bar {
-  display: block;
-  width: 40px;
-  height: 4px;
-  transition: all 0.2s;
-  transform-origin: 0% 0%;
-  transform: translateY(-50%);
-  position: absolute;
-  left: 0;
-}
-
-.drawer_button .drawer_bar1 {
-  top: 0;
-}
-
-.drawer_button .drawer_bar2 {
-  top: 50%;
-}
-
-.drawer_button .drawer_bar3 {
-  top: 100%;
-}
-
-.drawer_button.active .drawer_bar {
-  width: 36.77px;
-  left: 7px
-}
-
-.drawer_button.active .drawer_bar1 {
-  transform: rotate(0.7853981633974483rad) translateY(-50%);
-  top: 0px
-}
-
-.drawer_button.active .drawer_bar2 {
-  opacity: 0;
-}
-
-.drawer_button.active .drawer_bar3 {
-  transform: rotate(-0.7853981633974483rad) translateY(-50%);
-  top: calc(100% - 0px)
-}
-
-.drawer_button.active .drawer_menu_text {
-  display: none;
-}
-
-.drawer_button.active .drawer_close {
-  display: block;
-}
-
-.drawer_text {
-  width: 100%;
-  position: absolute;
-  bottom: -20px;
-  left: 0;
-  text-align: center;
-  font-size: 10px;
-}
-
-.drawer_close {
-  letter-spacing: 0.08em;
-  display: none;
-}
-
-.drawer_button {
-  color: #293b6a;
-}
-
-.drawer_button .drawer_bar {
-  background-color: #293b6a;
-}
-
-.drawer_menu .drawer_bg {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 999;
-  background-color: rgba(51, 51, 51, 0.5);
-  display: none;
-  top: 0;
-  left: 0;
-}
-
-.drawer_menu .drawer_nav_wrapper {
-  width: 312px;
-  height: 100%;
-  transition: all 0.2s;
-  transform: translate(-312px);
-  position: fixed;
-  top: 0;
-  right: auto;
-  left: 0;
-  z-index: 1000;
-  background-image: url(../img/leftbox_image.png);
-}
-
-.drawer_menu .drawer_nav_wrapper.open {
-  transform: translate(0);
-  overflow: auto;
-}
-
-.drawer_menu .drawer_nav {
-    padding: 100px 0 100px 58px;
-}
-
 *   {
     box-sizing: border-box;
     -webkita-box-sizing: border-box;
@@ -151,6 +14,7 @@
 }
 
 html {
+    /*1em=10px ++*/
 	font-size: 62.5%;
     height: 100%;
     color: #555;
@@ -201,7 +65,7 @@ a:hover {
 @media (max-width: 767px){
 body {
     font-size: 1rem;
-    line-height: 1;
+    line-height: 1.2;
 }
 }
 /**--------------------------------------------------------
@@ -304,14 +168,6 @@ body {
     width: 100%;
 }
 
-@media screen and (min-width:1024px) {
-.wrapper {
-	min-width: 1024px;
-}
-}
-
-
-
 .container {
     margin: 130px auto 70px;
     width: 978px;
@@ -381,7 +237,7 @@ body {
 }
 
 .main_contents h3 {
-    margin-bottom: 14px;
+    margin-bottom: 1.4rem;
 }
 
 @media screen and (max-width: 979px) {
@@ -578,6 +434,147 @@ body {
     margin-left: -40px;
 }
 }
+
+/**--------------------------------------------------------
+        ドロワーメニュー
+----------------------------------------------------------*/
+
+@media only screen and (min-width: 980px) {
+    .drawer_btn_wrap {
+        display: none;
+    }
+    
+    .drawer_btn_wrap.open {
+        display: block;
+    }
+}
+
+.drawer_btn_wrap {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1001;
+}
+
+.drawer_button {
+  display: inline-block;
+  padding: 0;
+  width: 40px;
+  height: 26px;
+  position: relative;
+  background: none;
+  border: none;
+  text-align: center;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  outline: none;
+}
+
+.drawer_button .drawer_bar {
+  display: block;
+  width: 40px;
+  height: 4px;
+  transition: all 0.2s;
+  transform-origin: 0% 0%;
+  transform: translateY(-50%);
+  position: absolute;
+  left: 0;
+}
+
+.drawer_button .drawer_bar1 {
+  top: 0;
+}
+
+.drawer_button .drawer_bar2 {
+  top: 50%;
+}
+
+.drawer_button .drawer_bar3 {
+  top: 100%;
+}
+
+.drawer_button.active .drawer_bar {
+  width: 36.77px;
+  left: 7px
+}
+
+.drawer_button.active .drawer_bar1 {
+  transform: rotate(0.7853981633974483rad) translateY(-50%);
+  top: 0px
+}
+
+.drawer_button.active .drawer_bar2 {
+  opacity: 0;
+}
+
+.drawer_button.active .drawer_bar3 {
+  transform: rotate(-0.7853981633974483rad) translateY(-50%);
+  top: calc(100% - 0px)
+}
+
+.drawer_button.active .drawer_menu_text {
+  display: none;
+}
+
+.drawer_button.active .drawer_close {
+  display: block;
+}
+
+.drawer_text {
+  width: 100%;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.drawer_close {
+  letter-spacing: 0.08em;
+  display: none;
+}
+
+.drawer_button {
+  color: #293b6a;
+}
+
+.drawer_button .drawer_bar {
+  background-color: #293b6a;
+}
+
+.drawer_menu .drawer_bg {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 999;
+  background-color: rgba(51, 51, 51, 0.5);
+  display: none;
+  top: 0;
+  left: 0;
+}
+
+.drawer_menu .drawer_nav_wrapper {
+  width: 312px;
+  height: 100%;
+  transition: all 0.2s;
+  transform: translate(-312px);
+  position: fixed;
+  top: 0;
+  right: auto;
+  left: 0;
+  z-index: 1000;
+  background-image: url(../img/leftbox_image.png);
+}
+
+.drawer_menu .drawer_nav_wrapper.open {
+  transform: translate(0);
+  overflow: auto;
+}
+
+.drawer_menu .drawer_nav {
+    padding: 100px 0 100px 58px;
+}
+
 /**--------------------------------------------------------
         左サイドバー
 ----------------------------------------------------------*/
@@ -726,15 +723,6 @@ body {
 	clear: both;
 	display: none;
 }
-
-.side_menu .box .person {
-	font-size: 110%;
-	font-weight: bold;
-	color: #000099;
-	padding-right: 5px;
-	padding-left: 5px;
-}
-
 
 .text_wrapper {
     padding-left: 12px;
@@ -1165,7 +1153,12 @@ body {
 
 #item_detail .status_text {
     margin-top: 10px;
-    font-size: 18px;
+    font-size: 1.8rem;
+    color: red;
+    font-weight: bold;
+}
+
+#item_detail .stock_alert {
     color: red;
     font-weight: bold;
 }
@@ -1381,12 +1374,12 @@ body {
 }
 
 .item_detail_title, .favorite_title, .deliver_title, .mypage_title {
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 @media screen and (max-width: 767px) {
 .item_detail_title, .favorite_title, .deliver_title, .mypage_title {
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 }
 }
 
@@ -1425,6 +1418,12 @@ body {
 
 #cart .item_quantity {
     width: 60px;    
+}
+
+#cart .stock_alert {
+    color: red;
+    font-weight: bold;
+    display: block;   
 }
 
 #cart .cart_btn_wrap {
@@ -1544,7 +1543,7 @@ body {
 }
 
 #postage_message {
-    font-size: 18px;
+    font-size: 1.8rem;
     color: red;
     font-weight: bold;
 }
@@ -1634,7 +1633,7 @@ body {
 }
     
 #postage_message {
-    font-size: 16px;
+    font-size: 1.6rem;
 }
 }
 
@@ -2028,7 +2027,7 @@ body {
     font-size: 1.2rem;
 }
 
-.confirm_button_wrapper input {
+.confirm_button_wrapper input, .confirm_button_wrapper a{
     width: 200px;
     height: 40px;
 }
@@ -2086,7 +2085,7 @@ body {
     width: 33.3%;
 }
 
-.confirm_button_wrapper input {
+.confirm_button_wrapper input, .confirm_button_wrapper a{
     width: 160px;
 }
 }
@@ -2527,7 +2526,7 @@ body {
 .shipping_box_wrap {
     width: 100%;
     display: table;
-    padding-bottom: 14px;
+    padding-bottom: 1.4rem;
     min-height: 90px;
 }
 
@@ -2594,7 +2593,7 @@ body {
 }
 
 #order_confirm .purchase_error_text {
-    font-size: 18px;
+    font-size: 1.8rem;
     font-weight: bold;
     color: red;   
 }
@@ -2870,8 +2869,7 @@ body {
 }
 
 .list_order_detail_01 {
-    margin-top: -7px;
-    line-height: 28px;
+    line-height: 2;
 }
 
 .list_order_detail_01 dt, .list_order_detail_02 dt {
@@ -2997,10 +2995,6 @@ body {
     padding-left: 4px;
 }
     
-.list_order_detail_01 {
-    line-height: 2;
-}
-    
 #history_detail .buy_item_quantity, #history_detail .mod_order_total {
     font-size: 1.3rem;   
 }
@@ -3059,6 +3053,7 @@ body {
 
 #leave_comp .main_contents_inner {
     text-align: center;    
+    text-align: center;    
     font-size: 1.8rem; 
 }
 
@@ -3093,10 +3088,12 @@ body {
 ----------------------------------------------------------*/
 .admin .admin_index_wrapper{
     text-align: center;
+    width: 200px;
+    margin: 0 auto;
 }
 
 .admin .admin_index_wrapper a, .admin_logout_btn{
-    font-size: 18px;
+    font-size: 1.8rem;
     line-height: 36px;
     display: block;
     text-decoration: underline;
@@ -3123,7 +3120,8 @@ body {
 ----------------------------------------------------------*/
 
 #admin_items .container {
-    width: 90%;   
+    width: 100%;   
+    padding: 0 20px;
 }
 
 .admin_item_list_wrapper, .admin_notice_list_wrapper {
@@ -3142,6 +3140,16 @@ body {
 
 #admin_items .link_wrap a{
     margin: 0 5px 20px auto;
+}
+
+.admin .admin_link:hover{
+    color: dimgrey;   
+}
+
+.admin .admin_link {
+    float: right;
+    text-decoration: underline;
+    font-weight: bold;
 }
 
 .admin th{
@@ -3185,10 +3193,6 @@ body {
     line-height: 24px;
     margin: 0 auto;
     padding: 0;
-}
-
-#admin_items .admin_button_area input:first-of-type {
-    margin-bottom: 22px;   
 }
 
 #admin_items .admin_item_search_row input, #admin_items .admin_item_search_row select{
@@ -3263,7 +3267,7 @@ body {
 }
 
 #admin_items .admin_none_text {
-    font-size: 18px;   
+    font-size: 1.8rem;   
     text-align: center;
     margin-top: 30px;
 }
@@ -3424,6 +3428,7 @@ body {
 
 #admin_customers .container {
     width: 100%;   
+    padding: 0 20px;
 }
 
 #admin_customers .admin_button_area input{
@@ -3462,7 +3467,7 @@ body {
 }
 
 #admin_customer_detail .link_wrap input{
-    margin: 0 5px 10px auto;
+    margin: 5px auto 10px 5px;
 }
 
 /**--------------------------------------------------------
@@ -3511,6 +3516,11 @@ body {
 /**--------------------------------------------------------
         admin_sales.php
 ----------------------------------------------------------*/
+#admin_sales .container {
+    width: 100%;   
+    padding: 0 20px;
+}
+
 #admin_sales .admin_sales_list_wrapper, #admin_sales .sales_aggregate, #admin_sales .sales_result_list {
     font-size: 1.6rem;
     width: 100%;
