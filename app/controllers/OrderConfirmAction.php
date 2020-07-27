@@ -17,16 +17,13 @@ use \Models\InvalidParamException;
 use \Models\MyPDOException;
 use \Models\DBConnectionException;
 
-class OrderConfirmAction{
+class OrderConfirmAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){        
 
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
-        if($cmd == "do_logout" ){
-            $_SESSION['customer_id'] = null;
-        }
-        
+        $this->checkLogoutRequest($cmd);
         /*====================================================================
          cart.phpで「レジに進む」ボタンが押された時の処理
         =====================================================================*/
@@ -48,7 +45,9 @@ class OrderConfirmAction{
             /*- カート情報及びcart.phpで選択した商品の点数をとりだし、セッションに格納 -*/
             for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
 
-                $_SESSION["cart"][$i]['item_quantity'] = $_POST["cart{$var}"];
+                    
+                $itemQuantity = Config::getPOST("cart{$var}");
+                $_SESSION["cart"][$i]['item_quantity'] = $itemQuantity;
 
                 /*- $_SESSION['order']に格納する値を計算-*/
                 $totalQuantity += $_SESSION["cart"][$i]['item_quantity']; 
@@ -78,7 +77,7 @@ class OrderConfirmAction{
             );
         }
         
-        /*- それ以外で$_SESSION['order']の値がない訪問は例外発生 -*/
+        /*- $_SESSION['order']の値がない訪問は例外発生 -*/
         try{
             $this->checkOrder();
         }catch(InvalidParamException $e){
@@ -89,8 +88,8 @@ class OrderConfirmAction{
         　非ログイン状態の場合の処理
         ————————————————————————————————————————————————————————————————*/
 
-        if(!isset($_SESSION["customer_id"])){
-            $_SESSION['order_flag'] = "is";
+        if(!isset($_SESSION['customer_id'])){
+            $_SESSION['track_for_login']['from'] = "order";
             header("Location:/html/login.php");   
             exit();
         }else{
@@ -98,7 +97,7 @@ class OrderConfirmAction{
         }
         
         /*——————————————————————————————————————————————————————————————
-         //$_SESSION['order']の値がある場合の共通処理
+            以下$_SESSION['order']/$_SESSION['customer_id']がある時の共通処理
         ————————————————————————————————————————————————————————————————*/
         try{
             $model = Model::getInstance();
@@ -111,12 +110,12 @@ class OrderConfirmAction{
         }
 
         try{
-        /*——————————————————————————————————————————————————————————————
-         「配送先確定」ボタンがおされたときの処理
-        ————————————————————————————————————————————————————————————————*/
+            /*——————————————————————————————————————————————————————————————
+             「配送先確定」ボタンがおされたときの処理
+            ————————————————————————————————————————————————————————————————*/
             if($cmd == "del_comp"){
 
-                $def_addr = filter_input(INPUT_POST, 'def_addr');
+                $def_addr = Config::getPOST('def_addr');
                 $_SESSION['def_addr'] = $def_addr;
 
                 if($def_addr != "customer") {
@@ -127,9 +126,9 @@ class OrderConfirmAction{
                     $this->saveCustomerData($customer);
                 }
             }else{
-        /*——————————————————————————————————————————————————————————————
-         「配送先確定」ボタンがおされたとき以外の共通処理
-        ————————————————————————————————————————————————————————————————*/
+            /*——————————————————————————————————————————————————————————————
+             「配送先確定」ボタンがおされたとき以外の共通処理
+            ————————————————————————————————————————————————————————————————*/
                 $customer = $customerDao->getCustomerById($customerId);
                 if(!$customer->getDeliveryFlag()){    
                     /*- customerテーブルの住所が配送先のデフォルトでなければ
@@ -152,7 +151,7 @@ class OrderConfirmAction{
          「決済方法確定」ボタンがおされたときの処理
         ————————————————————————————————————————————————————————————————*/
         if($cmd == "pay_comp") {
-            $payType = filter_input(INPUT_POST, 'pay_type');
+            $payType = Config::getPOST('pay_type');
             $_SESSION['pay_error'] = NULL;
             $_SESSION['payment_term'] = NULL;
 
@@ -173,25 +172,17 @@ class OrderConfirmAction{
             }
         }
         
-        if(isset($_SESSION['purchase_error'])){
-            
-            try{
-                $itemsDao = new ItemsDao($pdo);
-                
-                for($i = 0 ; $i<count($_SESSION["cart"]); $i++ ){
-                    //購入できない商品を特定し最新の商品ステータスに更新
-                    if($_SESSION['purchase_error'] == $_SESSION["cart"][$i]['item_code']){
-                        $itemCode = $_SESSION["cart"][$i]['item_code'];
-                        $itemsDto = $itemsDao->getItemByItemCode($itemCode);
-                        $_SESSION["cart"][$i]['item_status'] = $itemsDto->getItemStatus();
-                    }
-                }
-            } catch(MyPDOException $e){
-                $e->handler($e);
+        /*——————————————————————————————————————————————————————————————
+            共通処理
+        ————————————————————————————————————————————————————————————————*/
+       try{
+           $this->checkItemInfo($pdo);
 
-            }catch(DBParamException $e){
-                $e->handler($e);
-            }
+       } catch(MyPDOException $e){
+            $e->handler($e);
+
+        }catch(DBParamException $e){
+            $e->handler($e);
         }
     }
     
@@ -236,6 +227,71 @@ class OrderConfirmAction{
             'address' => $customer->getAddress(),
             'tel' => $customer->getTel()
         );
+    }
+    
+    public function checkItemInfo($pdo){
+        
+        $_SESSION['purchase_error'] = false;
+        
+        $itemsDao = new ItemsDao($pdo);
+        
+        foreach($_SESSION['cart'] as &$item){
+
+            $itemCode = $item['item_code'];
+            $itemQuantity = $item['item_quantity'];
+
+            $itemsDto = $itemsDao->getItemByItemCode($itemCode);
+            $itemStatus = $itemsDto->getItemStatus();
+            $itemStock = $itemsDto->getItemStock();
+            $item['item_status'] = $itemStatus;
+            $item['item_stock'] = $itemStock;
+            
+            if($itemStatus !== "1" || $itemStock<$itemQuantity){
+                $_SESSION['purchase_error'] = TRUE;
+            }
+        }
+    }
+    
+    public function checkValue($key, $value){
+        if(isset($_SESSION[$key]) && $_SESSION[$key] == $value){
+            return true;
+        }
+    }
+    
+    public function checkIssetPayType(){
+        if(!isset($_SESSION['pay_type']) || $_SESSION['pay_type'] == "none"){
+            return false;   
+        }else{
+            return true;   
+        }
+    }
+    
+    public function echoOrder($key){
+        return  $_SESSION['order'][$key];   
+    }
+    
+    public function echoDelivery($key){
+        return  $_SESSION['delivery'][$key];   
+    }
+    
+    public function calculateTotal(){
+        return $_SESSION['order']['total_amount'] + $_SESSION['order']['postage'];
+    }
+    
+    public function checkIssetPurchaseError(){
+        if(isset($_SESSION['purchase_error']) && $_SESSION['purchase_error']){
+            return true;   
+        }else{
+            return false;   
+        }
+    }
+    
+    public function alertStock($itemStock, $itemQuantity){
+        if($itemStock < $itemQuantity){
+            return true;   
+        }else{
+            return false;
+        }   
     }
 }
 
