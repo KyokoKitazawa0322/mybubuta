@@ -30,6 +30,7 @@ $notice = $adminNoticeDetail->getNotice();
                         <h2><a href="/html/admin/admin_notice.php">お知らせ管理画面</a></h2>
                     </div>
 		            <div class="main_contents_inner">
+                        <a href="/html/admin/admin_notice.php" class="admin_link">お知らせ一覧へ戻る</a>
                         <table class="admin_notice_list_wrapper">
                             <tr>      
                                 <th>ID</th>
