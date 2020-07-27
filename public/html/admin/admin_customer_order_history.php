@@ -8,6 +8,7 @@ use \Config\Config;
 $adminCustomerOrderHistory = new \Controllers\AdminCustomerOrderHistoryAction();
 $adminCustomerOrderHistory->execute();
 $orders = $adminCustomerOrderHistory->getOrders();
+$customerId = $adminCustomerOrderHistory->getCustomerId();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -22,8 +23,6 @@ $(function(){
     $('.admin_order_detail').click(function(){ 
         var orderId = $(this).data("order");
         $('input#order_id').val(orderId);
-        var customerId = $(this).data("customer");
-        $('input#customer_id').val(customerId);
         $('form#orderDetailForm').submit();
     });
 });
@@ -41,16 +40,17 @@ $(function(){
                         <h2><a href="/html/admin/admin_customers.php">顧客管理画面</a></h2>
                     </div>
 		            <div class="main_contents_inner">
-                        <table class="admin_customer_list_wrapper">
-                            <caption>購入履歴</caption>
-                            <tr>
-                                <th>ご注文日</th>
-                                <th>ご注文番号</th>
-                                <th>合計金額</th>
-                                <th>決済方法</th>
-                                <th></th>
-                            </tr>
-                            <?php if($orders):?>
+                        <a href="/html/admin/admin_customer_detail.php?customer_id=<?=$customerId?>" class="admin_link">顧客登録情報へ戻る</a>
+                        <?php if($orders):?>
+                            <table class="admin_customer_list_wrapper">
+                                <caption>購入履歴</caption>
+                                <tr>
+                                    <th>ご注文日</th>
+                                    <th>ご注文番号</th>
+                                    <th>合計金額</th>
+                                    <th>決済方法</th>
+                                    <th></th>
+                                </tr>
                                 <?php foreach($orders as $order):?>
                                     <tr>
                                         <td class="admin_order_date"><?=$order->getPurchaseDate();?></td>
@@ -58,14 +58,14 @@ $(function(){
                                         <td class="admin_order_amount">&yen;<?=number_format($order->getTotalAmount());?></td>
                                         <td class="admin_order_payment_term"><?=$order->getPaymentTerm();?></td>
                                         <td class="detail_link_wrap">
-                                            <input type="button" class="btn_cmn_01 btn_design_02 admin_order_detail" value="詳細" data-order="<?=$order->getOrderId();?>" data-customer="<?=$order->getCustomerId();?>"/>
+                                            <input type="button" class="btn_cmn_01 btn_design_02 admin_order_detail" value="詳細" data-order="<?=$order->getOrderId();?>"/>
                                         </td>
                                     </tr>
                                 <?php endforeach;?>
-                            <?php else:?>
-                                <p>購入履歴なし</p>
-                            <?php endif;?>
-                        </table>
+                            </table>
+                        <?php else:?>
+                            <p>購入履歴なし</p>
+                        <?php endif;?>
 		            </div>
 		        </div>
 		    </div>
@@ -73,10 +73,9 @@ $(function(){
 		<div id="footer">
 		    <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
 		</div>
-        <form method="POST" id="orderDetailForm" action="/html/admin/admin_customer_order_detail.php">
+        <form method="GET" id="orderDetailForm" action="/html/admin/admin_customer_order_detail.php">
             <input type="hidden" id="order_id" name="order_id" value>
-            <input type="hidden" id="customer_id" name="customer_id" value>
-            <input type="hidden" name="cmd" value="admin_order_detail">
+            <input type="hidden" id="customer_id" name="customer_id" value="<?=$customerId?>">
         </form>
     </div>
 </body>
