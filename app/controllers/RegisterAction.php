@@ -24,6 +24,7 @@ class RegisterAction{
     private $prefectureError = false;
     private $cityError = false;
     private $blockNumberError = false;
+    private $buildingNameError = false;
     private $telError = false;
     private $mailError = false;
     private $passwordError = false;
@@ -32,27 +33,27 @@ class RegisterAction{
         
     public function execute(){
 
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         /*====================================================================
         　「会員登録をする」ボタンが押された時の処理
         =====================================================================*/
         if($cmd == "confirm"){
             
-            $lastName = filter_input(INPUT_POST, 'last_name');
-            $firstName = filter_input(INPUT_POST, 'first_name');
-            $rubyLastName = filter_input(INPUT_POST, 'ruby_last_name');
-            $rubyFirstName = filter_input(INPUT_POST, 'ruby_first_name');
-            $zipCode01 = filter_input(INPUT_POST, 'zip_code_01');
-            $zipCode02 = filter_input(INPUT_POST, 'zip_code_02');
-            $prefecture = filter_input(INPUT_POST, 'prefecture');
-            $city = filter_input(INPUT_POST, 'city');
-            $blockNumber = filter_input(INPUT_POST, 'block_number');
-            $buildingName = filter_input(INPUT_POST, 'building_name');
-            $tel = filter_input(INPUT_POST, 'tel');
-            $mail = filter_input(INPUT_POST, 'mail');
-            $password = filter_input(INPUT_POST, 'password');
-            $passwordConfirm = filter_input(INPUT_POST, 'passwordConfirm');
+            $lastName = Config::getPOST('last_name');
+            $firstName = Config::getPOST('first_name');
+            $rubyLastName = Config::getPOST('ruby_last_name');
+            $rubyFirstName = Config::getPOST('ruby_first_name');
+            $zipCode01 = Config::getPOST('zip_code_01');
+            $zipCode02 = Config::getPOST('zip_code_02');
+            $prefecture = Config::getPOST('prefecture');
+            $city = Config::getPOST('city');
+            $blockNumber = Config::getPOST('block_number');
+            $buildingName = Config::getPOST('building_name');
+            $tel = Config::getPOST('tel');
+            $mail = Config::getPOST('mail');
+            $password = Config::getPOST('password');
+            $passwordConfirm = Config::getPOST('passwordConfirm');
 
             $validator = new CommonValidator();
             
@@ -74,16 +75,20 @@ class RegisterAction{
             );
 
             $key = "氏名(性)";
-            $this->lastNameError = $validator->fullWidthValidation($key, $lastName);
+            $limit = 20;
+            $this->lastNameError = $validator->fullWidthValidation($key, $lastName, $limit);
 
             $key = "氏名(名)";
-            $this->firstNameError = $validator->fullWidthValidation($key, $firstName);
+            $limit = 20;
+            $this->firstNameError = $validator->fullWidthValidation($key, $firstName, $limit);
 
             $key = "氏名(セイ)";
-            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName);
+            $limit = 20;
+            $this->rubyLastNameError = $validator->rubyValidation($key, $rubyLastName, $limit);
 
             $key = "氏名(メイ)";
-            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName);
+            $limit = 20;
+            $this->rubyFirstNameError = $validator->rubyValidation($key, $rubyFirstName, $limit);
 
             $key = "郵便番号(3ケタ)";
             $this->zipCode01Error = $validator->firstZipCodeValidation($key, $zipCode01);
@@ -103,10 +108,16 @@ class RegisterAction{
             }
             
             $key="市区町村";
-            $this->cityError = $validator->requireCheck($key, $city);
+            $limi = 30;
+            $this->cityError = $validator->fullWidthValidation($key, $city, $limit);
 
             $key="番地";
-            $this->blockNumberError = $validator->requireCheck($key, $blockNumber);
+            $limit = 30;
+            $this->blockNumberError = $validator->fullWidthValidation($key, $blockNumber, $limit);
+            
+            $key="建物名等";
+            $limit = 30;
+            $this->buildingNameError = $validator->fullWidthValidation($key, $buildingName, $limit);
 
             $key="メールアドレス";
             $this->mailError = $validator->mailValidation($key, $mail);
@@ -186,6 +197,10 @@ class RegisterAction{
         return $this->blockNumberError;   
     }
 
+    public function getBuildingNameError(){
+        return $this->buildingNameError;   
+    }
+    
     public function getTelError(){
         return $this->telError;   
     }
