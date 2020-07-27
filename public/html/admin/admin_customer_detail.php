@@ -20,14 +20,6 @@ $customerDeliveries = $adminCustomerDetail->getCustomerDelivery();
 <script type="text/javascript">
 <!--
 $(function(){
-    $('#admin_order_history').click(function(){ 
-        var customerId = $(this).data("value");
-        $('input#customer_id').val(customerId);
-        $('form#orderHistoryForm').submit();
-    });
-});
-   
-$(function(){
     history.pushState(null, null, null);
     $(window).on("popstate", function (event) {
         window.location.replace('/html/admin/admin_customers.php');
@@ -43,11 +35,12 @@ $(function(){
 		    <div class="main_wrapper">
 		        <div class="main_contents">
                     <div class="admin_title">
-                        <h2>顧客管理画面</h2>
+                        <h2><a href="/html/admin/admin_customers.php">顧客管理画面</a></h2>
                     </div>
 		            <div class="main_contents_inner">
+                        <a href="/html/admin/admin_customers.php" class="admin_link">顧客一覧へ戻る</a>
                         <div class="link_wrap">
-                            <input type="button" id="admin_order_history" class="btn_cmn_mid btn_design_02" data-value="<?=Config::h($customer->getCustomerId());?>" value="購入履歴へ"/>
+                            <input type="button"  type="button" onclick="location.href='/html/admin/admin_customer_order_history.php?customer_id=<?=$customer->getcustomerId()?>'" class="btn_cmn_mid btn_design_02" value="購入履歴へ"/>
                         </div>
                         <?php if($customer->getDeliveryFlag()):?>
                             <span class="default_info">いつもの配送先</span>
@@ -135,10 +128,6 @@ $(function(){
 		<div id="footer">
 		    <p class="copy">&copy; 2020 BUBUTA All Rights Reserved.</p>
 		</div>
-        <form method="POST" id="orderHistoryForm" action="/html/admin/admin_customer_order_history.php">
-            <input type="hidden" id="customer_id" name="customer_id" value>
-            <input type="hidden" name="cmd" value="order_history">
-        </form>
     </div>
 </body>
 </html>

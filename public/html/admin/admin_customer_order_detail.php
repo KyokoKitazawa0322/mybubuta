@@ -9,6 +9,7 @@ $adminCustomerOrderDetail = new \Controllers\AdminCustomerOrderDetailAction();
 $adminCustomerOrderDetail->execute();
 $details = $adminCustomerOrderDetail->getOrderDetail();
 $order = $adminCustomerOrderDetail->getOrderHistory();
+$customerId = $adminCustomerOrderDetail->getCustomerId();
 ?>
 
 <!DOCTYPE html>
@@ -29,6 +30,7 @@ $order = $adminCustomerOrderDetail->getOrderHistory();
                         <h2><a href="/html/admin/admin_customers.php">顧客管理画面</a></h2>
                     </div>
                      <div class="main_contents_inner">
+                        <a href="/html/admin/admin_customer_order_history.php?customer_id=<?=$customerId?>" class="admin_link">購入履歴一覧に戻る</a>
                         <div class="cart_item_box">
                             <div class="order_detail_box">
                                 <dl class="list_order_detail_01">
@@ -109,9 +111,6 @@ $order = $adminCustomerOrderDetail->getOrderHistory();
                                         </dl>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="btn_link_wrap">
-                                <a href="/html/mypage/mypage_order_history.php" class="btn_cmn_01 btn_design_03">ご注文履歴に戻る</a>
                             </div>
                         </div> 
                     </div>
