@@ -9,6 +9,7 @@ use \Models\CsrfValidator;
 
 $myPageDeliveryEntryConfirm = new \Controllers\MyPageDeliveryEntryConfirmAction();
 $myPageDeliveryEntryConfirm->execute();
+$delId = $myPageDeliveryEntryConfirm->getDelId();
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -35,22 +36,22 @@ $myPageDeliveryEntryConfirm->execute();
                                 <p class="register_form_title">氏名</p>
                                 <p class="name_label">姓:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['last_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('last_name'));?></p>
                                 </div>
                                 <p class="name_label">名:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['first_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('first_name'));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">フリガナ(カタカナ)</p>
                                 <p class="name_label">セイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['ruby_last_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('ruby_last_name'));?></p>
                                 </div>
                                 <p class="name_label">メイ:</p>
                                 <div class="name_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['ruby_first_name']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('ruby_first_name'));?></p>
                                 </div>
                             </div>
                         </div>  
@@ -58,43 +59,43 @@ $myPageDeliveryEntryConfirm->execute();
                             <div class="register_form_row">
                                 <p class="register_form_title">郵便番号</p>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['zip_code_01']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('zip_code_01'));?></p>
                                 </div>
                                 <span class="txt_dash">－</span>
                                 <div class="addr01_input_wrapper">
-                                    <p><?=Config::h($_SESSION['del_update']['zip_code_02']);?></p>
+                                    <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('zip_code_02'));?></p>
                                 </div>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">都道府県</p>
                                 <div class="add_list_wrapper">
-                                   <p><?=Config::h($_SESSION['del_update']['prefecture']);?></p>
+                                   <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('prefecture'));?></p>
                                 </div>		
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">市区町村</p>
-                                <p><?=Config::h($_SESSION['del_update']['city']);?></p>
+                                <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('city'));?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">番地</p>
-                                <p><?=Config::h($_SESSION['del_update']['block_number']);?></p>
+                                <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('block_number'));?></p>
                             </div>
                             <div class="register_form_row">
                                 <p class="register_form_title">建物名</p>
-                                <p><?=Config::h($_SESSION['del_update']['building_name']);?></p>
+                                <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('building_name'));?></p>
                             </div>
                         </div>                     
                         <div class="register_field tel_field">
                             <div class="register_form_row">
                                 <p class="register_form_title">電話番号</p>
-                                <p><?=Config::h($_SESSION['del_update']['tel']);?></p>
+                                <p><?=Config::h($myPageDeliveryEntryConfirm->echoValue('tel'));?></p>
                             </div>
                         </div>
                         <div class="confirm_button_wrapper">
                             <div class="confirm_button_inner">
-                                <input class="btn_cmn_mid btn_design_03" type="button" onClick="location.href='/html/mypage/delivery/mypage_delivery_entry.php'" value="前の画面に戻る"/>
+                                <a class="btn_cmn_mid btn_design_03" href="/html/mypage/delivery/mypage_delivery_entry.php?del_id=<?=$delId?>">前の画面に戻る</a>
                             </div>
-                            <form action="/html/mypage/delivery/mypage_delivery_complete.php" method="POST">
+                            <form action="/html/mypage/delivery/mypage_delivery_complete.php?del_id=<?=$delId?>"  method="POST">
                                 <div class="confirm_button_inner">
                                     <input class="register_button btn_design_01" type="submit" value="この内容で登録する"/>
                                 </div>
