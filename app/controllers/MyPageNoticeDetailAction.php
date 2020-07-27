@@ -18,8 +18,8 @@ class MyPageNoticeDetailAction extends \Controllers\CommonMyPageAction{
         
     public function execute(){
 
-        $cmd = filter_input(INPUT_POST, 'cmd');
-        $noticeId = filter_input(INPUT_POST, 'notice_id');
+        $cmd = Config::getPOST("cmd");
+        $noticeId = Config::getGET('notice_id');
 
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
