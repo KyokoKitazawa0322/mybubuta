@@ -18,25 +18,25 @@ use \Models\InvalidParamException;
 use \Models\MyPDOException;
 use \Models\DBConnectionException;
 
-class OrderCompleteAction{
+class OrderCompleteAction  extends \Controllers\CommonMyPageAction{
 
     public function execute(){
 
-        if(!isset($_SESSION['customer_id'])){
-            header('Location:/html/login.php');
-            exit();
-         }
-
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
+        
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin(); 
         
         /*====================================================================
         　register_confirm.phpで「注文を確定する」ボタンが押された時の処理
         =====================================================================*/
-        $token = filter_input(INPUT_POST, "token_order_complete");
+        
+        $token = Config::getPOST( "token_order_complete");
         $formName = "token_order_complete";
         
         try{
             CsrfValidator::checkToken($token, $formName);
+            
         }catch(InvalidParamException $e){
             $e->handler($e);   
         }
@@ -50,6 +50,7 @@ class OrderCompleteAction{
             $_SESSION['pay_type'] = "none";
             exit();
         }
+        
         /*——————————————————————————————————————————————————————————————*/
 
         $customerId = $_SESSION['customer_id'];
@@ -63,21 +64,16 @@ class OrderCompleteAction{
         $post = $_SESSION['delivery']['post'];
         $tel = $_SESSION['delivery']['tel'];
 
-        /*- 商品のitem_statusが1(販売中)か最終確認 -*/
+        /*- 商品のitem_status(=1：販売中ならOK)とitem_stock(購入数量が在庫より少なければOK)を最終確認 -*/
         try{
             $model = Model::getInstance();
             $pdo = $model->getPdo();
-            $itemsDao = new ItemsDao($pdo);
             
-            foreach($_SESSION['cart'] as $item){
-                $itemCode = $item['item_code'];
-                /*$itemsDao->getItemByItemCodeForPurchase($itemCode);*/
-                $itemsDto = $itemsDao->getItemByItemCode($itemCode);
-                if($itemsDto->getItemStatus() !== "1"){
-                    $_SESSION['purchase_error'] = $itemCode;
-                    header("Location:/html/order/order_confirm.php");   
-                    exit();
-                }
+            $this->checkItemInfo($pdo);
+        
+            if(isset($_SESSION['purchase_error']) && $_SESSION['purchase_error']){
+                header("Location:/html/order/order_confirm.php");   
+                exit();
             }
             
         }catch(DBConnectionException $e){
@@ -92,34 +88,24 @@ class OrderCompleteAction{
 
         try{
             $model->beginTransaction();
+            
         } catch(MyPDOException $e){
             $e->handler($e);
         }
                 
         try{
-            $orderHistoryDao = new OrderHistoryDao($pdo);
-            $orderHistoryDao->insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel);
-
-            /*- INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録 -*/
-            $orderDetailDao = new OrderDetailDao($pdo);
-
-            $orderHistoryDto = $orderHistoryDao->getOrderId($customerId);
-            $orderId = $orderHistoryDto->getOrderId();
-
-            $itemsDao = new ItemsDao($pdo);
-            $cart = $_SESSION['cart'];        
-
-            foreach($cart as $item){
-                $itemCode = $item['item_code'];
-                $itemQuantity = $item['item_quantity'];
-                $itemPrice = $item['item_price'];
-                $itemTax = $item['item_tax'];
-                $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax);
-                $itemsDao->recordItemSales($itemQuantity, $itemCode);
-            }
+            $this->insertOrderInfo($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel, $pdo);
             
             $model->commit();
-            
+
+        }catch(MyPDOException $e){
+            if($pdo->inTransaction()){$pdo->rollback();}
+            $e->handler($e);
+
+        }catch(DBParamException $e){
+            if($pdo->inTransaction()){$pdo->rollback();}
+            $e->handler($e);   
+        } 
             unset($_SESSION['cart']);
             unset($_SESSION['order']);
             unset($_SESSION['delivery']);
@@ -127,22 +113,56 @@ class OrderCompleteAction{
             unset($_SESSION['pay_type']);
             unset($_SESSION['pay_error']);
             unset($_SESSION['payment_term']);
-            unset($_SESSION['cmd']);
             unset($_SESSION['availableForPurchase']);
-
-        } catch(MyPDOException $e){
-            if ($pdo->inTransaction()){
-                $pdo->rollback();
-            }
-            $e->handler($e);
-
-        } catch(DBParamException $e){
-            if ($pdo->inTransaction()){
-                $pdo->rollback();
-            }
-            $e->handler($e);   
-        }
+            unset($_SESSION['purchase_error']);
     }   
+    
+    /*---------------------------------------*/
+    
+    public function checkItemInfo($pdo){
+    
+        $itemsDao = new ItemsDao($pdo);
+        
+        foreach($_SESSION['cart'] as &$item){
+            $itemCode = $item['item_code'];
+            $itemQuantity = $item['item_quantity'];
+
+            $itemsDto = $itemsDao->getItemByItemCode($itemCode);
+            $itemStatus = $itemsDto->getItemStatus();
+            $itemStock = $itemsDto->getItemStock();
+            $item['item_status'] = $itemStatus;
+            $item['item_stock'] = $itemStock;
+            
+            if($itemStatus !== "1" || $itemStock<$itemQuantity){
+                $_SESSION['purchase_error'] = TRUE;
+            }
+        }
+    }
+    
+    public function insertOrderInfo($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel, $pdo){
+        
+        $orderHistoryDao = new OrderHistoryDao($pdo);
+        $orderHistoryDao->insertOrderHistory($customerId, $totalAmount, $totalQuantity, $tax, $postage, $paymentTerm, $name, $address, $post, $tel);
+
+        /*- INSERT時に自動発行される注文idを取得し購入アイテムを全件明細テーブルに登録 -*/
+        $orderDetailDao = new OrderDetailDao($pdo);
+
+        $orderHistoryDto = $orderHistoryDao->getOrderId($customerId);
+        $orderId = $orderHistoryDto->getOrderId();
+
+        $itemsDao = new ItemsDao($pdo);
+        $cart = $_SESSION['cart'];        
+
+        foreach($cart as $item){
+            $itemCode = $item['item_code'];
+            $itemQuantity = $item['item_quantity'];
+            $itemPrice = $item['item_price'];
+            $itemTax = $item['item_tax'];
+            
+            $orderDetailDao->insertOrderDetail($orderId, $itemCode, $itemQuantity, $itemPrice, $itemTax);
+            $itemsDao->recordItemSales($itemQuantity, $itemCode);
+        }
+    }
 }
 ?>    
 
