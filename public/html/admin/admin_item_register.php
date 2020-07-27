@@ -8,6 +8,7 @@ use \Models\CsrfValidator;
 
 $adminItemRegister = new \Controllers\AdminItemRegisterAction();
 $adminItemRegister->execute();
+$errorMessage = $adminItemRegister->getErrorMessage();
 ?>
 
 <!DOCTYPE html>
@@ -19,10 +20,26 @@ $adminItemRegister->execute();
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
 <!--
+    
+$(function(){
+    var errorMessage = "<?=$errorMessage?>";
+    if(errorMessage !== "none"){
+       alert(errorMessage);
+    }
+});
+    
 $(function(){
     $('#register_btn').click(function(){ 
-        $('form#itemDataForm').submit();
-    });
+        if(confirm("更新しますか?")){
+            var password = prompt("パスワードを入力してください");
+            $('#password').val(password);
+            $('form#itemDataForm').submit();
+            
+        }else{
+            alert('キャンセルされました');
+            e.preventDefault();
+        }
+    });    
 });
 // --> 
 </script>
@@ -37,6 +54,7 @@ $(function(){
                         <h2><a href="/html/admin/admin_items.php">商品管理画面</a></h2>
                     </div>
 		            <div class="main_contents_inner">
+                        <a href="/html/admin/admin_items.php" class="admin_link">商品一覧へ戻る</a>
                         <table class="admin_item_list_wrapper">
                             <form method="post" action="#" id="itemDataForm" enctype="multipart/form-data">
                                 <tr>
@@ -52,7 +70,8 @@ $(function(){
                                 <tr>
                                     <th>商品名</th>
                                     <td class="admin_item_name">
-                                        <input type="text" name="item_name" value="<?=Config::h($adminItemRegister->echoValue("item_name"))?>"/>
+                                        <p>30文字以内</p>
+                                        <input type="text" name="item_name" value="<?=Config::h($adminItemRegister->echoValue("item_name"))?>" maxlength="30"/>
                                         <?php if($adminItemRegister->getItemNameError()):?>
                                             <p class="error_txt"><?=$adminItemRegister->getItemNameError();?></p>
                                         <?php endif;?>
@@ -61,7 +80,8 @@ $(function(){
                                 <tr>
                                     <th>商品コード<br/></th>
                                     <td class="admin_item_code">
-                                        <input type="text" name="item_code" value="<?=Config::h($adminItemRegister->echoValue("item_code"))?>"/>
+                                        <p>カテゴリ分類(半角英大文字[A-Z]1文字)+ハイフン+数字4ケタ(例)A-0005</p>
+                                        <input type="text" name="item_code" value="<?=Config::h($adminItemRegister->echoValue("item_code"))?>" maxlength="6"/>
                                         <?php if($adminItemRegister->getItemCodeError()):?>
                                             <p class="error_txt"><?=$adminItemRegister->getItemCodeError();?></p>
                                         <?php endif;?>
@@ -70,6 +90,7 @@ $(function(){
                                 <tr>
                                     <th>売価<br/></th>
                                     <td class="admin_item_price">
+                                        <p>上限額:999,999円</p>
                                         <input type="text" name="item_price" maxlength="6" oninput="value = value.replace(/[^0-9]+/i,'');" value="<?=Config::h($adminItemRegister->echoValue("item_price"))?>"/>&nbsp;円(税抜き)
                                         <?php if($adminItemRegister->getItemPriceError()):?>
                                             <p class="error_txt"><?=$adminItemRegister->getItemPriceError();?></p>
@@ -91,7 +112,8 @@ $(function(){
                                 <tr>
                                     <th>在庫<br/></th>
                                     <td class="admin_item_stock">
-                                        <input type="text" name="item_stock" maxlength="10" oninput="value = value.replace(/[^0-9]+/i,'');" value="<?=Config::h($adminItemRegister->echoValue("item_stock"))?>"/>&nbsp;個
+                                        <p>上限:999,999個</p>
+                                        <input type="text" name="item_stock" maxlength="6" oninput="value = value.replace(/[^0-9]+/i,'');" value="<?=Config::h($adminItemRegister->echoValue("item_stock"))?>"/>&nbsp;個
                                         <?php if($adminItemRegister->getItemStockError()):?>
                                             <p class="error_txt"><?=$adminItemRegister->getItemStockError();?></p>
                                         <?php endif;?>
@@ -114,7 +136,8 @@ $(function(){
                                 <tr>
                                     <th>説明文<br/></th>
                                     <td class="admin_item_detail">
-                                        <textarea rows="4" wrap="soft" name="item_detail"><?=Config::h($adminItemRegister->echoValue("item_detail"))?></textarea>
+                                        <p>500文字以内</p>
+                                        <textarea rows="4" wrap="soft" name="item_detail" maxlength="500"><?=Config::h($adminItemRegister->echoValue("item_detail"))?></textarea>
                                         <?php if($adminItemRegister->getItemDetailError()):?>
                                             <p class="error_txt"><?=$adminItemRegister->getItemDetailError();?></p>
                                         <?php endif;?>
