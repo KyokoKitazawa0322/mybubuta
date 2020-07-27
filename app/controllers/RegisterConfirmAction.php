@@ -32,4 +32,10 @@ class RegisterConfirmAction{
             throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["register_data"]='.$registerData);
         }
     }
+    
+    public function echoValue($value){
+        if(isset($_SESSION['register'][$value])){
+            echo $_SESSION['register'][$value];
+        }
+    }
 }

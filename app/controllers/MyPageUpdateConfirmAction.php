@@ -4,11 +4,10 @@ namespace Controllers;
 use \Models\InvalidParamException;
 
 class MyPageUpdateConfirmAction extends \Controllers\CommonMyPageAction{
-
     
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
@@ -30,13 +29,34 @@ class MyPageUpdateConfirmAction extends \Controllers\CommonMyPageAction{
     **/
     public function checkValidationResult(){
         
-        if(!isset($_SESSION['update_data']) || $_SESSION['update_data'] != "complete"){
-            if(!isset($_SESSION['update_data'])){
-                $updateData = "nothing";
+        if(!isset($_SESSION['mypage_update']['status']) || $_SESSION['mypage_update']['status'] != "complete"){
+            if(!isset($_SESSION['mypage_update']['status'])){
+                $updateStatus = "nothing";
             }else{
-                $updateData = $_SESSION['update_data'];   
+                $updateStatus = $_SESSION['mypage_update']['status'];   
             }
-            throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["update_data"]='.$updateData);
+            throw new InvalidParamException('Invalid param for update_confirm:$_SESSION["mypage_update"]["status"]='.$updateStatus);
+        }
+    }
+    
+    public function echoValue($value){
+        if(isset($_SESSION['mypage_update'][$value])){
+            echo $_SESSION['mypage_update'][$value];
+        }
+    }
+    
+    public function checkValue($value){
+        if(isset($_SESSION['mypage_update'][$value]) && $_SESSION['mypage_update'][$value]){
+            return TRUE;   
+        }else{
+            return FALSE;
+        }
+    }
+    
+    public function CountPassword($mark){
+        $password = $_SESSION['mypage_update']['password'];
+        for($i = 0; $i < strlen($password); $i++){
+            echo $mark;   
         }
     }
 }
