@@ -19,8 +19,8 @@ class MyPageDeliveryAction extends \Controllers\CommonMyPageAction{
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
-        $deliveryId = filter_input(INPUT_POST, 'del_id');
+        $cmd = Config::getPOST("cmd");
+        $deliveryId = Config::getPOST('del_id');
         
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();

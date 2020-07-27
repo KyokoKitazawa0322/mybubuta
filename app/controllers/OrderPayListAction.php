@@ -7,17 +7,17 @@ use \Models\InvalidParamException;
 use \Models\MyPDOException;
 use \Config\Config;
 
-class OrderPayListAction{
+class OrderPayListAction extends \Controllers\CommonMyPageAction{
 
     public function execute(){
         
         /**--------------------------------------------------------
          * ログイン状態の判定(セッション切れの場合はlogin.phpへ)
          ---------------------------------------------------------*/
-         if(!isset($_SESSION['customer_id'])){
-            header('Location:/html/login.php');
-            exit();
-        }
+        $cmd = Config::getPOST("cmd");
+        
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin(); 
         
         try{
             if(!isset($_SESSION['availableForPurchase'])){

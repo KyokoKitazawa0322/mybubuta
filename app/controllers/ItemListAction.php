@@ -18,11 +18,11 @@ class ItemListAction {
     
     public function execute() {
         
-        $cmd = filter_input(INPUT_GET, 'cmd');
-        $keyWord = filter_input(INPUT_GET, 'keyword');
-        $minPrice = filter_input(INPUT_GET, 'min_price');
-        $maxPrice = filter_input(INPUT_GET, 'max_price');
-        $sortKey = filter_input(INPUT_GET, 'sortkey');
+        $cmd = Config::getGET('cmd');
+        $keyWord = Config::getGET('keyword');
+        $minPrice = Config::getGET('min_price');
+        $maxPrice = Config::getGET('max_price');
+        $sortKey = Config::getGET('sortkey');
 
         /*- 検索条件をリセット -*/
         if($cmd == "do_search" || $cmd == "item_list") {
@@ -104,22 +104,22 @@ class ItemListAction {
     }
     
     public function checkRequest(){
-        $cmd = filter_input(INPUT_GET, 'cmd');
-        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        $cmd = Config::getGET('cmd');
+        $sortkey = Config::getGET('sortkey');
         if($cmd !== "do_search" && !$sortkey){
             return true;
        }
     }
 
     public function checkSortkey($value){
-        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        $sortkey = Config::getGET('sortkey');
         if($sortkey==$value){
             return true;
         }
     }
     
     public function checkSelectedSortkey($value){
-        $sortkey = filter_input(INPUT_GET, 'sortkey');
+        $sortkey = Config::getGET('sortkey');
         if($sortkey==$value){
             echo "selected";   
         }

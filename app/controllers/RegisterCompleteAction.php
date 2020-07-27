@@ -16,13 +16,13 @@ class RegisterCompleteAction{
           
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         /*====================================================================
         　register_confirm.phpで「この内容で登録をする」ボタンが押された時の処理
         =====================================================================*/
         
-        $token = filter_input(INPUT_POST, "token_register_complete");
+        $token = Config::getPOST( "token_register_complete");
         $formName = "token_register_complete";
         
         try{

@@ -15,19 +15,20 @@ use \Models\InvalidParamException;
 use \Models\MyPDOException;
 use \Models\DBConnectionException;
 
-class OrderDeliveryListAction{
+class OrderDeliveryListAction extends \Controllers\CommonMyPageAction{
 
     private $customerDto;
     private $deliveryDto;
+    private $delId;
     
     public function execute(){
 
-        if(!isset($_SESSION["customer_id"])){
-            header("Location:/html/login.php");   
-            exit();
-        }else{
-            $customerId = $_SESSION['customer_id'];   
-        }
+        $cmd = Config::getPOST("cmd");
+        
+        $this->checkLogoutRequest($cmd);
+        $this->checkLogin(); 
+        
+        $customerId = $_SESSION['customer_id'];   
 
         try{
             if(!isset($_SESSION['availableForPurchase'])){
@@ -37,8 +38,8 @@ class OrderDeliveryListAction{
             $e->handler($e);
         }
             
-        $delId = filter_input(INPUT_POST, 'del_id');
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $delId = Config::getPOST('del_id');
+        $cmd = Config::getPOST("cmd");
         
         try{
             $model = Model::getInstance();
@@ -89,6 +90,10 @@ class OrderDeliveryListAction{
     
     public function getDelivery(){
         return $this->deliveryDto;   
+    }
+    
+    public function getDelId(){
+        return $this->delId;   
     }
     
     public function checkCustomer($customer){

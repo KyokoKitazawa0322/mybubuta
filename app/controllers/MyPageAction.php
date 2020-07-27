@@ -18,7 +18,7 @@ class MyPageAction extends \Controllers\CommonMyPageAction{
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
 
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();

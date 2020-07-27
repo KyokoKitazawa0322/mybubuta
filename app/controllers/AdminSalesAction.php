@@ -22,7 +22,7 @@ class AdminSalesAction{
         
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         /*====================================================================
       　  $_SESSION['admin_id']がなければadmin_login.phpへリダイレクト
         =====================================================================*/
@@ -40,13 +40,13 @@ class AdminSalesAction{
         if($cmd == "search_sales"){
             
             unset($_SESSION['search_error']);
-            $content = filter_input(INPUT_POST, 'content');
-            $year = filter_input(INPUT_POST, 'year');
-            $month = filter_input(INPUT_POST, 'month');
-            $day = filter_input(INPUT_POST, 'day');
-            $year_2 = filter_input(INPUT_POST, 'year_2');
-            $month_2 = filter_input(INPUT_POST, 'month_2');
-            $day_2 = filter_input(INPUT_POST, 'day_2');
+            $content = Config::getPOST('content');
+            $year = Config::getPOST('year');
+            $month = Config::getPOST('month');
+            $day = Config::getPOST('day');
+            $year_2 = Config::getPOST('year_2');
+            $month_2 = Config::getPOST('month_2');
+            $day_2 = Config::getPOST('day_2');
             
             if($month){
                 $month = sprintf('%02d', $month);
@@ -163,15 +163,15 @@ class AdminSalesAction{
     } 
     
     public function checkRadioValue($content){
-        $postContent = filter_input(INPUT_POST, 'content');
+        $postContent = Config::getPOST('content');
         if($postContent==$content){
             echo "checked";
         }
     }
     
     public function checkOptionValue($content, $date){
-        $postContent = filter_input(INPUT_POST, 'content');
-        $postDate = filter_input(INPUT_POST, $date);
+        $postContent = Config::getPOST('content');
+        $postDate = Config::getPOST( $date);
         if($postContent==$content && $postDate){
             echo $postDate;
         }else{

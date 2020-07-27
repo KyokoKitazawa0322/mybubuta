@@ -16,7 +16,7 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
     
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
     
         $this->checkLogoutRequest($cmd);
         $this->checkLogin();
@@ -28,7 +28,7 @@ class MyPageLeaveAction extends \Controllers\CommonMyPageAction{
  
         if($cmd == "leave"){
             
-            $memPwd = filter_input(INPUT_POST, 'memPwd');
+            $memPwd = Config::getPOST('memPwd');
             
             try{
                 $model = Model::getInstance();

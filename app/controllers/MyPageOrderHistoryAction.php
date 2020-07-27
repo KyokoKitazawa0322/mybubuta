@@ -18,7 +18,7 @@ class MyPageOrderHistoryAction {
     
     public function execute(){
         
-        $cmd = filter_input(INPUT_POST, 'cmd');
+        $cmd = Config::getPOST("cmd");
         
         if($cmd == "do_logout" ){
             $_SESSION['customer_id'] = null;
@@ -30,8 +30,6 @@ class MyPageOrderHistoryAction {
         }else{
             $customerId = $_SESSION['customer_id'];   
         }
-        
-        unset($_SESSION['order_id']);
         
         try{
             $model = Model::getInstance();
