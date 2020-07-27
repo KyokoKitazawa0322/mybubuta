@@ -67,6 +67,7 @@ $(function(){
                                 <th>登録日</th>
                                 <th>変更</th>
                             </tr>
+                            <?php if($notices):?>
                             <?php foreach($notices as $notice): ?>
                                 <tr class="admin_item">
                                     <td class="admin_notice_id"><?=Config::h($notice->getId());?></td>
@@ -78,6 +79,7 @@ $(function(){
                                     </td>
                                 </tr>
                             <?php endforeach;?>
+                            <?php endif;?>
                         </table>
 		            </div>
 		        </div>
@@ -90,9 +92,8 @@ $(function(){
             <input type="hidden" id="content" name="content" value>
             <input type="hidden" name="cmd" value="sort">
         </form>
-        <form method="POST" id="detailForm" action="/html/admin/admin_notice_detail.php">
+        <form method="GET" id="detailForm" action="/html/admin/admin_notice_detail.php">
             <input type="hidden" id="notice_id" name="notice_id" value>
-            <input type="hidden" name="cmd" value="notice_detail">
         </form>
         <form method="POST" id="deleteForm" action="#">
             <input type="hidden" id="notice_id" name="notice_id" value>

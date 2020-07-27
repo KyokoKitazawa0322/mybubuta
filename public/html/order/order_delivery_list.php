@@ -10,6 +10,7 @@ $orderDeliveryList = new \Controllers\OrderDeliveryListAction();
 $orderDeliveryList->execute();
 $customer = $orderDeliveryList->getCustomer();
 $deliveries = $orderDeliveryList->getDelivery();
+$delId = $orderDeliveryList->getDelId();
 ?>
 
 <!DOCTYPE html>
@@ -135,10 +136,9 @@ $deliveries = $orderDeliveryList->getDelivery();
     <form method="POST" id="base-addr-update" action="/html/mypage/update/mypage_update.php">
         <input type="hidden" name="cmd" value="from_order">
     </form>
-    <form method="POST" id="exist-addr-update" action="/html/mypage/delivery/mypage_delivery_entry.php">
+    <form method="GET" id="exist-addr-update" action="/html/mypage/delivery/mypage_delivery_entry.php">
         <input type="hidden" name="del_id" id="updId" value>
         <input type="hidden" name="cmd" value="from_order">
-        <!--<input type="hidden" name="del_upd" value="">-->
     </form>
     <form method="POST" id="add_addr" action="/html/mypage/delivery/mypage_delivery_add.php">
         <input type="hidden" name="cmd" value="from_order">

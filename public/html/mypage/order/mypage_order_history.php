@@ -49,7 +49,7 @@ $orders = $mypageOrderHistory->getOrders();
                                         <span class="his_ttl-sp">決済方法:</span>
                                         <p class="box_col_method"><?=Config::h($order->getPaymentTerm());?></p>
                                         <div class="detail_link_wrap">
-                                            <form method="POST" action="mypage_order_detail.php">
+                                            <form method="GET" action="mypage_order_detail.php">
                                                 <input type="submit" class="btn_cmn_01 btn_design_02" value="詳細を見る">
                                                 <input type="hidden" name="order_id" value="<?=Config::h($order->getOrderId());?>">
                                             </form>

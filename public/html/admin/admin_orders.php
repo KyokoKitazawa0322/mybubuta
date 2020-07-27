@@ -87,10 +87,9 @@ $(function(){
             <input type="hidden" id="content" name="content" value>
             <input type="hidden" name="cmd" value="sort">
         </form>
-        <form method="POST" id="orderDetailForm" action="/html/admin/admin_order_detail.php">
+        <form method="GET" id="orderDetailForm" action="/html/admin/admin_order_detail.php">
             <input type="hidden" id="order_id" name="order_id" value>
             <input type="hidden" id="customer_id" name="customer_id" value>
-            <input type="hidden" name="cmd" value="admin_order_detail">
         </form>
     </div>
 </body>
