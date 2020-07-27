@@ -9,13 +9,14 @@ use \Config\Config;
 $itemDetail = new \Controllers\ItemDetailAction();
 $itemDetail->execute();
 $item = $itemDetail->getItem();
+$itemStock = $item->getItemStock();
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, in+itial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="良質のアイテムが手に入るファッション通販サイト。ぶぶた BUBUTAはレディースファッション洋服通販サイトです。">
 <title>ぶぶた　BUBUTA 公式 | レディースファッション通販のぶぶた【公式】</title>
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
@@ -52,16 +53,26 @@ $item = $itemDetail->getItem();
                         </p>
                         <div class="item_detail_txt"><?=$item->getItemDetail();?></div>
                         <div class="detail_form_wrap">
-                            <form action="/html/cart.php" method="POST" class="item_num_form">
-                                <div class="select_wrap">
-                                    <select name="item_quantity" class="item_quantity_sl">
-                                    <?php  for($i=1; $i<=10; $i++){
-                                       echo "<option value={$i}>{$i}</option>";
-                                    } ?>
-                                    </select>
-                                </div>
-                                <span>個</span>
-                                <?php if($item->getItemStatus()=="2"):?>
+                            <form action="#" method="POST" class="item_num_form">
+                                <?php if($item->getItemStatus()=="1"):?>
+                                    <?php if($itemDetail->alertStock()):?>
+                                        <p class="stock_alert">在庫残り<?=$itemStock?>点</p>
+                                    <?php endif;?>
+                                    <div class="select_wrap">
+                                        <select name="item_quantity" class="item_quantity_sl">
+                                        <?php if(!$itemDetail->alertStock()):?>
+                                            <?php  for($i=1; $i<=10; $i++){
+                                               echo "<option value={$i}>{$i}</option>";
+                                            }?>
+                                        <?php else:?>
+                                            <?php  for($i=1; $i<=$itemStock; $i++){
+                                               echo "<option value={$i}>{$i}</option>";
+                                            } ?>
+                                        <?php endif;?>
+                                        </select>
+                                    </div>
+                                    <span>個</span>
+                                <?php elseif($item->getItemStatus()=="2"):?>
                                     <p class="status_text">この商品は現在、入荷待ちです。</p>
                                 <?php elseif($item->getItemStatus()=="5"):?>
                                     <p class="status_text">この商品は現在、品切れ中です(入荷未定)。</p>
@@ -70,7 +81,6 @@ $item = $itemDetail->getItem();
                                 <div class="cart_btn_wrap">
                                     <input type="submit" class="btn_cmn_mid btn_design_01" value="カートにいれる" />
                                     <input type="hidden" name="cmd" value="add_cart" />
-                                    <input type="hidden" name="item_code" value="<?=Config::h($item->getItemCode());?>" />
                                 </div>
                                 <?php endif;?>
                             </form>
