@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use \Models\InvalidParamException;
+use \Config\Config;
 
 class MyPageUpdateConfirmAction extends \Controllers\CommonMyPageAction{
     
